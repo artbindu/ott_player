@@ -1,6 +1,6 @@
 
 export default {
-    input: "src/main.js",
+    input: "src/AmcBitmovin.js",
     output: [{
         file: 'dist/bundle.js',
         format: 'iife',
