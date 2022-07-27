@@ -1,4 +1,4 @@
-import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
+import * as Bitmovinplayer from "bitmovin-player";
 
 
 //<!-- STEP 3 - Configure and Initialize the player-->
