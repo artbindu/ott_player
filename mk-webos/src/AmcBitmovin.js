@@ -3,8 +3,8 @@ import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.
 var bufferConfig = {};
 var bufferLevels = {};
 bufferLevels["forwardduration"] = 30;
-bufferLevels["backwardduration"] = 10,
-  bufferConfig["audio"] = bufferLevels;
+bufferLevels["backwardduration"] = 10;
+bufferConfig["audio"] = bufferLevels;
 bufferConfig["video"] = bufferLevels;
 var config = {
   key: "YOUR-PLAYER-KEY",

@@ -1,5 +1,6 @@
 
-// import * as bitmovinplayerpolyfill from '../thirdparty/bitmovin_8.90.0/bitmovinplayer-polyfill';
+// import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
+
 
 bitmovin.player.core.Player.addModule(window.bitmovin.player.polyfill.default);
 bitmovin.player.core.Player.addModule(window.bitmovin.player['engine-bitmovin'].default);
@@ -124,7 +125,7 @@ player.load(source).then(
     //Success
     console.log('Player load resolved');
     var modules = bitmovin.player.core.Player.getModules();
-    console.log("Modules: " + modules);
+    console.log("BM: Modules: " + modules);
   },
   function (reason) {
     //Error
