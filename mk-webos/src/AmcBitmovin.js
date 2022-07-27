@@ -1,4 +1,6 @@
-import * as BitmovinPlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
+import * as BitmovinPlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0";
+// import * as Bitmovinweos from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-webos";
+// import * as BitmovinCorePlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-core";
 
 var config = {
   key: "YOUR-PLAYER-KEY",
@@ -35,8 +37,10 @@ var source = {
 // create Bitmovin player instance
 var container = document.getElementById('my-player');
 
-// bitmovin.player.Player.addModule(bitmovin.player["webos"].default);
+// BitmovinPlayer.Player.addModule(Bitmovinweos.default);
+// new bitmovinplayer.exports.Player.addModule(Bitmovinweos.default.default)
 var player = new BitmovinPlayer.Player(container, config);
+// var player = new bitmovin.player.Player(container, config);
 
 function onSourceLoaded() {
   console.log('onSourceLoaded');
@@ -105,8 +109,8 @@ player.load(source).then(
   function () {
     //Success
     console.log('Player load resolved');
-    // var modules = bitmovin.player.Player.getModules();
-    // console.log("Modules: " + modules);
+    var modules = new BitmovinPlayer.Player.getModules;
+    console.log("BM: Modules: " + modules.join(', '));
   },
   function (reason) {
     //Error
