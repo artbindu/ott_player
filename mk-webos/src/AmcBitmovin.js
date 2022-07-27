@@ -1,4 +1,4 @@
-import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
+import * as BitmovinPlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
 
 var bufferConfig = {};
 var bufferLevels = {};
@@ -34,7 +34,7 @@ var source = {
 var container = document.getElementById('my-player');
 
 // bitmovin.player.Player.addModule(bitmovin.player["webos"].default);
-var player = new Bitmovinplayer.Player(container, config);
+var player = new BitmovinPlayer.Player(container, config);
 
 function onSourceLoaded() {
   console.log('onSourceLoaded');
