@@ -1,9 +1,16 @@
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs'
 
 export default {
     input: "src/AmcBitmovin.js",
-    output: [{
+    external: ['bitmovinplayer_8.90.0.js'],
+    output: {
         file: 'dist/bundle.js',
-        format: 'iife',
+        format: 'cjs', // 'iife',
         inlineDynamicImports: true
-    }]
+    },
+    plugins: [
+        resolve(),
+        commonjs()
+    ],
 }
