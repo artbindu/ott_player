@@ -1,4 +1,4 @@
-// import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
+import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
 
 
 //<!-- STEP 3 - Configure and Initialize the player-->
@@ -10,7 +10,7 @@ var playerConfig = {
     }
   }
   var container = document.getElementById('my-player');
-  var player = new bitmovin.player.Player(container, playerConfig);
+  var player = new Bitmovinplayer.Player(container, playerConfig);
   
   //<!-- STEP 4 - Configure and load a Source for the player -->
   var sourceConfig = {
@@ -29,9 +29,6 @@ var playerConfig = {
   player.on('paused', onPause);
   
   player.load(sourceConfig).then(function() {
-      var plyr = new Bitmovinplayer();
-      console.log(plyr);
-      debugger;
       console.log('Successfully loaded Source Config!');
     }).catch(function(reason) {
       console.log('Error while loading source:', reason);
