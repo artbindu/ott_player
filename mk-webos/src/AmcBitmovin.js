@@ -1,11 +1,5 @@
 import * as BitmovinPlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
 
-var bufferConfig = {};
-var bufferLevels = {};
-bufferLevels["forwardduration"] = 30;
-bufferLevels["backwardduration"] = 10;
-bufferConfig["audio"] = bufferLevels;
-bufferConfig["video"] = bufferLevels;
 var config = {
   key: "YOUR-PLAYER-KEY",
   logs: {
@@ -24,7 +18,15 @@ var config = {
     BACKWARD_BUFFER_PURGE_INTERVAL: 10,
     enable_seek_for_live: true
   },
-  buffer: bufferConfig
+  buffer: {
+    audio: {
+      backwardduration: 10,
+      forwardduration: 30
+    }, video: {
+      backwardduration: 10,
+      forwardduration: 30
+    }
+  }
 };
 
 var source = {
