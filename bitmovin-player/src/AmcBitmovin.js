@@ -1,9 +1,12 @@
+// import * as Bitmovinplayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js";
+
+
 //<!-- STEP 3 - Configure and Initialize the player-->
 var playerConfig = {
     "key": "<PLAYER_LICENSE_KEY>",
     "playback": {
       "muted": true,
-      "autoplay": false
+      "autoplay": true
     }
   }
   var container = document.getElementById('my-player');
@@ -19,8 +22,16 @@ var playerConfig = {
     "progressive": "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4",
     "poster": "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/poster.jpg"
   }
+
+  function onPause() {
+    console.log('BM:➵ onPause');
+  }
+  player.on('paused', onPause);
   
   player.load(sourceConfig).then(function() {
+      var plyr = new Bitmovinplayer();
+      console.log(plyr);
+      debugger;
       console.log('Successfully loaded Source Config!');
     }).catch(function(reason) {
       console.log('Error while loading source:', reason);

@@ -1,5 +1,5 @@
-// import bitmovinplayer from "./modules/webos/bitmovinplayer";
-// import bitmovinplayerwebos from "./modules/webos/bitmovinplayer-webos";
+const Bitmovinplayer = required("../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0.js");
+
 
 var bufferConfig = {};
 var bufferLevels = {};
@@ -34,57 +34,58 @@ var source = {
 // create Bitmovin player instance
 var container = document.getElementById('my-player');
 
-// bitmovin.player.Player.addModule(import ("./modules/webos/bitmovinplayer-webos"));
-bitmovin.player.Player.addModule(bitmovin.player["webos"].default);
-var player = new bitmovin.player.Player(container, config);
+debugger;
+// bitmovin.player.Player.addModule(bitmovin.player["webos"].default);
+
+var player = new Bitmovinplayer.player.Player(container, config);
 
 function onSourceLoaded() {
-  console.log('onSourceLoaded');
+  console.log('BM:➵ onSourceLoaded');
 };
 
 function onReady() {
-  console.log('onReady');
+  console.log('BM:➵ onReady');
 };
 
 function onPlay() {
-  console.log('onPlay');
+  console.log('BM:➵ onPlay');
 };
 
 function onPlaying() {
-  console.log('onPlaying');
+  console.log('BM:➵ onPlaying');
 }
 function onPause() {
-  console.log('onPause');
+  console.log('BM:➵ onPause');
 }
 
 function onPlaybackFinished() {
-  console.log('onPlaybackFinished');
+  console.log('BM:➵ onPlaybackFinished');
 }
 
 function onDvrWindowExceeded(event) {
-  console.log('onDvrWindowExceeded');
+  console.log('BM:➵ onDvrWindowExceeded');
 }
 
 function onStallStarted(event) {
-  console.log('onStallStarted');
+  console.log('BM:➵ onStallStarted');
 }
 
 function onStallEnded(event) {
-  console.log('onStallEnded');
+  console.log('BM:➵ onStallEnded');
 }
 
 function onPeriodSwitch(event) {
-  console.log('onPeriodSwitch');
+  console.log('BM:➵ onPeriodSwitch');
 }
 
 function onPeriodSwitched(event) {
-  console.log('onPeriodSwitched');
+  console.log('BM:➵ onPeriodSwitched');
 }
 
 function onTimeChanged(event) {
   var timeAbs = player.getCurrentTime("absolutetime");
   var timeRel = player.getCurrentTime("relativetime");
-  console.log('onTimeChanged: timeAbs=' + timeAbs + ', timeRel=' + timeRel);
+  console.log('BM:➵ onTimeChanged: timeAbs=' + timeAbs + ', timeRel=' + timeRel);
 }
 
 player.on('paused', onPause);
@@ -100,16 +101,16 @@ player.on('periodswitch', onPeriodSwitch);
 player.on('periodswitched', onPeriodSwitched);
 player.on('timechanged', onTimeChanged);
 
-console.log('Loading player');
+console.log('BM:➵ Loading player');
 player.load(source).then(
   function () {
     //Success
-    console.log('Player load resolved');
-    var modules = bitmovin.player.Player.getModules();
-    console.log("Modules: " + modules);
+    console.log('BM:➵ Player load resolved');
+    // var modules = bitmovin.player.Player.getModules();
+    // console.log("Modules: " + modules);
   },
   function (reason) {
     //Error
-    console.log('Error while creating Bitmovin Player instance');
+    console.log('BM:➵ Error while creating Bitmovin Player instance');
   }
 );
