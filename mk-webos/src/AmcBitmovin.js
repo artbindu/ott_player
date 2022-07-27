@@ -1,11 +1,20 @@
-import * as BitmovinPlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0";
-// import * as Bitmovinweos from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-webos";
-// import * as BitmovinCorePlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-core";
+// import * as BitmovinPlayer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer_8.90.0";
+import * as BitmovinCore from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-core";
+import * as BitmovinPolyfill from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-polyfill";
+import * as BitmovinEngine from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-engine-bitmovin";
+import * as BitmovinMserenderer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-mserenderer";
+import BitmovinAbr from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-abr";
+import BitmovinDrm from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-drm";
+import * as BitmovinContainer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-container-mp4";
+import * as BitmovinXml from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-xml";
+import * as BitmovinDash from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-dash";
+
+
 
 var config = {
   key: "YOUR-PLAYER-KEY",
   logs: {
-    //level: 'debug'
+    // level: 'debug'
   },
   playback: {
     autoplay: true,
@@ -37,10 +46,18 @@ var source = {
 // create Bitmovin player instance
 var container = document.getElementById('my-player');
 
-// BitmovinPlayer.Player.addModule(Bitmovinweos.default);
-// new bitmovinplayer.exports.Player.addModule(Bitmovinweos.default.default)
-var player = new BitmovinPlayer.Player(container, config);
-// var player = new bitmovin.player.Player(container, config);
+
+BitmovinCore.Player.addModule(BitmovinPolyfill.default);
+BitmovinCore.Player.addModule(BitmovinEngine.default);
+BitmovinCore.Player.addModule(BitmovinMserenderer.default);
+BitmovinCore.Player.addModule(BitmovinAbr.default);
+BitmovinCore.Player.addModule(BitmovinDrm.default);
+BitmovinCore.Player.addModule(BitmovinContainer.default);
+BitmovinCore.Player.addModule(BitmovinXml.default.default);
+BitmovinCore.Player.addModule(BitmovinDash.default.default);
+console.log(`BM: loaded modules: `, BitmovinCore.Player.getModules());
+
+var player = new BitmovinCore.Player(container, config);
 
 function onSourceLoaded() {
   console.log('onSourceLoaded');
@@ -109,11 +126,11 @@ player.load(source).then(
   function () {
     //Success
     console.log('Player load resolved');
-    var modules = new BitmovinPlayer.Player.getModules;
-    console.log("BM: Modules: " + modules.join(', '));
+    // var modules = new BitmovinPlayer.Player.getModules;
+    // console.log("BM: Modules: " + modules.join(', '));
   },
   function (reason) {
     //Error
-    console.log('Error while creating Bitmovin Player instance');
+    console.log('Error while creating Bitmovin Player instance', reason);
   }
 );
