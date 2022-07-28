@@ -1,4 +1,4 @@
-import { Player } from "bitmovin-player/modules/bitmovinplayer-core";
+import { Player, PlayerEvent, BufferType, MediaType, MetadataType, HttpRequestType, TimelineReferencePoint } from "bitmovin-player/modules/bitmovinplayer-core";
 import * as PolyfillModule from "bitmovin-player/modules/bitmovinplayer-polyfill";
 import * as EngineBitmovinModule from "bitmovin-player/modules/bitmovinplayer-engine-bitmovin";
 import * as MseRendererModule from "bitmovin-player/modules/bitmovinplayer-mserenderer";
@@ -64,6 +64,7 @@ Player.addModule(ContainerTSModule.default.default);
 Player.addModule(SubtitlesModule.default);
 Player.addModule(SubtitlesCEA608Module.default);
 
+console.log(`BM: `, PlayerEvent, BufferType, MediaType, MetadataType, HttpRequestType, TimelineReferencePoint)
 console.log(`BM: loaded modules: `, Player.getModules());
 
 var player = new Player(container, config);
