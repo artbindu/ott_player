@@ -13,7 +13,7 @@ import * as SubtitlesModule from 'bitmovin-player/modules/bitmovinplayer-subtitl
 import * as SubtitlesCEA608Module from 'bitmovin-player/modules/bitmovinplayer-subtitles-cea608';
 // import StyleModule from 'bitmovin-player/modules/bitmovinplayer-style';
 // import { UIFactory } from 'bitmovin-player/bitmovinplayer-ui';
-// import 'bitmovin-player/bitmovinplayer-ui.css';
+import 'bitmovin-player/bitmovinplayer-ui.css';
 
 
 var config = {

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "bitmovin-player": "^8.90.0",
+    "rollup-plugin-import-css": "^3.0.3",
     "rollup-pluginutils": "^2.8.2"
   }
 }
