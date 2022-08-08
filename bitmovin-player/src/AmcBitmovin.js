@@ -30,13 +30,13 @@ var config = {
 };
 
 var source = {
-  "dash": "https://womprodc.cdn.mdstrm.com/sdash/LIVE$4784/index.mpd/Manifest?start=2022-07-18T04%3A22%3A10.936Z&end=END&device=clear_live_wom_html5_chrome_dash_v1_wv3_all",
+  "dash": "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd",
 };
 // create Bitmovin player instance
 var container = document.getElementById('my-player');
 
 
-console.log(`BM: loaded modules: `, BitmovinPlayer.Player.getModules());
+console.log(`BP-01: loaded modules: `, BitmovinPlayer.Player.getModules());
 var player = new BitmovinPlayer.Player(container, config);
 
 function onSourceLoaded() {
@@ -101,12 +101,12 @@ player.on('periodswitch', onPeriodSwitch);
 player.on('periodswitched', onPeriodSwitched);
 player.on('timechanged', onTimeChanged);
 
-console.log('Loading player');
+console.log('BP-01: Loading player');
 player.load(source).then(
   function () {
     //Success
-    console.log('Player load resolved');
-    console.log(`BM: loaded modules: `, BitmovinPlayer.Player.getModules());
+    console.log('BP-01: Player load resolved');
+    console.log(`BP-01: loaded modules: `, BitmovinPlayer.Player.getModules());
   },
   function (reason) {
     //Error

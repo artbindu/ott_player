@@ -1,0 +1,24 @@
+{
+  "name": "bitmovin-modular-player",
+  "version": "1.0.0",
+  "description": "[Bitmovin Demo Player](https://bitmovin.com/demos/stream-test?format=dash&manifest=https%3A%2F%2Fbitmovin-a.akamaihd.net%2Fcontent%2FMI201109210084_1%2Fmpds%2Ff08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd)",
+  "main": "index.js",
+  "scripts": {
+    "bitmovin-player": "http-server -o bitmovin-player -a 0.0.0.0 -p 8001 --cors -c-1 -g true",
+    "bitmovin-modular-player": "http-server -o bitmovin-modular-player -a 0.0.0.0 -p 8002 --cors -c-1 -g true",
+    "start": "npm run bitmovin-player"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artbindu/bitmovin-modular-player.git"
+  },
+  "author": "Biswasindhu Mandal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/artbindu/bitmovin-modular-player/issues"
+  },
+  "homepage": "https://github.com/artbindu/bitmovin-modular-player#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

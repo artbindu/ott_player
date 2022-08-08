@@ -1,16 +1,18 @@
 {
-  "name": "bitmovin-player",
+  "name": "bitmovin-player-npm-modular-player",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "rollup --config",
-    "server": "http-server -o index -a 0.0.0.0 -p 9000 --cors -c-1 -g true",
+    "server": "http-server -o index -a 0.0.0.0 -p 9002 --cors -c-1 -g true",
     "start": "npm run build && npm run server"
   },
   "author": "Biswasindhu Mandal",
   "license": "ISC",
   "dependencies": {
+    "bitmovin-player": "^8.90.0",
+    "rollup-plugin-import-css": "^3.0.3",
     "rollup-pluginutils": "^2.8.2"
   },
   "devDependencies": {
