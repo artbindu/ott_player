@@ -20,6 +20,21 @@ var sourceConfig = {
 </br>
 <hr><hr>
 
+## <b>Bitmovin Default Player</b>
+
+<hr><hr>
+
+- Run Bitmovin Default Player : `src/bitmovin-player.html`
+```
+  npm i && npm run bp ↵
+```
+- Run Bitmovin Default Moudlar Player : `src/bitmovin-modular-player.html`
+```
+  npm i && npm run bmp ↵
+```
+
+<hr><hr>
+
 ## <b>Bitmovin Player</b>
 
 <hr><hr>
