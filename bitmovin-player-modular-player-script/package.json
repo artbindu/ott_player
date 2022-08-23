@@ -1,0 +1,15 @@
+{
+  "name": "bitmovin-player-modular-player-script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "server": "http-server -o index -a 0.0.0.0 -p 9002 --cors -c-1 -g true",
+    "start": "npm run server"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "author": "Biswasindhu Mandal",
+  "license": "ISC"
+}

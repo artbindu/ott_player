@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "bp": "http-server -o bitmovin-player -a 0.0.0.0 -p 8001 --cors -c-1 -g true",
-    "bmp": "http-server -o bitmovin-modular-player -a 0.0.0.0 -p 8002 --cors -c-1 -g true",
+    "bmp": "http-server -o bitmovin-modular-player -a 0.0.0.0 -p 8002 --cors -c-1 -g true"
   },
   "repository": {
     "type": "git",
