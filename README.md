@@ -32,7 +32,11 @@ var sourceConfig = {
 ```
   npm i && npm run bmp ↵
 ```
-
+- Run Bitmovin Default Moudlar Player : `src/bitmovin-modular-player2.html`
+- This is alternative implementation of `src/bitmovin-modular-player.html`. Import all modules from `js` file.
+```
+  npm i && npm run bmp2 ↵
+```
 <hr><hr>
 
 ## <b>Bitmovin Player</b>
@@ -85,27 +89,6 @@ or
 - Build & Run Code
 ```
  npm run build && npm run server ↵
-```
-or
-```
- npm run start ↵
-```
-<hr><hr>
-
-## <b>Bitmovin Player with modular player from Script</b>
-
-<hr><hr>
-
-- Created this player using bitmovin modular player (current version at package.json: `^8.90.0`)
-- Checked directory && install node-modules (http-server)
-- Basically here we import all bitmovin modules at script file.
-- It's alternative implementation of  `src/bitmovin-modular-player.html`  or  **Default Bitmovin Modulear Player**
-```
- cd bitmovin-player-npm-modular-player-script && npm i ↵
-```
-- Run Code
-```
- npm run server ↵
 ```
 or
 ```
