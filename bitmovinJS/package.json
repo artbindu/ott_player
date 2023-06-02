@@ -9,7 +9,7 @@
   "scripts": {
     "bitmovin:sample-player": "http-server -o bitmovin-player.html -a 0.0.0.0 -p 7001 --cors -c-1 -g true",
     "bitmovin:modular-player": "http-server -o bitmovin-modular-player.html -a 0.0.0.0 -p 7002 --cors -c-1 -g true",
-    "bitmovin:css-modular-player": "http-server -o bitmovin-css-modular-player.html -a 0.0.0.0 -p 7003 --cors -c-1 -g true"
+    "bitmovin:modular-player-customLoad": "http-server -o bitmovin-modular-player-load.html -a 0.0.0.0 -p 7003 --cors -c-1 -g true"
   },
   "repository": {
     "type": "git",
