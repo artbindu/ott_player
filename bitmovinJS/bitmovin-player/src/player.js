@@ -1,13 +1,4 @@
-import * as BitmovinCore from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-core";
-import * as BitmovinPolyfill from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-polyfill";
-import * as BitmovinEngine from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-engine-bitmovin";
-import * as BitmovinMserenderer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-mserenderer";
-import BitmovinAbr from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-abr";
-import BitmovinDrm from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-drm";
-import * as BitmovinContainer from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-container-mp4";
-import * as BitmovinXml from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-xml";
-import * as BitmovinDash from "../thirdparty/bitmovin_8.90.0/bitmovinplayer-dash";
-
+import * as BitmovinPlayer from "../bitmovin_8.90.0/bitmovinplayer_8.90.0";
 
 var config = {
   key: "YOUR-PLAYER-KEY",
@@ -25,7 +16,8 @@ var config = {
   tweaks: {
     file_protocol: true,
     BACKWARD_BUFFER_PURGE_INTERVAL: 10,
-    enable_seek_for_live: true
+    enable_seek_for_live: true,
+    native_hls_parsing: true
   },
   buffer: {
     audio: {
@@ -45,17 +37,8 @@ var source = {
 var container = document.getElementById('my-player');
 
 
-BitmovinCore.Player.addModule(BitmovinPolyfill.default);
-BitmovinCore.Player.addModule(BitmovinEngine.default);
-BitmovinCore.Player.addModule(BitmovinMserenderer.default);
-BitmovinCore.Player.addModule(BitmovinAbr.default);
-BitmovinCore.Player.addModule(BitmovinDrm.default);
-BitmovinCore.Player.addModule(BitmovinContainer.default);
-BitmovinCore.Player.addModule(BitmovinXml.default.default);
-BitmovinCore.Player.addModule(BitmovinDash.default.default);
-console.log(`BM: loaded modules: `, BitmovinCore.Player.getModules());
-
-var player = new BitmovinCore.Player(container, config);
+console.log(`BP-01: loaded modules: `, BitmovinPlayer.Player.getModules());
+var player = new BitmovinPlayer.Player(container, config);
 
 function onSourceLoaded() {
   console.log('onSourceLoaded');
@@ -119,12 +102,12 @@ player.on('periodswitch', onPeriodSwitch);
 player.on('periodswitched', onPeriodSwitched);
 player.on('timechanged', onTimeChanged);
 
-console.log('Loading player');
+console.log('BP-01: Loading player');
 player.load(source).then(
   function () {
     //Success
-    console.log('Player load resolved');
-    console.log(`BM: loaded modules: `, BitmovinCore.Player.getModules());
+    console.log('BP-01: Player load resolved');
+    console.log(`BP-01: loaded modules: `, BitmovinPlayer.Player.getModules());
   },
   function (reason) {
     //Error

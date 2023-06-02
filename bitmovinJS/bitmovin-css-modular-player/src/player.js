@@ -32,7 +32,8 @@ var config = {
   tweaks: {
     file_protocol: true,
     BACKWARD_BUFFER_PURGE_INTERVAL: 10,
-    enable_seek_for_live: true
+    enable_seek_for_live: true,
+    native_hls_parsing: true
   },
   buffer: {
     audio: {

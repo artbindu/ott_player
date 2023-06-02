@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import css from "rollup-plugin-import-css";
 
 export default {
-    input: "src/AmcBitmovin.js",
+    input: "src/player.js",
     external: [],
     output: {
         file: 'dist/bundle.js',

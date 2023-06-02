@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">= 16.15.1 <18.0.1"
+  },
   "scripts": {
     "build": "rollup --config",
-    "server": "http-server -o index -a 0.0.0.0 -p 9001 --cors -c-1 -g true",
+    "server": "http-server -o index.html -a 0.0.0.0 -p 9001 --cors -c-1 -g true",
     "start": "npm run build && npm run server"
   },
   "dependencies": {
