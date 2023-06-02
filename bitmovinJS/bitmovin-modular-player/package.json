@@ -11,12 +11,12 @@
     "server": "http-server -o index.html -a 0.0.0.0 -p 9002 --cors -c-1 -g true",
     "start": "npm run build && npm run server"
   },
+  "author": "Biswasindhu Mandal",
+  "license": "ISC",
   "dependencies": {
     "rollup-plugin-import-css": "^3.0.3",
     "rollup-pluginutils": "^2.8.2"
   },
-  "author": "Biswasindhu Mandal",
-  "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",

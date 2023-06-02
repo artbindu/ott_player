@@ -1,21 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <title>Bitmovin Modular Player 2</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    crossorigin="anonymous">
-</head>
-
-<body>
-  <div id="my-player"></div>
-
-  <script type="text/javascript">
-    const bitmovin_url = "https://cdn.bitmovin.com/player/web/8/modules/";
+const bitmovin_url = "https://cdn.bitmovin.com/player/web/8.90.0/modules/"; // latest bitmovin player
     const bitmovin_modules = [
       "bitmovinplayer-core.js",
       "bitmovinplayer-polyfill.js",
@@ -183,8 +166,3 @@
 
     // Load Bitmovin Player Modules
     loadBitmovinModules();
-
-  </script>
-</body>
-
-</html>

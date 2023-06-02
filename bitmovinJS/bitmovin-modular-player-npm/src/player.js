@@ -175,13 +175,11 @@ player.on('timechanged', onTimeChanged);
 
 console.log('Loading player');
 player.load(source).then(
-  function () {
-    //Success
+  function () { // Success
     console.log('Player load resolved');
     console.log(`loaded modules: `, Player.getModules());
   },
-  function (reason) {
-    //Error
+  function (reason) { // Error
     console.log('Error while creating Bitmovin Player instance', reason);
   }
 );
