@@ -134,7 +134,7 @@ or
    - There is a master manifest file available `shls/LIVE$11297/master.m3u8`, which contains variant audio & video manifest. 
    - All variant manifest and corresponding audio & video segments are available locally on respective repos `shls/LIVE$11297/**/*`. 
    - Now load all local data with bitmovin player (version: 8.90.0) and try to play the content.
-   - 
+  
 <hr><hr>
 
 
