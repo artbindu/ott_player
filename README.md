@@ -36,8 +36,6 @@ var sourceConfig = {
 
 ## <b>Bitmovin Sample Player</b>
 
-<hr><hr>
-
 - Load player with [latest bitmovin release](https://developer.bitmovin.com/playback/docs/release-notes-web)
 <hr>
 
@@ -52,8 +50,6 @@ var sourceConfig = {
 <hr><hr>
 
 ## <b>Bitmovin Player</b> 👉 `bitmovin-player`
-
-<hr><hr>
 
 - Create this player using bitmovin player version: [`8.90.0`](https://developer.bitmovin.com/playback/docs/release-notes-web#8900)
 - Checked directory && install node-modules
@@ -71,8 +67,6 @@ or
 <hr><hr>
 
 ## <b>Bitmovin Modular Player - 01</b> 👉 `bitmovin-modular-player-jsLoad`
-
-<hr><hr>
 
 - Create this player with all bitmovin modules of player version: [`8.90.0`](https://developer.bitmovin.com/playback/docs/release-notes-web#8900)
 - This is duplicate of `bitmovin-modular-player.html`. We load bitmovin 8.90.0 player modules through javascript into the html script
@@ -92,8 +86,6 @@ or
 
 ## <b>Bitmovin Modular Player - 02</b> 👉 `bitmovin-modular-player`
 
-<hr><hr>
-
 - Create this player with all bitmovin modules of player version: [`8.90.0`](https://developer.bitmovin.com/playback/docs/release-notes-web#8900)
 - Locally we store all bitmovin modules and then use them
 - Checked directory && install node-modules
@@ -112,8 +104,6 @@ or
 
 ## <b>Bitmovin Modular Player - 03</b> 👉 `bitmovin-modular-player-npm`
 
-<hr><hr>
-
 - Create this player with all bitmovin modules of player version: [`8.90.0`](https://developer.bitmovin.com/playback/docs/release-notes-web#8900)
 - Load bitmovin [8.90.0](https://www.npmjs.com/package/bitmovin-player/v/8.90.0) player through [npm](https://www.npmjs.com/package/bitmovin-player?activeTab=versions) and use the modules one by one
 ```
@@ -131,4 +121,12 @@ or
 ```
  npm run start ↵
 ```
+<hr><hr>
+
+## <b>Bitmovin Sample Testing - 03</b> 👉 `bitmovin-test-sample`
+
+1. `bitmovin-roll-response-test`: There are a roll response and it give us the manifest url. Through that manifest url how the player is work fundamentally.
+2. `bitmovin-test-hls-manifest`: This is custom manifest data working scenario. There is a master manifest file available `shls/LIVE$11297/master.m3u8`, which contains variant audio & video manifest. Also all variant manifest and corresponding audio & video segments are available locally on respective repos `shls/LIVE$11297/**/*`. Now load all local data with bitmovin player (version: 8.90.0) and try to play the content.
+
+
 <hr><hr>
