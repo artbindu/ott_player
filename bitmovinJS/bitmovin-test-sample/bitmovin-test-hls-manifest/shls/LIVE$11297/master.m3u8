@@ -1,0 +1,14 @@
+#EXTM3U
+#-----------------------------------------------------------
+#--Created with VSPP Streamer version 9.0.1.0 build  Commit_id: 29807847802c1319b7236f19bddff5c44893260b Commit_time: 1673796947 context OPABPAAABPHAGGEG-X
+#-----------------------------------------------------------
+#EXT-X-VERSION:7
+#EXT-X-INDEPENDENT-SEGMENTS
+#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="AC-3",NAME="audio_483_spa",LANGUAGE="spa",AUTOSELECT=YES,DEFAULT=NO,CHANNELS="2",URI="index.m3u8/S!d2EQbWZfaGxzX2Ficl9jbGVhchILVP7...8BRiF7MQGf/Alter-audio_483_spa(483,Level_params=dxADIeMBnw..)"
+#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="AACL",NAME="audio_482_eng",LANGUAGE="eng",AUTOSELECT=YES,DEFAULT=YES,CHANNELS="2",URI="index.m3u8/S!d2EQbWZfaGxzX2Ficl9jbGVhchILVP7...8BRiF7MQGf/Alter-audio_482_eng(482,Level_params=dxADIeIBnw..)"
+#EXT-X-STREAM-INF:BANDWIDTH=943720,CODECS="mp4a.40.2,avc1.4d4015",RESOLUTION=480x270,FRAME-RATE=29.97,AUDIO="AACL"
+index.m3u8/S!d2EQbWZfaGxzX2Ficl9jbGVhchILVP7...8BRiF7MQGf/Level(943720,Level_params=dxADMWhmDhIbnw..)_variant
+#EXT-X-STREAM-INF:BANDWIDTH=943720,CODECS="ac-3,avc1.4d4015",RESOLUTION=480x270,FRAME-RATE=29.97,AUDIO="AC-3"
+index.m3u8/S!d2EQbWZfaGxzX2Ficl9jbGVhchILVP7...8BRiF7MQGf/Level(943720,Level_params=dxADMWhmDhIbnw..)_variant
+
+
