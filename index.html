@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8" />
+   <title>Basic Media Player</title>
+   <link href="css/media-css.css" rel="stylesheet" type="text/css" />
+   <link rel="icon" type="image/x-icon" href="js/favicon.ico">
+</head>
+
+<body>
+   <selection class="content">
+      <div class="header">
+         <p>This is Custom Player</p>
+
+         <p>Select Another File: <input type="file" value="" id="fName">
+            <button id="" onclick="chooseNewFile()">PlayNow</button>
+         </p>
+
+         <p>Write File Name Including Path: <input type="text" value="" id="fName1">
+            <button id="" onclick="chooseNewFile1()">PlayNow</button>
+         </p>
+      </div>
+      <div class="maincontent" id="media-media-player">
+         <!-- <table>
+               <tr>
+                  <td>
+                     <video class="media-video-player" id="media-video-player">
+                        <source src="media/WHY IS INDIA GREAT.mp4" type="video/mp4">
+                     </video>
+                  </td>
+                  <td>
+                     <div id="log-container">
+                        <pre id="log"></pre>
+                     </div>
+                  </td>
+               </tr>
+            </table> -->
+         <video class="media-video-player" id="media-video-player">
+            <source src="media/WHY IS INDIA GREAT.mp4" type="video/mp4">
+         </video>
+
+         <!-- show media handler -->
+         <div class="media-media-controls" id="media-media-controls">
+            <div id="media-media-seekBar">
+               <span id="startPos">--:--:--</span>
+               <input id="player-seekbar" type="range" min="0" max="" step="1" value="0" />
+               <span id="endPos">--:--:--</span>
+            </div>
+
+            <div id="media-media-buttons">
+               <button id="reset" onclick="reset()">reset</button>
+               <button id="rewind" onclick="autoForward()">
+                  <select id="playSpeed">
+                     <option value="0.125">x.125</option>
+                     <option value="0.25">x.25</option>
+                     <option value="0.5">x.5</option>
+                     <option value="0.75">x.75</option>
+                     <option value="1" selected>auto-forward</option>
+                     <option value="1.25">x1.25</option>
+                     <option value="1.5">x1.5</option>
+                     <option value="1.75">x1.75</option>
+                     <option value="2">x2</option>
+                     <option value="3">x3</option>
+                     <option value="4">x4</option>
+                  </select>
+               </button>
+               <button id="backword" onclick="forwardBackward(-10)">Backword</button>
+               <button id="playPause" onclick="playPauseFun()">Play|Pause</button>
+               <button id="forward" onclick="forwardBackward(10)">Forward</button>
+               <button id="volume" onclick="volumeFun()">Volume
+                  <!-- <input id="volumeBar" type="range" min="0" max="1" value="0.5" step=0.1;> -->
+               </button>
+               <button id="volumeValue">1.0</button>
+            </div>
+
+         </div>
+      </div>
+      <div class="footer">
+         <p>
+            <strong>Editor:
+               <a href="https://github.com/artbindu">
+                  <img width="15px" padding="1px" src="https://cdn.simpleicons.org/github">
+                  Biswasindhu Mandal
+               </a>
+            </strong>
+         </p>
+      </div>
+   </selection>
+   <script src="js/media-js.js"></script>
+</body>
+
+</html>

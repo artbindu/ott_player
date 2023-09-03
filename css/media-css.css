@@ -1,0 +1,128 @@
+/* css body */
+*{
+    margin: 0;
+    padding: 0;
+    outline: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: black;
+}
+
+p {
+    text-align: center;
+    font-family: inherit;
+    text-align: center;
+    padding: 5px;
+    color: black;
+}
+/* class content */
+.content {
+    max-height: 100%;
+    min-height: 10%;
+    min-width: 10%;
+    max-width: 100%;
+    padding: 30px;
+    background-color: black;
+}
+
+/* class : header footer*/
+.header, .footer {
+    font-size: 20px;
+    position: relative;
+    text-align: center;
+    align-content: center;
+    width: 99%;
+    background-color: white;
+}
+.header {
+    height: 10%;
+}
+.footer {
+    height: 5%;
+}
+.footer img {
+    height: 1.5%; width: 1.5%;
+}
+
+/* class : main content */
+.maincontent {
+    width: 99%;
+    background-color: white;
+    text-align: center;
+    align-content: center;
+    margin:5px;
+    /* margin-left: 100px;
+    margin-right: 100px;
+    min-height: 30px;
+    height: 500px;
+    max-height: 500px;
+    width: 90%; */
+}
+
+/* class: media player position */
+.media-video-player {
+    align-content: center;
+    padding: 10px;
+    background-color: lightsalmon;
+    max-width: 1200px;
+    max-height: 900px;
+    /* width: auto;
+    height: auto; */
+    /* min-width: 350px;
+    min-height: 200px; */
+}
+
+/* seek bar design */
+#media-media-seekBar span, input {
+    align-content: center;
+    vertical-align: middle;
+    width: 70%;
+}
+#media-media-seekBar span{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: yellowgreen;
+    font-style: bold;
+}
+#media-media-seekBar input {
+    /* width: 70%;  */
+    height: 10px;
+}
+
+/* button design */
+#media-media-buttons {
+    align-content: center;
+    border: 5px;
+    text-align: center;
+}
+#media-media-buttons button {
+    height: 25px;
+    vertical-align: middle;
+    padding: 2px 2px;
+    border: 1px solid rgb(12, 235, 235);
+    background-color: black;
+    color: greenyellow;
+}
+#media-media-buttons select {
+    color: greenyellow;
+    background-color: black;
+}
+
+/* log color */
+#log-container {
+    border: "25px";
+    position: below;
+    overflow: auto; 
+    height: 400px;
+    position: right;
+    background-color: aquamarine;
+}
+#log {
+    color: black;
+    font-size: 0.15in;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    scrollbar-shadow-color: blueviolet;
+    scroll-margin-bottom: 100px;
+}

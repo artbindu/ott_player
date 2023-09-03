@@ -1,0 +1,20 @@
+{
+  "name": "mediaplayer",
+  "version": "1.0.0",
+  "description": "create a custom media player using native html",
+  "main": "http-server -p 54321 -o",
+  "scripts": {
+    "start": "npm run url && npm run http-server",
+    "url": "start http://localhost:54321/index.html",
+    "http-server": "http-server -p 54321"
+  },
+  "repository": {
+    "type": "bitbucket",
+    "url": ""
+  },
+  "author": "Biswasindhu Mandal",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.12.1"
+  }
+}
