@@ -24,7 +24,8 @@ class OTTMediaPlayer {
     this.volumeBtn = this.controls.volumeBtn;
 
     this.fullScreen = this.controls.fullScreen;
-    this.pipModel = this.controls.pipModel;
+    this.pipMode = this.controls.pipMode;
+    this.rotation = this.controls.rotation;
 
     this.bindEvents();
     this.updateUI();
@@ -42,7 +43,24 @@ class OTTMediaPlayer {
     this.seekBar.addEventListener('input', () => this.seekVideo());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
     this.fullScreen.addEventListener('click', () => this.toggleFullScreen());
-    this.pipModel.addEventListener('click', () => this.togglePipMode());
+    this.pipMode.addEventListener('click', () => this.togglePipMode());
+    this.rotation.addEventListener('click', () => this.toggleScreenRotation());
+  }
+
+  toggleScreenRotation() {
+    if (screen.orientation) {
+      // Listen for orientation changes using onchange
+      console.log(`call to rotation`);
+      screen.orientation.onchange = (event) => {
+        const type = screen.orientation.type;
+        const angle = screen.orientation.angle;
+        console.log(`ScreenOrientation changed: ${type}, ${angle} degrees.`);
+      };
+      // Example: lock to landscape (uncomment if needed)
+      // screen.orientation.lock('landscape').catch(() => {
+      //   screen.orientation.unlock();
+      // });
+    }
   }
 
   toggleFullScreen() {
@@ -50,7 +68,7 @@ class OTTMediaPlayer {
   }
 
   togglePipMode() {
-    this.pipModel.fullscreen ? document.exitPictureInPicture() : this.video.requestPictureInPicture();
+    this.pipMode.fullscreen ? document.exitPictureInPicture() : this.video.requestPictureInPicture();
   }
 
   toggleMute() {
@@ -100,7 +118,7 @@ class OTTMediaPlayer {
   }
 
   updatePlayPauseIcon() {
-    this.playPauseBtn.innerHTML = this.video.paused ? '▶️' : '⏸️';
+    this.playPauseBtn.innerHTML = this.video.paused ? '▶' : '❚❚';
   }
 
   updateUI() {
@@ -200,26 +218,29 @@ window.chooseActualFilePath = chooseActualFilePath;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
+  const playerConfig = {
+    startPos: document.getElementById('startPos'),
+    seekBar: document.getElementById('player-seekbar'),
+    endPos: document.getElementById('endPos'),
+
+    resetPlayback: document.getElementById('reset'),
+    playSpeed: document.getElementById('playSpeed'),
+    forwardPlayback: document.getElementById('forward'),
+    playPauseBtn: document.getElementById('playPause'),
+    backwordPlayback: document.getElementById('backword'),
+
+    volumeBar: document.getElementById('volumeBar'),
+    volumeValue: document.getElementById('volumeValue'),
+    volumeBtn: document.getElementById('volume'),
+
+    fullScreen: document.getElementById('fullScreen'),
+    pipMode: document.getElementById('pipMode'),
+    rotation: document.getElementById('screenRotation')
+  };
+
   const player = new OTTMediaPlayer(
     document.getElementById('media-video-player'),
-    {
-      startPos: document.getElementById('startPos'),
-      seekBar: document.getElementById('player-seekbar'),
-      endPos: document.getElementById('endPos'),
-
-      resetPlayback: document.getElementById('reset'),
-      playSpeed: document.getElementById('playSpeed'),
-      forwardPlayback: document.getElementById('forward'),
-      playPauseBtn: document.getElementById('playPause'),
-      backwordPlayback: document.getElementById('backword'),
-
-      volumeBar: document.getElementById('volumeBar'),
-      volumeValue: document.getElementById('volumeValue'),
-      volumeBtn: document.getElementById('volume'),
-
-      fullScreen: document.getElementById('fullScreen'),
-      pipModel: document.getElementById('pipModel')
-    }
+    playerConfig
   );
   OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
   // Attach playFromHeaderUrl to global for button usage

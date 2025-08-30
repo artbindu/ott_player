@@ -53,12 +53,12 @@
          <div class="drag-handle" id="dragHandle" title="Drag to move controls">&#x2630;</div>
          <div id="media-media-seekBar" class="seekbar-row">
             <span id="startPos">--:--:--</span>
-            <input id="player-seekbar" type="range" min="0" max="" step="1" value="0" />
+            <input id="player-seekbar" type="range" min="0" max="100" step="1" value="0" />
             <span id="endPos">--:--:--</span>
          </div>
          <div id="media-media-buttons" class="button-row">
-            <button id="reset" class="control-btn" onclick="reset()" title="Reset">🔄</button>
-            <select id="playSpeed" class="control-btn" onclick="autoForward()" title="Playback Speed">
+            <button id="reset" class="control-btn" title="Reset">💫</button>
+            <select id="playSpeed" class="control-btn" title="Playback Speed">
                <option value="0.25">x0.25</option>
                <option value="0.5">x0.50</option>
                <option value="0.75">x0.75</option>
@@ -69,14 +69,15 @@
                <option value="1.75">x1.75</option>
                <option value="2">x2.00</option>
             </select>
-            <button id="backword" class="control-btn" title="Skip Forward">⏪</button>
-            <button id="playPause" class="control-btn" title="Play/Pause">▶️/⏸️</button>
-            <button id="forward" class="control-btn" title="Skip Rewind">⏩</button>
+            <button id="backword" class="control-btn" title="Skip Forward">⏮</button>
+            <button id="playPause" class="control-btn" title="Play/Pause">▶/❚❚</button>
+            <button id="forward" class="control-btn" title="Skip Rewind">⏭</button>
             <input id="volumeBar" class="control-btn" type="range" min="0" max="1" step="0.01" value="1" title="Volume" style="width:80px;">
             <button id="volume" class="control-btn" title="Mute/Unmute">🔊</button>
             <span id="volumeValue" class="control-btn" hidden>00</span>
-            <button id="fullScreen" class="control-btn" title="Fullscreen">🔲</button>
-            <button id="pipModel" class="control-btn" title="Picture in Picture">📺</button>
+            <button id="fullScreen" class="control-btn" title="Fullscreen">⛶</button>
+            <button id="pipMode" class="control-btn" title="Picture in Picture">⿻</button>
+            <button id="screenRotation" class="control-btn" title="Rotate Screen" hidden>↳↰</button>
          </div>
       </div>
    </section>
