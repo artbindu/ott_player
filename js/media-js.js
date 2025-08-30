@@ -3,13 +3,17 @@ class OTTMediaPlayer {
     this.video = videoElement;
     this.controls = controls;
     this.init();
+    this.videoConfig = {
+      forwardAmount: 10,
+      rewindAmount: -10
+    }
   }
 
   init() {
     this.startPos = this.controls.startPos;
     this.endPos = this.controls.endPos;
     this.seekBar = this.controls.seekBar;
-    
+
     this.resetPlayback = this.controls.resetPlayback;
     this.playSpeed = this.controls.playSpeed;
     this.forwardPlayback = this.controls.forwardPlayback;
@@ -17,7 +21,7 @@ class OTTMediaPlayer {
     this.backwordPlayback = this.controls.backwordPlayback;
     this.volumeBar = this.controls.volumeBar;
     this.volumeValue = this.controls.volumeValue;
-    
+
     this.bindEvents();
     this.updateUI();
   }
@@ -26,8 +30,8 @@ class OTTMediaPlayer {
     this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
     this.playSpeed.addEventListener('change', () => this.setPlaybackSpeed());
     this.resetPlayback.addEventListener('click', () => this.toggleResetPlayer());
-    this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(10));
-    this.backwordPlayback.addEventListener('click', () => this.toggleForwardPlayback(-10));
+    this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.videoConfig.forwardAmount));
+    this.backwordPlayback.addEventListener('click', () => this.toggleBackwardPlayback(this.videoConfig.rewindAmount));
     this.volumeBar.addEventListener('input', () => this.setVolume());
     this.video.addEventListener('volumechange', () => this.updateVolumeUI());
     this.seekBar.addEventListener('input', () => this.seekVideo());
@@ -38,7 +42,7 @@ class OTTMediaPlayer {
     this.video.paused ? this.video.play() : this.video.pause();
     this.updatePlayPauseIcon();
   }
-  
+
   setPlaybackSpeed() {
     this.video.playbackRate = parseFloat(this.playSpeed.value);
   }
@@ -59,12 +63,12 @@ class OTTMediaPlayer {
   }
 
   seekVideo() {
-    this.video.currentTime = parseInt(this.seekBar.value);
+    this.video.currentTime = Math.floor(this.video.duration * parseInt(this.seekBar.value) / 100);
     this.updateSeekBar();
   }
 
   updateSeekBar() {
-    this.seekBar.value = Math.floor(this.video.currentTime);
+    this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
     this.startPos.textContent = this.formatTime(this.video.currentTime);
     this.endPos.textContent = this.formatTime(this.video.duration);
   }
@@ -174,14 +178,14 @@ window.chooseLocalFile = chooseLocalFile;
 window.chooseActualFilePath = chooseActualFilePath;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const player = new OTTMediaPlayer(
     document.getElementById('media-video-player'),
     {
       startPos: document.getElementById('startPos'),
       seekBar: document.getElementById('player-seekbar'),
       endPos: document.getElementById('endPos'),
-      
+
       resetPlayback: document.getElementById('reset'),
       playSpeed: document.getElementById('playSpeed'),
       forwardPlayback: document.getElementById('forward'),
@@ -194,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
   );
   OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
   // Attach playFromHeaderUrl to global for button usage
-  window.playFromHeaderUrl = function() {
+  window.playFromHeaderUrl = function () {
     OTTMediaPlayer.playFromHeaderUrl('headerVideoUrlInput', 'media-video-player');
   };
 });
