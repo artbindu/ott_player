@@ -1,214 +1,229 @@
-
-var fileName;
-var myPlayer = document.getElementById('media-video-player');
-var fs = require('fs');
-
-var intervalTimer = (myPlayer.duration>3600) ? 1000 : 250; // milisecond
-var seekBar = document.getElementById("player-seekbar");  // for media seekBar change
-var seekBarMaxVal = 100; // default seekBarMaxValue
-var autoPlayInterval = null;
-
-
-// (function () {
-//     var old = console.log;
-//     var logger = document.getElementById('log');
-//     console.log = function (message) {
-//         if (typeof message == 'object') {
-//             logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
-//         } else {
-//             logger.innerHTML += message + '<br />';
-//         }
-//     }
-// })();
-
-function playPauseFun() {
-    console.error("isPaused: ", myPlayer.paused);
-    (myPlayer.paused) ? myPlayer.play() : myPlayer.pause();
-    console.log(`isPaused: ${(myPlayer.paused) ? 'yes' : 'no'}`);
-    mediaSeekBarValue = (!myPlayer.paused) ? setInterval(updateMediaSeekBar, intervalTimer) : clearInterval(mediaSeekBarValue);
-
-    stopAutoForward();
-
-    console.log('unit seekBarTime: ', Math.round(myPlayer.duration/seekBarMaxVal,2),'sec :: PlayerDuration: ', timeFormat(myPlayer.duration), 'currentTime: ', timeFormat(myPlayer.currentTime));
-    return true;
-}
-
-function chooseNewFile() {
-    myPlayer.pause();    
-    fileName = document.getElementById("fName").value.split("\\").reverse()[0];
-    console.log(`BM: actual fileName: ${document.getElementById("fName").value} take fileName: ${fileName}`);
-    document.getElementById("media-video-player").innerHTML = "<source src=\"data/"+fileName+"\" type=\"video/mp4\">";
-    myPlayer = document.getElementById('media-video-player');
-    myPlayer.load();  // reload new file
-    reset();
-}
-
-/* update for show all files */
-// function chooseNewFile1() {
-//     myPlayer.pause();
-//     fileName = document.getElementById("fName1").value.trim();
-//     var files = fs.readdirSync("/data/__songs/");
-//     console.log(`%c ${files}`, 'color: green');
-//     console.log(`BM: actual fileName: ${document.getElementById("fName1").value} take fileName: ${fileName}`);
-//     document.getElementById("media-video-player").innerHTML = "<source src=\"data/"+fileName+"\" type=\"video/mp4\">";
-//     myPlayer = document.getElementById('media-video-player');
-//     myPlayer.load();  // reload new file
-//     reset();
-// }
-
-function chooseNewFile1() {
-    myPlayer.pause();
-    fileName = document.getElementById("fName1").value.trim();
-    if(fileName.indexOf('.') < 1) {
-        fileName = `${fileName}.mp4`;
+class OTTMediaPlayer {
+  constructor(videoElement, controls) {
+    this.video = videoElement;
+    this.controls = controls;
+    this.init();
+    this.videoConfig = {
+      forwardAmount: 10,
+      rewindAmount: -10
     }
-    console.log(`BM: actual fileName: ${document.getElementById("fName1").value} take fileName: ${fileName}`);
-    document.getElementById("media-video-player").innerHTML = "<source src=\"data/"+fileName+"\" type=\"video/mp4\">";
-    myPlayer = document.getElementById('media-video-player');
-    myPlayer.load();  // reload new file
-    reset();
+  }
+
+  init() {
+    this.startPos = this.controls.startPos;
+    this.endPos = this.controls.endPos;
+    this.seekBar = this.controls.seekBar;
+
+    this.resetPlayback = this.controls.resetPlayback;
+    this.playSpeed = this.controls.playSpeed;
+    this.forwardPlayback = this.controls.forwardPlayback;
+    this.playPauseBtn = this.controls.playPauseBtn;
+    this.backwordPlayback = this.controls.backwordPlayback;
+    this.volumeBar = this.controls.volumeBar;
+    this.volumeValue = this.controls.volumeValue;
+    this.volumeBtn = this.controls.volumeBtn;
+
+    this.fullScreen = this.controls.fullScreen;
+    this.pipModel = this.controls.pipModel;
+
+    this.bindEvents();
+    this.updateUI();
+  }
+
+  bindEvents() {
+    this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+    this.playSpeed.addEventListener('change', () => this.setPlaybackSpeed());
+    this.resetPlayback.addEventListener('click', () => this.toggleResetPlayer());
+    this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.videoConfig.forwardAmount));
+    this.backwordPlayback.addEventListener('click', () => this.toggleBackwardPlayback(this.videoConfig.rewindAmount));
+    this.volumeBar.addEventListener('input', () => this.setVolume());
+    this.volumeBtn.addEventListener('click', () => this.toggleMute());
+    this.video.addEventListener('volumechange', () => this.updateVolumeUI());
+    this.seekBar.addEventListener('input', () => this.seekVideo());
+    this.video.addEventListener('timeupdate', () => this.updateSeekBar());
+    this.fullScreen.addEventListener('click', () => this.toggleFullScreen());
+    this.pipModel.addEventListener('click', () => this.togglePipMode());
+  }
+
+  toggleFullScreen() {
+    this.video.fullscreen ? document.exitFullscreen() : this.video.requestFullscreen();
+  }
+
+  togglePipMode() {
+    this.pipModel.fullscreen ? document.exitPictureInPicture() : this.video.requestPictureInPicture();
+  }
+
+  toggleMute() {
+    this.video.muted = !this.video.muted;
+    this.updateVolumeUI();
+  }
+
+  togglePlayPause() {
+    this.video.paused ? this.video.play() : this.video.pause();
+    this.updatePlayPauseIcon();
+  }
+
+  setPlaybackSpeed() {
+    this.video.playbackRate = parseFloat(this.playSpeed.value);
+  }
+
+  toggleResetPlayer() {
+    this.video.currentTime = 0;
+    this.video.play();
+  }
+
+  toggleForwardPlayback(amount = 0) {
+    this.video.currentTime += amount;
+  }
+
+  setVolume() {
+    this.video.volume = parseFloat(this.volumeBar.value);
+    this.video.muted = false;
+    this.updateVolumeUI();
+  }
+
+  seekVideo() {
+    this.video.currentTime = Math.floor(this.video.duration * parseInt(this.seekBar.value) / 100);
+    this.updateSeekBar();
+  }
+
+  updateSeekBar() {
+    this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
+    this.startPos.textContent = this.formatTime(this.video.currentTime);
+    this.endPos.textContent = this.formatTime(this.video.duration);
+  }
+
+  updateVolumeUI() {
+    this.volumeBar.value = this.video.volume;
+    this.volumeBtn.innerHTML = this.video.muted ? '🔇' : '🔊';
+    this.volumeValue.textContent = `${this.video.muted ? '00' : (this.video.volume * 99).toFixed(0)}%`;
+  }
+
+  updatePlayPauseIcon() {
+    this.playPauseBtn.innerHTML = this.video.paused ? '▶️' : '⏸️';
+  }
+
+  updateUI() {
+    this.updatePlayPauseIcon();
+    this.updateVolumeUI();
+    this.updateSeekBar();
+  }
+
+  formatTime(seconds) {
+    if (isNaN(seconds)) return '--:--:--';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+  }
+
+  // Static helper for draggable controls
+  static makeControlsDraggable(controlsId, handleId) {
+    const controls = document.getElementById(controlsId);
+    const handle = document.getElementById(handleId);
+    let isDragging = false, startX, startY, origX, origY;
+    handle.addEventListener('mousedown', function (e) {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = controls.getBoundingClientRect();
+      origX = rect.left;
+      origY = rect.top;
+      controls.style.transition = 'none';
+      controls.style.position = 'fixed';
+      controls.style.zIndex = 1000;
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!isDragging) return;
+      let dx = e.clientX - startX;
+      let dy = e.clientY - startY;
+      controls.style.left = (origX + dx) + 'px';
+      controls.style.top = (origY + dy) + 'px';
+    });
+    document.addEventListener('mouseup', function () {
+      isDragging = false;
+    });
+  }
+
+  // Static helper for playing video from header URL
+  static playFromHeaderUrl(inputId, videoId) {
+    var url = document.getElementById(inputId).value.trim();
+    if (!url) return;
+    var video = document.getElementById(videoId);
+    video.pause();
+    video.src = url;
+    video.load();
+    video.play();
+  }
 }
 
-function reset() {
-    stopAutoForward();
-
-    // auto reset selected button
-    document.getElementById("playSpeed").selectedIndex = 4;
-    /* call them to auto-relode & auto-play video */
-    myPlayer.load();  // by default after player.load() player is paused automatically
-    playPauseFun();  // call it to update player-seek-bar
-
-    // reset playbackRate
-    myPlayer.playbackRate = 1;
-    myPlayer.currentTime = 0;
-    updateMediaSeekBar();
-    myPlayer.play();
-    return true;
+// Toggle input mode dropdown visibility
+function toggleInputModeDropdown() {
+  var mode = document.getElementById('inputModeDropdown').value;
+  document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
+  document.getElementById('pathInputRow').style.display = (mode === 'path') ? '' : 'none';
+  document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
 }
 
-var isDecrese = true;
-function volumeFun() {
-    var inc = (isDecrese & myPlayer.volume>=0.10) ? -1 : 1;
-    myPlayer.volume = (myPlayer.volume*10 + inc)/10;
-    isDecrese = ((inc===-1 & myPlayer.volume>=0.10) || myPlayer.volume===1) ? true : false;
-    console.log(`playerVolume: ${myPlayer.volume}`);
-    document.getElementById("volumeValue").innerHTML = (myPlayer.volume !== 0) ? (myPlayer.volume === 1) ? "1.0" : myPlayer.volume : "0.0";
-    return true;
+// Choose local file from file input
+function chooseLocalFile() {
+  const fileInput = document.getElementById('fName');
+  const video = document.getElementById('media-video-player');
+  if (fileInput.files && fileInput.files[0]) {
+    const fileURL = URL.createObjectURL(fileInput.files[0]);
+    video.pause();
+    video.src = fileURL;
+    video.load();
+    video.play();
+  }
 }
 
-function forwardBackward(ctime) {
-    console.log('cTime: ', ctime);
-    myPlayer.currentTime = (ctime>0) ? ((myPlayer.currentTime<myPlayer.duration) ? (myPlayer.currentTime + ctime) : myPlayer.duration) : ((myPlayer.currentTime>0) ? (myPlayer.currentTime + ctime) : 0);
-    console.log(`playerCurrentTime: ${myPlayer.currentTime}`);
-    return updateMediaSeekBar();
+// Choose actual file path from text input
+function chooseActualFilePath() {
+  const pathInput = document.getElementById('fName1');
+  const video = document.getElementById('media-video-player');
+  let filePath = pathInput.value.trim();
+  if (!filePath) return;
+  if (filePath.indexOf('.') < 1) {
+    filePath = `${filePath}.mp4`;
+  }
+  video.pause();
+  video.src = `data/${filePath}`;
+  video.load();
+  video.play();
 }
 
-function updateMediaSeekBar() {
-    let currentTime = timeFormat(myPlayer.currentTime);
-    let remainingTime = timeFormat(myPlayer.duration - myPlayer.currentTime);
-    document.getElementById('startPos').innerText = currentTime;
-    document.getElementById('endPos').innerText = remainingTime;
+// Attach to global for HTML usage
+window.toggleInputModeDropdown = toggleInputModeDropdown;
+window.chooseLocalFile = chooseLocalFile;
+window.chooseActualFilePath = chooseActualFilePath;
 
-    seekBarMaxVal = Math.floor(myPlayer.duration * 10);
-    document.getElementById("player-seekbar").max = seekBarMaxVal;
-    let seekBarPos = Math.ceil(myPlayer.currentTime * seekBarMaxVal / myPlayer.duration);
-    document.getElementById("player-seekbar").value = seekBarPos;
+// Auto-instantiate player and setup helpers on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+  const player = new OTTMediaPlayer(
+    document.getElementById('media-video-player'),
+    {
+      startPos: document.getElementById('startPos'),
+      seekBar: document.getElementById('player-seekbar'),
+      endPos: document.getElementById('endPos'),
 
-    console.log(`max: ${seekBarMaxVal} duration: ${myPlayer.duration} \nSeekBarPos: ${seekBarPos} currentTime: ${currentTime}`);
-    // close interval
-    if(myPlayer.currentTime === myPlayer.duration) {
-        document.getElementById("player-seekbar").value = 0; // reset 'player-seekbar' value
-        myPlayer.currentTime = 0;  // reset currentTime;
-        clearInterval(mediaSeekBarValue);
+      resetPlayback: document.getElementById('reset'),
+      playSpeed: document.getElementById('playSpeed'),
+      forwardPlayback: document.getElementById('forward'),
+      playPauseBtn: document.getElementById('playPause'),
+      backwordPlayback: document.getElementById('backword'),
+
+      volumeBar: document.getElementById('volumeBar'),
+      volumeValue: document.getElementById('volumeValue'),
+      volumeBtn: document.getElementById('volume'),
+
+      fullScreen: document.getElementById('fullScreen'),
+      pipModel: document.getElementById('pipModel')
     }
-    return true;
-}
-
-seekBar.addEventListener("mouseup", playerSeekBarChangeValue);
-function playerSeekBarChangeValue() {
-    let isPaused = (myPlayer.paused);
-    let seekValue = seekBar.value;
-    console.log('BM: change seekbar', seekValue);
-    myPlayer.pause();
-    mediaSeekBarValue = (!myPlayer.paused) ? setInterval(updateMediaSeekBar, intervalTimer) : clearInterval(mediaSeekBarValue);
-
-    myPlayer.currentTime = 0;
-    myPlayer.currentTime = Math.floor(myPlayer.duration * seekValue / seekBarMaxVal);
-    console.log('BM: isPaused', isPaused, 'current position: ', myPlayer.currentTime);
-    (!isPaused) ? myPlayer.play() : myPlayer.pause();
-    mediaSeekBarValue = (!myPlayer.paused) ? setInterval(updateMediaSeekBar, intervalTimer) : clearInterval(mediaSeekBarValue);
-    return true;
-}
-
-/** 
- * when we click on 'dropdown' box then we have to click two(2) times.
- * So there was problem to auto-forward when we are in paused mode, because in that case 'playbackRate' does not work
- * To solve that chalange : Set;            isAutoForward = 0 (by default)
- *                          first click;    isAutoForward = 1
- *                          second click;   isAutoForward = 2
- *          and then forward in pause mode
- * */
-var isAutoForward = 0;
-function autoForward() {
-    isAutoForward = (myPlayer.paused) ? ((isAutoForward===2) ? isAutoForward : (isAutoForward + 1) % 3) : 0;
-    // when we continuously use dropdown box for auto-forword in paused mode
-    if (myPlayer.paused & isAutoForward===2) {
-        console.log("clear previous autoForward interval");
-        clearInterval(autoPlayInterval);
-    }
-    
-    console.log(`isAutoForward: ${isAutoForward} isPaused: ${myPlayer.paused}`);
-    let rTime = parseFloat(document.getElementById("playSpeed").value);
-    if(!myPlayer.paused) {
-        if(rTime<10) 
-            myPlayer.playbackRate = rTime;
-        else 
-            myPlayer.currentTime += rTime;
-        return true;
-    } else if(myPlayer.paused & isAutoForward === 2) {
-        myPlayer.playbackRate = 0;
-        autoPlayInterval = setInterval(() => {
-            if(myPlayer.currentTime>=myPlayer.duration || isAutoForward === 0) {
-                clearInterval(autoPlayInterval);
-                return;
-            }
-            if(!myPlayer.seeking & myPlayer.currentTime<myPlayer.duration) { 
-                myPlayer.currentTime += rTime; 
-                updateMediaSeekBar()
-            }
-        }, 1000);  // interval time = 1sec i.e. 1000 ms.
-    } else if(myPlayer.paused & isAutoForward === 2 & rTime===1) {
-        isAutoForward = 0;
-    }
-}
-
-// when we press 'play|pause' or 'reset' button then call it
-function stopAutoForward() {
-    myPlayer.playbackRate = 1;
-    document.getElementById("playSpeed").selectedIndex = 4;
-    isAutoForward = 0
-    if(autoPlayInterval) { clearInterval(autoPlayInterval); /* autoPlayInterval= null;*/ }
-}
-
-// t : in second (integer)
-function timeFormat(t) {
-    t = Math.floor(t);
-    return (t<60) ? 
-            ((t<10) ? '00:00:0' : '00:00:') + t.toString() :  // --:--::ss
-
-            ((t<60*60) ? 
-                '00:' + (((Math.floor(t/60)<10) ? '0' : '') + Math.floor(t/60).toString()) + // --:mm:
-                ':' + ((t%60 < 10) ? '0' : '') + (t%60).toString() :  // ss
-
-            ((Math.floor(t/(60*60))<10) ? '0' : '') + Math.floor(t/(60*60)).toString() + // hh
-                ':' + ((Math.floor((t%(60*60))/60)<10) ? '0' : '') + Math.floor((t%(60*60))/60).toString() + // mm 
-                ':' + ((((t%(60*60))%60)<10) ? '0' : '') + (t%(60*60))%60).toString(); // ss
-}
-
-
-/* after all initilization first automatically call it  */
-var autoStart = ( function() {
-    myPlayer.pause();
-    playPauseFun();
-})();
-
+  );
+  OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
+  // Attach playFromHeaderUrl to global for button usage
+  window.playFromHeaderUrl = function () {
+    OTTMediaPlayer.playFromHeaderUrl('headerVideoUrlInput', 'media-video-player');
+  };
+});
