@@ -21,6 +21,10 @@ class OTTMediaPlayer {
     this.backwordPlayback = this.controls.backwordPlayback;
     this.volumeBar = this.controls.volumeBar;
     this.volumeValue = this.controls.volumeValue;
+    this.volumeBtn = this.controls.volumeBtn;
+
+    this.fullScreen = this.controls.fullScreen;
+    this.pipModel = this.controls.pipModel;
 
     this.bindEvents();
     this.updateUI();
@@ -33,9 +37,25 @@ class OTTMediaPlayer {
     this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.videoConfig.forwardAmount));
     this.backwordPlayback.addEventListener('click', () => this.toggleBackwardPlayback(this.videoConfig.rewindAmount));
     this.volumeBar.addEventListener('input', () => this.setVolume());
+    this.volumeBtn.addEventListener('click', () => this.toggleMute());
     this.video.addEventListener('volumechange', () => this.updateVolumeUI());
     this.seekBar.addEventListener('input', () => this.seekVideo());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
+    this.fullScreen.addEventListener('click', () => this.toggleFullScreen());
+    this.pipModel.addEventListener('click', () => this.togglePipMode());
+  }
+
+  toggleFullScreen() {
+    this.video.fullscreen ? document.exitFullscreen() : this.video.requestFullscreen();
+  }
+
+  togglePipMode() {
+    this.pipModel.fullscreen ? document.exitPictureInPicture() : this.video.requestPictureInPicture();
+  }
+
+  toggleMute() {
+    this.video.muted = !this.video.muted;
+    this.updateVolumeUI();
   }
 
   togglePlayPause() {
@@ -75,6 +95,7 @@ class OTTMediaPlayer {
 
   updateVolumeUI() {
     this.volumeBar.value = this.video.volume;
+    this.volumeBtn.innerHTML = this.video.muted ? '🔇' : '🔊';
     this.volumeValue.textContent = `${this.video.muted ? '00' : (this.video.volume * 99).toFixed(0)}%`;
   }
 
@@ -194,6 +215,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       volumeBar: document.getElementById('volumeBar'),
       volumeValue: document.getElementById('volumeValue'),
+      volumeBtn: document.getElementById('volume'),
+
+      fullScreen: document.getElementById('fullScreen'),
+      pipModel: document.getElementById('pipModel')
     }
   );
   OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
