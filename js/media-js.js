@@ -226,4 +226,67 @@ document.addEventListener('DOMContentLoaded', function () {
   window.playFromHeaderUrl = function () {
     OTTMediaPlayer.playFromHeaderUrl('headerVideoUrlInput', 'media-video-player');
   };
+  enableMobileDraggableControls();
 });
+
+// Make player-controls draggable on mobile and desktop, with focus fix
+function enableMobileDraggableControls() {
+  const controls = document.getElementById('media-media-controls');
+  const handle = document.getElementById('dragHandle');
+  let isDragging = false, startX, startY, origX, origY;
+
+  function setPosition(x, y) {
+    controls.style.left = x + 'px';
+    controls.style.top = y + 'px';
+    controls.style.position = 'fixed';
+    controls.style.zIndex = 1000;
+    controls.style.transition = 'none';
+    controls.focus(); // Ensure focus after move
+  }
+
+  // Desktop
+  handle.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = controls.getBoundingClientRect();
+    origX = rect.left;
+    origY = rect.top;
+    setPosition(origX, origY);
+    controls.setAttribute('tabindex', '-1'); // Make focusable if not already
+    controls.focus();
+  });
+  document.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    let dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+    setPosition(origX + dx, origY + dy);
+  });
+  document.addEventListener('mouseup', function () {
+    isDragging = false;
+  });
+
+  // Mobile (touch)
+  handle.addEventListener('touchstart', function (e) {
+    isDragging = true;
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    const rect = controls.getBoundingClientRect();
+    origX = rect.left;
+    origY = rect.top;
+    setPosition(origX, origY);
+    controls.setAttribute('tabindex', '-1');
+    controls.focus();
+  });
+  document.addEventListener('touchmove', function (e) {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    let dx = touch.clientX - startX;
+    let dy = touch.clientY - startY;
+    setPosition(origX + dx, origY + dy);
+  });
+  document.addEventListener('touchend', function () {
+    isDragging = false;
+  });
+}

@@ -3,3 +3,4 @@ data/*.lnk
 !data/sample.mp4
 node_modules
 package-lock.json
+.DS_Store
