@@ -3,10 +3,17 @@ var fileName;
 var myPlayer = document.getElementById('media-video-player');
 var fs = require('fs');
 
-var intervalTimer = (myPlayer.duration>3600) ? 1000 : 250; // milisecond
+var intervalTimer = (myPlayer.duration > 3600) ? 1000 : 250; // milisecond
 var seekBar = document.getElementById("player-seekbar");  // for media seekBar change
 var seekBarMaxVal = 100; // default seekBarMaxValue
 var autoPlayInterval = null;
+
+function toggleInputModeDropdown() {
+    var mode = document.getElementById('inputModeDropdown').value;
+    document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
+    document.getElementById('pathInputRow').style.display = (mode === 'path') ? '' : 'none';
+    document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
+}
 
 
 // (function () {
@@ -29,41 +36,40 @@ function playPauseFun() {
 
     stopAutoForward();
 
-    console.log('unit seekBarTime: ', Math.round(myPlayer.duration/seekBarMaxVal,2),'sec :: PlayerDuration: ', timeFormat(myPlayer.duration), 'currentTime: ', timeFormat(myPlayer.currentTime));
+    console.log('unit seekBarTime: ', Math.round(myPlayer.duration / seekBarMaxVal, 2), 'sec :: PlayerDuration: ', timeFormat(myPlayer.duration), 'currentTime: ', timeFormat(myPlayer.currentTime));
     return true;
 }
 
 function chooseNewFile() {
-    myPlayer.pause();    
+    myPlayer.pause();
     fileName = document.getElementById("fName").value.split("\\").reverse()[0];
     console.log(`BM: actual fileName: ${document.getElementById("fName").value} take fileName: ${fileName}`);
-    document.getElementById("media-video-player").innerHTML = "<source src=\"data/"+fileName+"\" type=\"video/mp4\">";
+    document.getElementById("media-video-player").innerHTML = "<source src=\"data/" + fileName + "\" type=\"video/mp4\">";
     myPlayer = document.getElementById('media-video-player');
     myPlayer.load();  // reload new file
     reset();
 }
 
-/* update for show all files */
-// function chooseNewFile1() {
-//     myPlayer.pause();
-//     fileName = document.getElementById("fName1").value.trim();
-//     var files = fs.readdirSync("/data/__songs/");
-//     console.log(`%c ${files}`, 'color: green');
-//     console.log(`BM: actual fileName: ${document.getElementById("fName1").value} take fileName: ${fileName}`);
-//     document.getElementById("media-video-player").innerHTML = "<source src=\"data/"+fileName+"\" type=\"video/mp4\">";
-//     myPlayer = document.getElementById('media-video-player');
-//     myPlayer.load();  // reload new file
-//     reset();
-// }
+// Play video from URL
+function playFromUrl() {
+    var url = document.getElementById('videoUrlInput').value.trim();
+    if (!url) return;
+    var video = document.getElementById('media-video-player');
+    video.pause();
+    video.src = url;
+    video.load();
+    video.play();
+}
 
+/* update for show all files */
 function chooseNewFile1() {
     myPlayer.pause();
     fileName = document.getElementById("fName1").value.trim();
-    if(fileName.indexOf('.') < 1) {
+    if (fileName.indexOf('.') < 1) {
         fileName = `${fileName}.mp4`;
     }
     console.log(`BM: actual fileName: ${document.getElementById("fName1").value} take fileName: ${fileName}`);
-    document.getElementById("media-video-player").innerHTML = "<source src=\"data/"+fileName+"\" type=\"video/mp4\">";
+    document.getElementById("media-video-player").innerHTML = "<source src=\"data/" + fileName + "\" type=\"video/mp4\">";
     myPlayer = document.getElementById('media-video-player');
     myPlayer.load();  // reload new file
     reset();
@@ -88,9 +94,9 @@ function reset() {
 
 var isDecrese = true;
 function volumeFun() {
-    var inc = (isDecrese & myPlayer.volume>=0.10) ? -1 : 1;
-    myPlayer.volume = (myPlayer.volume*10 + inc)/10;
-    isDecrese = ((inc===-1 & myPlayer.volume>=0.10) || myPlayer.volume===1) ? true : false;
+    var inc = (isDecrese & myPlayer.volume >= 0.10) ? -1 : 1;
+    myPlayer.volume = (myPlayer.volume * 10 + inc) / 10;
+    isDecrese = ((inc === -1 & myPlayer.volume >= 0.10) || myPlayer.volume === 1) ? true : false;
     console.log(`playerVolume: ${myPlayer.volume}`);
     document.getElementById("volumeValue").innerHTML = (myPlayer.volume !== 0) ? (myPlayer.volume === 1) ? "1.0" : myPlayer.volume : "0.0";
     return true;
@@ -98,7 +104,7 @@ function volumeFun() {
 
 function forwardBackward(ctime) {
     console.log('cTime: ', ctime);
-    myPlayer.currentTime = (ctime>0) ? ((myPlayer.currentTime<myPlayer.duration) ? (myPlayer.currentTime + ctime) : myPlayer.duration) : ((myPlayer.currentTime>0) ? (myPlayer.currentTime + ctime) : 0);
+    myPlayer.currentTime = (ctime > 0) ? ((myPlayer.currentTime < myPlayer.duration) ? (myPlayer.currentTime + ctime) : myPlayer.duration) : ((myPlayer.currentTime > 0) ? (myPlayer.currentTime + ctime) : 0);
     console.log(`playerCurrentTime: ${myPlayer.currentTime}`);
     return updateMediaSeekBar();
 }
@@ -116,7 +122,7 @@ function updateMediaSeekBar() {
 
     console.log(`max: ${seekBarMaxVal} duration: ${myPlayer.duration} \nSeekBarPos: ${seekBarPos} currentTime: ${currentTime}`);
     // close interval
-    if(myPlayer.currentTime === myPlayer.duration) {
+    if (myPlayer.currentTime === myPlayer.duration) {
         document.getElementById("player-seekbar").value = 0; // reset 'player-seekbar' value
         myPlayer.currentTime = 0;  // reset currentTime;
         clearInterval(mediaSeekBarValue);
@@ -150,34 +156,34 @@ function playerSeekBarChangeValue() {
  * */
 var isAutoForward = 0;
 function autoForward() {
-    isAutoForward = (myPlayer.paused) ? ((isAutoForward===2) ? isAutoForward : (isAutoForward + 1) % 3) : 0;
+    isAutoForward = (myPlayer.paused) ? ((isAutoForward === 2) ? isAutoForward : (isAutoForward + 1) % 3) : 0;
     // when we continuously use dropdown box for auto-forword in paused mode
-    if (myPlayer.paused & isAutoForward===2) {
+    if (myPlayer.paused & isAutoForward === 2) {
         console.log("clear previous autoForward interval");
         clearInterval(autoPlayInterval);
     }
-    
+
     console.log(`isAutoForward: ${isAutoForward} isPaused: ${myPlayer.paused}`);
     let rTime = parseFloat(document.getElementById("playSpeed").value);
-    if(!myPlayer.paused) {
-        if(rTime<10) 
+    if (!myPlayer.paused) {
+        if (rTime < 10)
             myPlayer.playbackRate = rTime;
-        else 
+        else
             myPlayer.currentTime += rTime;
         return true;
-    } else if(myPlayer.paused & isAutoForward === 2) {
+    } else if (myPlayer.paused & isAutoForward === 2) {
         myPlayer.playbackRate = 0;
         autoPlayInterval = setInterval(() => {
-            if(myPlayer.currentTime>=myPlayer.duration || isAutoForward === 0) {
+            if (myPlayer.currentTime >= myPlayer.duration || isAutoForward === 0) {
                 clearInterval(autoPlayInterval);
                 return;
             }
-            if(!myPlayer.seeking & myPlayer.currentTime<myPlayer.duration) { 
-                myPlayer.currentTime += rTime; 
+            if (!myPlayer.seeking & myPlayer.currentTime < myPlayer.duration) {
+                myPlayer.currentTime += rTime;
                 updateMediaSeekBar()
             }
         }, 1000);  // interval time = 1sec i.e. 1000 ms.
-    } else if(myPlayer.paused & isAutoForward === 2 & rTime===1) {
+    } else if (myPlayer.paused & isAutoForward === 2 & rTime === 1) {
         isAutoForward = 0;
     }
 }
@@ -187,27 +193,27 @@ function stopAutoForward() {
     myPlayer.playbackRate = 1;
     document.getElementById("playSpeed").selectedIndex = 4;
     isAutoForward = 0
-    if(autoPlayInterval) { clearInterval(autoPlayInterval); /* autoPlayInterval= null;*/ }
+    if (autoPlayInterval) { clearInterval(autoPlayInterval); /* autoPlayInterval= null;*/ }
 }
 
 // t : in second (integer)
 function timeFormat(t) {
     t = Math.floor(t);
-    return (t<60) ? 
-            ((t<10) ? '00:00:0' : '00:00:') + t.toString() :  // --:--::ss
+    return (t < 60) ?
+        ((t < 10) ? '00:00:0' : '00:00:') + t.toString() :  // --:--::ss
 
-            ((t<60*60) ? 
-                '00:' + (((Math.floor(t/60)<10) ? '0' : '') + Math.floor(t/60).toString()) + // --:mm:
-                ':' + ((t%60 < 10) ? '0' : '') + (t%60).toString() :  // ss
+        ((t < 60 * 60) ?
+            '00:' + (((Math.floor(t / 60) < 10) ? '0' : '') + Math.floor(t / 60).toString()) + // --:mm:
+            ':' + ((t % 60 < 10) ? '0' : '') + (t % 60).toString() :  // ss
 
-            ((Math.floor(t/(60*60))<10) ? '0' : '') + Math.floor(t/(60*60)).toString() + // hh
-                ':' + ((Math.floor((t%(60*60))/60)<10) ? '0' : '') + Math.floor((t%(60*60))/60).toString() + // mm 
-                ':' + ((((t%(60*60))%60)<10) ? '0' : '') + (t%(60*60))%60).toString(); // ss
+            ((Math.floor(t / (60 * 60)) < 10) ? '0' : '') + Math.floor(t / (60 * 60)).toString() + // hh
+            ':' + ((Math.floor((t % (60 * 60)) / 60) < 10) ? '0' : '') + Math.floor((t % (60 * 60)) / 60).toString() + // mm 
+            ':' + ((((t % (60 * 60)) % 60) < 10) ? '0' : '') + (t % (60 * 60)) % 60).toString(); // ss
 }
 
 
 /* after all initilization first automatically call it  */
-var autoStart = ( function() {
+var autoStart = (function () {
     myPlayer.pause();
     playPauseFun();
 })();

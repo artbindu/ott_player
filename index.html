@@ -5,88 +5,158 @@
    <meta charset="utf-8" />
    <title>Basic Media Player</title>
    <link href="css/media-css.css" rel="stylesheet" type="text/css" />
-   <link rel="icon" type="image/x-icon" href="js/favicon.ico">
+   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-
 <body>
-   <selection class="content">
-      <div class="header">
-         <p>This is Custom Player</p>
-
-         <p>Select Another File: <input type="file" value="" id="fName">
-            <button id="" onclick="chooseNewFile()">PlayNow</button>
-         </p>
-
-         <p>Write File Name Including Path: <input type="text" value="" id="fName1">
-            <button id="" onclick="chooseNewFile1()">PlayNow</button>
-         </p>
+   <header class="page-header">
+      <div class="page-header-content">
+         <section class="header-left">
+            <a href="https://github.com/artbindu">
+               <img src="favicon.ico" alt="Logo" class="header-logo">
+            </a>
+            <div>
+               <h1 class="site-title">OTT Player</h1>
+               <p class="site-subtitle">Your Custom Media Experience</p>
+            </div>
+         </section>
+         <section class="header-right">
+            <div class="file-inputs" id="inputModeDropdownRow">
+               <select id="inputModeDropdown" class="control-btn" onchange="toggleInputModeDropdown()">
+                  <option value="file" selected>Choose File</option>
+                  <option value="path">Add Local Path</option>
+                  <option value="url">Add Web URL</option>
+               </select>
+            </div>
+            <div class="file-inputs" id="fileInputRow">
+               <input type="file" id="fName">
+               <button class="primary-btn" onclick="chooseNewFile()">Play</button>
+            </div>
+            <div class="file-inputs" id="pathInputRow" style="display:none;">
+               <input type="text" id="fName1" placeholder="Enter file path...">
+               <button class="primary-btn" onclick="chooseNewFile1()">Play</button>
+            </div>
+            <div class="file-inputs" id="urlInputRow" style="display:none;">
+               <input type="text" id="headerVideoUrlInput" placeholder="Paste video URL...">
+               <button class="primary-btn" onclick="playFromHeaderUrl()">Play</button>
+            </div>
+         </section>
       </div>
-      <div class="maincontent" id="media-media-player">
-         <!-- <table>
-               <tr>
-                  <td>
-                     <video class="media-video-player" id="media-video-player">
-                        <source src="media/WHY IS INDIA GREAT.mp4" type="video/mp4">
-                     </video>
-                  </td>
-                  <td>
-                     <div id="log-container">
-                        <pre id="log"></pre>
-                     </div>
-                  </td>
-               </tr>
-            </table> -->
+   </header>
+   <section class="content player-card">
+      <div class="video-wrapper">
          <video class="media-video-player" id="media-video-player">
-            <source src="media/WHY IS INDIA GREAT.mp4" type="video/mp4">
+            <source src="data/sample.mp4" type="video/mp4">
          </video>
-
-         <!-- show media handler -->
-         <div class="media-media-controls" id="media-media-controls">
-            <div id="media-media-seekBar">
-               <span id="startPos">--:--:--</span>
-               <input id="player-seekbar" type="range" min="0" max="" step="1" value="0" />
-               <span id="endPos">--:--:--</span>
-            </div>
-
-            <div id="media-media-buttons">
-               <button id="reset" onclick="reset()">reset</button>
-               <button id="rewind" onclick="autoForward()">
-                  <select id="playSpeed">
-                     <option value="0.125">x.125</option>
-                     <option value="0.25">x.25</option>
-                     <option value="0.5">x.5</option>
-                     <option value="0.75">x.75</option>
-                     <option value="1" selected>auto-forward</option>
-                     <option value="1.25">x1.25</option>
-                     <option value="1.5">x1.5</option>
-                     <option value="1.75">x1.75</option>
-                     <option value="2">x2</option>
-                     <option value="3">x3</option>
-                     <option value="4">x4</option>
-                  </select>
-               </button>
-               <button id="backword" onclick="forwardBackward(-10)">Backword</button>
-               <button id="playPause" onclick="playPauseFun()">Play|Pause</button>
-               <button id="forward" onclick="forwardBackward(10)">Forward</button>
-               <button id="volume" onclick="volumeFun()">Volume
-                  <!-- <input id="volumeBar" type="range" min="0" max="1" value="0.5" step=0.1;> -->
-               </button>
-               <button id="volumeValue">1.0</button>
-            </div>
-
+      </div>
+      <!-- show media handler -->
+      <div class="media-media-controls player-controls" id="media-media-controls">
+         <div class="drag-handle" id="dragHandle" style="cursor:move; text-align:right; font-size:1.2em; color:#ccc;">
+            &#x2630;</div>
+         <div id="media-media-seekBar" class="seekbar-row">
+            <span id="startPos">--:--:--</span>
+            <input id="player-seekbar" type="range" min="0" max="" step="1" value="0" />
+            <span id="endPos">--:--:--</span>
+         </div>
+         <div id="media-media-buttons" class="button-row">
+            <button id="reset" class="control-btn" onclick="reset()" title="Reset">🔄</button>
+            <select id="playSpeed" class="control-btn" onclick="autoForward()" title="Playback Speed">
+               <option value="0.25">x0.25</option>
+               <option value="0.5">x0.5</option>
+               <option value="0.75">x0.75</option>
+               <option value="1" selected>x1.00</option>
+               <option value="1.1">x1.10</option>
+               <option value="1.25">x1.25</option>
+               <option value="1.5">x1.5</option>
+               <option value="1.75">x1.75</option>
+               <option value="2">x2</option>
+            </select>
+            <button id="backword" class="control-btn" onclick="forwardBackward(-10)" title="Skip Forward">⏪</button>
+            <button id="playPause" class="control-btn" onclick="playPauseFun()" title="Play/Pause">▶️/⏸️</button>
+            <button id="forward" class="control-btn" onclick="forwardBackward(10)" title="Skip Rewind">⏩</button>
+            <input id="volumeBar" type="range" min="0" max="1" step="0.01" value="1" class="control-btn" title="Volume" style="width:80px;">
+            <button id="volume" class="control-btn" onclick="volumeFun()" title="Mute/Unmute">🔊</button>
+            <span id="volumeValue" class="control-btn">1.0</span>
          </div>
       </div>
-      <div class="footer">
-         <p>
-            <strong>Editor:
-               <a href="https://github.com/artbindu">
-                  <img width="15px" padding="1px" src="https://cdn.simpleicons.org/github">
-                  Biswasindhu Mandal
-               </a>
-            </strong>
-         </p>
-      </div>
-   </selection>
+   </section>
+   <script>
+      // Play video from URL in header
+      function playFromHeaderUrl() {
+         var url = document.getElementById('headerVideoUrlInput').value.trim();
+         if (!url) return;
+         var video = document.getElementById('media-video-player');
+         video.pause();
+         video.src = url;
+         video.load();
+         video.play();
+      }
+
+      // Make player-controls draggable
+      (function () {
+         const controls = document.getElementById('media-media-controls');
+         const handle = document.getElementById('dragHandle');
+         let isDragging = false, startX, startY, origX, origY;
+         handle.addEventListener('mousedown', function (e) {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            const rect = controls.getBoundingClientRect();
+            origX = rect.left;
+            origY = rect.top;
+            controls.style.transition = 'none';
+            controls.style.position = 'fixed';
+            controls.style.zIndex = 1000;
+         });
+         document.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+            let dx = e.clientX - startX;
+            let dy = e.clientY - startY;
+            controls.style.left = (origX + dx) + 'px';
+            controls.style.top = (origY + dy) + 'px';
+         });
+         document.addEventListener('mouseup', function () {
+            isDragging = false;
+         });
+      })();
+
+      // Volume control logic
+      const video = document.getElementById('media-video-player');
+      const playPauseBtn = document.getElementById('playPause');
+      const volumeBar = document.getElementById('volumeBar');
+      const volumeValue = document.getElementById('volumeValue');
+      const volumeBtn = document.getElementById('volume');
+
+      function updatePlayPauseIcon() {
+         if (video.paused) {
+            playPauseBtn.innerHTML = '▶️';
+         } else {
+            playPauseBtn.innerHTML = '⏸️';
+         }
+      }
+
+      function updateVolumeUI() {
+         volumeBar.value = video.volume;
+         volumeValue.textContent = video.muted ? 'Muted' : video.volume.toFixed(2);
+         volumeBtn.innerHTML = video.muted || video.volume === 0 ? '🔇' : '🔊';
+      }
+
+      volumeBar.addEventListener('input', function() {
+         video.volume = parseFloat(volumeBar.value);
+         video.muted = false;
+         updateVolumeUI();
+      });
+
+      function volumeFun() {
+         video.muted = !video.muted;
+         updateVolumeUI();
+      }
+
+      video.addEventListener('volumechange', updateVolumeUI);
+      document.addEventListener('DOMContentLoaded', function() {
+         updatePlayPauseIcon();
+         updateVolumeUI();
+      });
+   </script>
    <script src="js/media-js.js"></script>
 </body>
 
