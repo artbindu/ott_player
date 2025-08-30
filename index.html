@@ -50,8 +50,7 @@
       </div>
       <!-- show media handler -->
       <div class="media-media-controls player-controls" id="media-media-controls">
-         <div class="drag-handle" id="dragHandle" style="cursor:move; text-align:right; font-size:1.2em; color:#ccc;">
-            &#x2630;</div>
+         <div class="drag-handle" id="dragHandle" title="Drag to move controls">&#x2630;</div>
          <div id="media-media-seekBar" class="seekbar-row">
             <span id="startPos">--:--:--</span>
             <input id="player-seekbar" type="range" min="0" max="" step="1" value="0" />
@@ -61,19 +60,19 @@
             <button id="reset" class="control-btn" onclick="reset()" title="Reset">🔄</button>
             <select id="playSpeed" class="control-btn" onclick="autoForward()" title="Playback Speed">
                <option value="0.25">x0.25</option>
-               <option value="0.5">x0.5</option>
+               <option value="0.5">x0.50</option>
                <option value="0.75">x0.75</option>
                <option value="1" selected>x1.00</option>
                <option value="1.1">x1.10</option>
                <option value="1.25">x1.25</option>
-               <option value="1.5">x1.5</option>
+               <option value="1.5">x1.50</option>
                <option value="1.75">x1.75</option>
-               <option value="2">x2</option>
+               <option value="2">x2.00</option>
             </select>
             <button id="backword" class="control-btn" onclick="forwardBackward(-10)" title="Skip Forward">⏪</button>
             <button id="playPause" class="control-btn" onclick="playPauseFun()" title="Play/Pause">▶️/⏸️</button>
             <button id="forward" class="control-btn" onclick="forwardBackward(10)" title="Skip Rewind">⏩</button>
-            <input id="volumeBar" type="range" min="0" max="1" step="0.01" value="1" class="control-btn" title="Volume" style="width:80px;">
+            <input id="volumeBar" class="control-btn" type="range" min="0" max="1" step="0.01" value="1" title="Volume" style="width:80px;">
             <button id="volume" class="control-btn" onclick="volumeFun()" title="Mute/Unmute">🔊</button>
             <span id="volumeValue" class="control-btn">1.0</span>
          </div>
