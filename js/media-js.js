@@ -7,6 +7,10 @@ class OTTMediaPlayer {
       forwardAmount: 10,
       rewindAmount: -10
     }
+    // Set seekBar value to 0 by default
+    if (this.controls.seekBar) {
+      this.controls.seekBar.value = 0;
+    }
   }
 
   init() {
@@ -15,10 +19,10 @@ class OTTMediaPlayer {
     this.seekBar = this.controls.seekBar;
 
     this.resetPlayback = this.controls.resetPlayback;
-    this.playSpeed = this.controls.playSpeed;
-    this.forwardPlayback = this.controls.forwardPlayback;
-    this.playPauseBtn = this.controls.playPauseBtn;
+    this.playbackRate = this.controls.playbackRate;
     this.backwordPlayback = this.controls.backwordPlayback;
+    this.playPauseBtn = this.controls.playPauseBtn;
+    this.forwardPlayback = this.controls.forwardPlayback;
     this.volumeBar = this.controls.volumeBar;
     this.volumeValue = this.controls.volumeValue;
     this.volumeBtn = this.controls.volumeBtn;
@@ -33,10 +37,10 @@ class OTTMediaPlayer {
 
   bindEvents() {
     this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
-    this.playSpeed.addEventListener('change', () => this.setPlaybackSpeed());
+    this.playbackRate.addEventListener('change', () => this.setPlaybackSpeed());
     this.resetPlayback.addEventListener('click', () => this.toggleResetPlayer());
     this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.videoConfig.forwardAmount));
-    this.backwordPlayback.addEventListener('click', () => this.toggleBackwardPlayback(this.videoConfig.rewindAmount));
+    this.backwordPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.videoConfig.rewindAmount));
     this.volumeBar.addEventListener('input', () => this.setVolume());
     this.volumeBtn.addEventListener('click', () => this.toggleMute());
     this.video.addEventListener('volumechange', () => this.updateVolumeUI());
@@ -56,10 +60,6 @@ class OTTMediaPlayer {
         const angle = screen.orientation.angle;
         console.log(`ScreenOrientation changed: ${type}, ${angle} degrees.`);
       };
-      // Example: lock to landscape (uncomment if needed)
-      // screen.orientation.lock('landscape').catch(() => {
-      //   screen.orientation.unlock();
-      // });
     }
   }
 
@@ -82,7 +82,7 @@ class OTTMediaPlayer {
   }
 
   setPlaybackSpeed() {
-    this.video.playbackRate = parseFloat(this.playSpeed.value);
+    this.video.playbackRate = parseFloat(this.playbackRate.value);
   }
 
   toggleResetPlayer() {
@@ -109,16 +109,32 @@ class OTTMediaPlayer {
     this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
     this.startPos.textContent = this.formatTime(this.video.currentTime);
     this.endPos.textContent = this.formatTime(this.video.duration);
-  }
-
-  updateVolumeUI() {
-    this.volumeBar.value = this.video.volume;
-    this.volumeBtn.innerHTML = this.video.muted ? '🔇' : '🔊';
-    this.volumeValue.textContent = `${this.video.muted ? '00' : (this.video.volume * 99).toFixed(0)}%`;
+    if(this.video.currentTime <= 1) this.updatePlayPauseIcon();
   }
 
   updatePlayPauseIcon() {
-    this.playPauseBtn.innerHTML = this.video.paused ? '▶' : '❚❚';
+    this.playPauseBtn.innerHTML = this.video.paused ? '<i class="fa fa-play"></i>' : '<i class="fa fa-pause"></i>';
+  }
+
+  updateVolumeUI() {
+    this.volumeBtn.innerHTML = (this.video.muted || this.video.volume === 0) ? '<i class="fa fa-volume-mute"></i>' : '<i class="fa fa-volume-up"></i>';
+    this.volumeBar.value = this.video.volume;
+    this.volumeValue.textContent = `${this.video.muted ? '00' : (this.video.volume * 99).toFixed(0)}%`;
+  }
+
+  updateFullScreenIcon(isFullScreen) {
+    const fullScreenBtn = document.getElementById('fullScreen');
+    fullScreenBtn.innerHTML = isFullScreen ? '<i class="fa fa-compress"></i>' : '<i class="fa fa-expand"></i>';
+  }
+
+  updatePipIcon(isPip) {
+    const pipBtn = document.getElementById('pipMode');
+    pipBtn.innerHTML = isPip ? '<i class="fa fa-window-close"></i>' : '<i class="fa fa-tv"></i>';
+  }
+
+  updateRotationIcon(isRotated) {
+    const rotationBtn = document.getElementById('screenRotation');
+    rotationBtn.innerHTML = isRotated ? '<i class="fa fa-rotate-left"></i>' : '<i class="fa fa-rotate-right"></i>';
   }
 
   updateUI() {
@@ -224,18 +240,17 @@ document.addEventListener('DOMContentLoaded', function () {
     endPos: document.getElementById('endPos'),
 
     resetPlayback: document.getElementById('reset'),
-    playSpeed: document.getElementById('playSpeed'),
-    forwardPlayback: document.getElementById('forward'),
-    playPauseBtn: document.getElementById('playPause'),
+    playbackRate: document.getElementById('playbackRate'),
     backwordPlayback: document.getElementById('backword'),
+    playPauseBtn: document.getElementById('playPause'),
+    forwardPlayback: document.getElementById('forward'),
+    fullScreen: document.getElementById('fullScreen'),
+    pipMode: document.getElementById('pipMode'),
+    rotation: document.getElementById('screenRotation'),
 
     volumeBar: document.getElementById('volumeBar'),
     volumeValue: document.getElementById('volumeValue'),
     volumeBtn: document.getElementById('volume'),
-
-    fullScreen: document.getElementById('fullScreen'),
-    pipMode: document.getElementById('pipMode'),
-    rotation: document.getElementById('screenRotation')
   };
 
   const player = new OTTMediaPlayer(

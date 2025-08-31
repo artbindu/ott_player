@@ -6,7 +6,9 @@
    <title>Basic Media Player</title>
    <link href="css/media-css.css" rel="stylesheet" type="text/css" />
    <link rel="icon" type="image/x-icon" href="favicon.ico">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
+
 <body>
    <header class="page-header">
       <div class="page-header-content">
@@ -57,30 +59,45 @@
             <span id="endPos">--:--:--</span>
          </div>
          <div id="media-media-buttons" class="button-row">
-            <button id="reset" class="control-btn" title="Reset">💫</button>
-            <select id="playSpeed" class="control-btn" title="Playback Speed">
-               <option value="0.25">x0.25</option>
-               <option value="0.5">x0.50</option>
-               <option value="0.75">x0.75</option>
-               <option value="1" selected>x1.00</option>
-               <option value="1.1">x1.10</option>
-               <option value="1.25">x1.25</option>
-               <option value="1.5">x1.50</option>
-               <option value="1.75">x1.75</option>
-               <option value="2">x2.00</option>
+            <button id="reset" class="control-btn" title="Reset"><i class="fa fa-stop-circle"></i></button>
+            <select id="playbackRate" class="control-btn" title="Playback Speed">
+               <option value="0.25">0.25</option>
+               <option value="0.5">0.50</option>
+               <option value="0.75">0.75</option>
+               <option value="1" selected>1.00</option>
+               <option value="1.1">1.10</option>
+               <option value="1.25">1.25</option>
+               <option value="1.5">1.50</option>
+               <option value="1.75">1.75</option>
+               <option value="2">2.00</option>
             </select>
-            <button id="backword" class="control-btn" title="Skip Forward">⏮</button>
-            <button id="playPause" class="control-btn" title="Play/Pause">▶/❚❚</button>
-            <button id="forward" class="control-btn" title="Skip Rewind">⏭</button>
+            <button id="backword" class="control-btn" title="Skip Forward">
+               <i class="fa fa-backward"></i>
+            </button>
+            <button id="playPause" class="control-btn" title="Play/Pause">
+               <i class="fa fa-play"></i>/<i class="fa fa-pause"></i>
+            </button>
+            <button id="forward" class="control-btn" title="Skip Rewind">
+               <i class="fa fa-forward"></i>
+            </button>
+            <button id="fullScreen" class="control-btn" title="Fullscreen">
+               <i class="fa fa-expand"></i>
+            </button>
+            <button id="pipMode" class="control-btn" title="Picture in Picture">
+               <i class="fa fa-window-restore"></i>
+            </button>
+            <button id="screenRotation" class="control-btn" title="Rotate Screen" hidden>
+               <i class="fa fa-rotate-right"></i>
+            </button>
             <input id="volumeBar" class="control-btn" type="range" min="0" max="1" step="0.01" value="1" title="Volume" style="width:80px;">
-            <button id="volume" class="control-btn" title="Mute/Unmute">🔊</button>
+            <button id="volume" class="control-btn" title="Mute/Unmute">
+               <i class="fa fa-volume-up"></i>
+            </button>
             <span id="volumeValue" class="control-btn" hidden>00</span>
-            <button id="fullScreen" class="control-btn" title="Fullscreen">⛶</button>
-            <button id="pipMode" class="control-btn" title="Picture in Picture">⿻</button>
-            <button id="screenRotation" class="control-btn" title="Rotate Screen" hidden>↳↰</button>
          </div>
       </div>
    </section>
    <script src="js/media-js.js"></script>
 </body>
+
 </html>

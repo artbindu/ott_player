@@ -314,6 +314,9 @@
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
+#volumeBar.control-btn {
+  padding: 0;
+}
 .control-btn:hover {
   background: #00b894;
   color: #fff;
