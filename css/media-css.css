@@ -264,6 +264,15 @@
   padding: 4px 8px;
 }
 
+#fName[type="file"], #headerVideoUrlInput[type="text"] {
+  width: 220px;
+}
+
+#headerVideoUrlInput::placeholder {
+  color: #fff;
+  opacity: 1;
+}
+
 .primary-btn {
   background: #00b894;
   color: #fff;
