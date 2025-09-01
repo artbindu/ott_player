@@ -90,7 +90,7 @@ class OTTMediaPlayer {
     // document.exitFullscreen();
     this.config.isEnableFullScreen = !this.config.isEnableFullScreen;
     this.config.isEnablePipModel = !this.config.isEnableFullScreen;
-    this.updateFullScreenIcon({ type: this.config.btnType.fullScreen });
+    this.updateUIButton({ type: this.config.btnType.fullScreen });
   }
 
   togglePipMode() {
@@ -101,7 +101,7 @@ class OTTMediaPlayer {
     // document.exitPictureInPicture();
     this.config.isEnablePipModel = !this.config.isEnablePipModel;
     this.config.isEnableFullScreen = !this.config.isEnablePipModel;
-    this.updatePipIcon({ type: this.config.btnType.pip });
+    this.updateUIButton({ type: this.config.btnType.pip });
   }
 
   toggleMute() {
@@ -165,7 +165,7 @@ class OTTMediaPlayer {
         this.updateUIButton({ type: this.config.btnType.pip });
         break;
       case this.config.btnType.pip:
-        this.pipModeBtn.innerHTML = `<i class="fa ${!!this.config.isEnablePipModel ? 'fa-window-close' : 'fa-tv'}"></i>`;
+        this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipModel ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
         this.updateUIButton({ type: this.config.btnType.fullScreen });
         break;
       case this.config.btnType.rotation:
@@ -226,7 +226,6 @@ class OTTMediaPlayer {
 function toggleInputModeDropdown() {
   var mode = document.getElementById('inputModeDropdown').value;
   document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
-  document.getElementById('pathInputRow').style.display = (mode === 'path') ? '' : 'none';
   document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
 }
 
@@ -243,25 +242,9 @@ function chooseLocalFile() {
   }
 }
 
-// Choose actual file path from text input
-function chooseActualFilePath() {
-  const pathInput = document.getElementById('fName1');
-  const video = document.getElementById('media-video-player');
-  let filePath = pathInput.value.trim();
-  if (!filePath) return;
-  if (filePath.indexOf('.') < 1) {
-    filePath = `${filePath}.mp4`;
-  }
-  video.pause();
-  video.src = `data/${filePath}`;
-  video.load();
-  video.play();
-}
-
 // Attach to global for HTML usage
 window.toggleInputModeDropdown = toggleInputModeDropdown;
 window.chooseLocalFile = chooseLocalFile;
-window.chooseActualFilePath = chooseActualFilePath;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {

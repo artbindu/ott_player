@@ -25,17 +25,12 @@
             <div class="file-inputs" id="inputModeDropdownRow">
                <select id="inputModeDropdown" class="control-btn" onchange="toggleInputModeDropdown()">
                   <option value="file" selected>Choose File</option>
-                  <option value="path">Add Local Path</option>
                   <option value="url">Add Web URL</option>
                </select>
             </div>
             <div class="file-inputs" id="fileInputRow">
                <input type="file" id="fName">
                <button class="primary-btn" onclick="chooseLocalFile()">Play</button>
-            </div>
-            <div class="file-inputs" id="pathInputRow" style="display:none;">
-               <input type="text" id="fName1" placeholder="Enter file path...">
-               <button class="primary-btn" onclick="chooseActualFilePath()">Play</button>
             </div>
             <div class="file-inputs" id="urlInputRow" style="display:none;">
                <input type="text" id="headerVideoUrlInput" placeholder="Paste video URL...">
