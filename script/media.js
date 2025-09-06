@@ -4,7 +4,7 @@ class OTTMediaPlayer {
       fwdTime: 10,
       rndTime: -10,
       isEnableFullScreen: false,
-      isEnablePipModel: false,
+      isEnablePipMode: false,
       isRotatedVideo: false,
       btnType: {
         playPause: 'PLAY-PAUSE',
@@ -62,12 +62,18 @@ class OTTMediaPlayer {
     this.volumeBar.addEventListener('input', () => this.setVolume());
     this.volumeBtn.addEventListener('click', () => this.toggleMute());
     this.seekBar.addEventListener('input', () => this.seekVideo());
-    this.fullScreenBtn.addEventListener('click', () => this.toggleFullScreen());
-    this.pipModeBtn.addEventListener('click', () => this.togglePipMode());
+    this.fullScreenBtn.addEventListener('click', () => this.toggleFullScreen(true));
+    this.pipModeBtn.addEventListener('click', () => this.togglePipMode(true));
     this.rotationBtn.addEventListener('click', () => this.toggleScreenRotation());
     // Native Video Events
     this.video.addEventListener('volumechange', () => this.updateVolumeBar());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
+    // Listen for PiP exit events and handle state/UI
+    this.video.addEventListener('leavepictureinpicture', () => this.togglePipMode(false));
+    // Listen for fullscreen change events and handle exit
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) this.toggleFullScreen(false);
+    });
   }
 
   toggleScreenRotation() {
@@ -82,25 +88,21 @@ class OTTMediaPlayer {
     }
   }
 
-  toggleFullScreen() {
-    if (!this.config.isEnableFullScreen) {
+  toggleFullScreen(isEnableFullScreen = false) {
+    if (isEnableFullScreen) {
       this.video.requestFullscreen();
     }
-    // Exit full Screen
-    // document.exitFullscreen();
-    this.config.isEnableFullScreen = !this.config.isEnableFullScreen;
-    this.config.isEnablePipModel = !this.config.isEnableFullScreen;
+    this.config.isEnableFullScreen = isEnableFullScreen;
+    this.config.isEnablePipMode = !this.config.isEnableFullScreen;
     this.updateUIButton({ type: this.config.btnType.fullScreen });
   }
 
-  togglePipMode() {
-    if (!this.config.isEnablePipModel) {
+  togglePipMode(isEnablePipMode = false) {
+    if (isEnablePipMode) {
       this.video.requestPictureInPicture();
     }
-    // Exit PiP Model
-    // document.exitPictureInPicture();
-    this.config.isEnablePipModel = !this.config.isEnablePipModel;
-    this.config.isEnableFullScreen = !this.config.isEnablePipModel;
+    this.config.isEnablePipMode = isEnablePipMode;
+    this.config.isEnableFullScreen = !this.config.isEnablePipMode;
     this.updateUIButton({ type: this.config.btnType.pip });
   }
 
@@ -161,12 +163,9 @@ class OTTMediaPlayer {
         this.volumeBtn.innerHTML = (this.video.muted) ? '<i class="fa fa-volume-mute"></i>' : '<i class="fa fa-volume-up"></i>';
         break;
       case this.config.btnType.fullScreen:
-        this.fullScreenBtn.innerHTML = `<i class="fa ${!!this.config.isEnableFullScreen ? 'fa-compress' : 'fa-expand'}"></i>`;
-        this.updateUIButton({ type: this.config.btnType.pip });
-        break;
       case this.config.btnType.pip:
-        this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipModel ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
-        this.updateUIButton({ type: this.config.btnType.fullScreen });
+        this.fullScreenBtn.innerHTML = `<i class="fa ${!!this.config.isEnableFullScreen ? 'fa-compress' : 'fa-expand'}"></i>`;
+        this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipMode ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
         break;
       case this.config.btnType.rotation:
         this.rotationBtn.innerHTML = `<i class="fa ${!!this.config.isRotatedVideo ? 'fa-rotate-left' : 'fa-rotate-right'}"></i>`;
