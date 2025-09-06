@@ -11,17 +11,19 @@
   text-align: center;
 }
 
-#startPos {
+#startPos, #endPos {
   flex: 1 1 0;
   min-width: 50px;
   max-width: 80px;
-  text-align: left;
   font-size: 1rem;
-  color: #00b894;
+  /* background: #222; */
+  padding: 2px;
+  text-align: center;
 }
 
 #player-seekbar {
   flex: 5 1 0;
+  /* flex: 1 1 60%; */
   min-width: 120px;
   max-width: 400px;
   margin: 0 12px;
@@ -29,27 +31,6 @@
   height: 10px;
   border-radius: 6px;
   background: #444;
-}
-
-#startPos {
-  flex: 1 1 0;
-  min-width: 50px;
-  max-width: 80px;
-  text-align: left;
-  font-size: 1rem;
-  color: #00b894;
-}
-
-#endPos {
-  flex: 1 1 0;
-  min-width: 50px;
-  max-width: 80px;
-  text-align: right;
-  font-size: 1rem;
-  color: #00b894;
-  background: #222;
-  color: #00b894;
-  padding-right: 12px;
 }
 
 .drag-handle {
@@ -160,15 +141,6 @@
   margin: 0 auto;
   border-radius: 8px;
   align-content: center;
-}
-
-#startPos {
-  text-align: left;
-}
-
-#endPos {
-  text-align: right;
-  padding-right: 12px;
 }
 
 /* Page header styles */
@@ -301,17 +273,6 @@
   font-size: 1rem;
 }
 
-#player-seekbar {
-  flex: 1 1 60%;
-  accent-color: #00b894;
-  height: 10px;
-  border-radius: 6px;
-  background: #444;
-  min-width: 120px;
-  max-width: 400px;
-  margin: 0 12px;
-}
-
 .button-row {
   display: flex;
   align-items: center;
@@ -334,20 +295,12 @@
 }
 
 #volumeBar {
-  accent-color: greenyellow;
+  accent-color: #910379;
 }
 
 .control-btn:hover {
   background: #00b894;
   color: #fff;
-}
-
-#media-media-buttons select {
-  color: #00b894;
-  background: #222;
-  border-radius: 6px;
-  border: 1px solid #00b894;
-  padding: 4px 8px;
 }
 
 /* css body */
@@ -432,7 +385,7 @@ input {
 #media-media-seekBar span {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
-  color: yellowgreen;
+  color: #910379;
 }
 
 #media-media-seekBar input {
@@ -452,17 +405,17 @@ input {
   padding: 2px 2px;
   border: none;
   background-color: transparent;
-  color: greenyellow;
+  color: #910379;
 }
 
 #media-media-buttons select {
   color: #00b894;
   background: #222;
   border-radius: 6px;
-  border: 1px solid #00b894;
+  border: 1px solid #910379;
   padding: 4px 8px;
   font-size: 0.85em;
-  height: 24px;
+  /* height: 24px; */
 }
 
 #volumeValue {
@@ -488,9 +441,3 @@ input {
   scroll-margin-bottom: 100px;
 }
 
-.drag-handle {
-  cursor: move;
-  text-align: right;
-  font-size: 1.2em;
-  color: #ccc;
-}
