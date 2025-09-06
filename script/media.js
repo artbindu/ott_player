@@ -43,6 +43,8 @@ class OTTMediaPlayer {
     this.pipModeBtn = this.controls.pipModeBtn;
     this.rotationBtn = this.controls.rotationBtn;
 
+    this.playbackMode = this.controls.videoMode;
+
     this.bindEvents();
     this.updateUIControls();
   }
@@ -64,13 +66,14 @@ class OTTMediaPlayer {
   bindEvents() {
     this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
     this.playbackRate.addEventListener('change', () => this.setPlaybackSpeed());
+    this.playbackMode.addEventListener('change', () => this.setVideoMode());
     this.resetPlayback.addEventListener('click', () => this.toggleResetPlayer());
     this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.config.fwdTime));
     this.backwordPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.config.rndTime));
     this.volumeBar.addEventListener('input', () => this.setVolume());
     this.volumeBtn.addEventListener('click', () => this.toggleMute());
     this.seekBar.addEventListener('input', () => this.seekVideo());
-    
+
     this.rotationBtn.addEventListener('click', () => this.toggleScreenRotation());
     // Native Video Events
     this.video.addEventListener('volumechange', () => this.updateVolumeBar());
@@ -78,9 +81,8 @@ class OTTMediaPlayer {
     // PiP Mode Configuration
     this.pipModeBtn.addEventListener('click', () => this.togglePipMode(!this.config.isEnablePipMode));
     this.video.addEventListener('leavepictureinpicture', () => {
-      if(this.config.isEnablePipMode && !document.pictureInPictureElement) {
+      if (this.config.isEnablePipMode && !document.pictureInPictureElement) {
         this.switchFullScreenPipConfig();
-        this.updateUIButton({ type: this.config.btnType.pip });
       }
     });
     // Full Screen Configuration
@@ -88,9 +90,8 @@ class OTTMediaPlayer {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
         this.toggleFullScreen(!this.config.isEnableFullScreen);
-        if(!this.config.isEnablePipMode && !!document.pictureInPictureElement) {
+        if (!this.config.isEnablePipMode && !!document.pictureInPictureElement) {
           this.switchFullScreenPipConfig();
-          this.updateUIButton({ type: this.config.btnType.pip });
         }
       }
     });
@@ -106,7 +107,7 @@ class OTTMediaPlayer {
   togglePipMode(isEnablePipMode) {
     if (isEnablePipMode && !document.pictureInPictureElement) {
       this.video.requestPictureInPicture();
-    } else if(!!document.pictureInPictureElement) {
+    } else if (!!document.pictureInPictureElement) {
       document.exitPictureInPicture();
     }
     this.switchFullScreenPipConfig();
@@ -160,6 +161,26 @@ class OTTMediaPlayer {
     this.updateUIButton({ type: this.config.btnType.volume });
   }
 
+  setVideoMode() {
+    switch (this.playbackMode.value) {
+      case 'normal':
+        this.video.style.filter = '';
+        break;
+      case 'cinema':
+        this.video.style.filter = 'contrast(120%) brightness(90%)';
+        break;
+      case 'vivid':
+        this.video.style.filter = 'contrast(140%) brightness(110%) saturate(120%)';
+        break;
+      case 'bw':
+        this.video.style.filter = 'grayscale(100%)';
+        break;
+      case 'night':
+        this.video.style.filter = 'brightness(60%) contrast(110%)';
+        break;
+    }
+  }
+
   updateUIButton(config = { type: '' }) {
     switch (config.type) {
       case this.config.btnType.playPause:
@@ -177,9 +198,8 @@ class OTTMediaPlayer {
         this.rotationBtn.innerHTML = `<i class="fa fa-rotate-${!!this.config.isRotatedVideo ? 'left' : 'right'}"></i>`;
         break;
     }
-    console.warn('buttonUI', this.config.isEnableFullScreen, this.config.isEnablePipMode);
   }
-  
+
   toggleScreenRotation() {
     if (screen.orientation) {
       // Listen for orientation changes using onchange
@@ -283,6 +303,8 @@ document.addEventListener('DOMContentLoaded', function () {
     volumeBar: document.getElementById('volumeBar'),
     volumeValue: document.getElementById('volumeValue'),
     volumeBtn: document.getElementById('volume'),
+
+    videoMode: document.getElementById('videoMode'),
   };
 
   const player = new OTTMediaPlayer(
