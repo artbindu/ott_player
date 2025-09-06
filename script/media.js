@@ -53,6 +53,14 @@ class OTTMediaPlayer {
     this.updateSeekBar();
   }
 
+  switchFullScreenPipConfig = () => {
+    setTimeout(() => {
+      this.config.isEnableFullScreen = !!document.fullscreenElement;
+      this.config.isEnablePipMode = !!document.pictureInPictureElement;
+      this.updateUIButton({ type: this.config.btnType.fullScreen });
+    }, 100);
+  }
+
   bindEvents() {
     this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
     this.playbackRate.addEventListener('change', () => this.setPlaybackSpeed());
@@ -62,48 +70,46 @@ class OTTMediaPlayer {
     this.volumeBar.addEventListener('input', () => this.setVolume());
     this.volumeBtn.addEventListener('click', () => this.toggleMute());
     this.seekBar.addEventListener('input', () => this.seekVideo());
-    this.fullScreenBtn.addEventListener('click', () => this.toggleFullScreen(true));
-    this.pipModeBtn.addEventListener('click', () => this.togglePipMode(true));
+    
     this.rotationBtn.addEventListener('click', () => this.toggleScreenRotation());
     // Native Video Events
     this.video.addEventListener('volumechange', () => this.updateVolumeBar());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
-    // Listen for PiP exit events and handle state/UI
-    this.video.addEventListener('leavepictureinpicture', () => this.togglePipMode(false));
-    // Listen for fullscreen change events and handle exit
+    // PiP Mode Configuration
+    this.pipModeBtn.addEventListener('click', () => this.togglePipMode(!this.config.isEnablePipMode));
+    this.video.addEventListener('leavepictureinpicture', () => {
+      if(this.config.isEnablePipMode && !document.pictureInPictureElement) {
+        this.switchFullScreenPipConfig();
+        this.updateUIButton({ type: this.config.btnType.pip });
+      }
+    });
+    // Full Screen Configuration
+    this.fullScreenBtn.addEventListener('click', () => this.toggleFullScreen(!this.config.isEnableFullScreen));
     document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) this.toggleFullScreen(false);
+      if (!document.fullscreenElement) {
+        this.toggleFullScreen(!this.config.isEnableFullScreen);
+        if(!this.config.isEnablePipMode && !!document.pictureInPictureElement) {
+          this.switchFullScreenPipConfig();
+          this.updateUIButton({ type: this.config.btnType.pip });
+        }
+      }
     });
   }
 
-  toggleScreenRotation() {
-    if (screen.orientation) {
-      // Listen for orientation changes using onchange
-      console.log(`call to rotation`);
-      screen.orientation.onchange = (event) => {
-        const type = screen.orientation.type;
-        const angle = screen.orientation.angle;
-        console.log(`ScreenOrientation changed: ${type}, ${angle} degrees.`);
-      };
-    }
-  }
-
-  toggleFullScreen(isEnableFullScreen = false) {
+  toggleFullScreen(isEnableFullScreen) {
     if (isEnableFullScreen) {
       this.video.requestFullscreen();
     }
-    this.config.isEnableFullScreen = isEnableFullScreen;
-    this.config.isEnablePipMode = !this.config.isEnableFullScreen;
-    this.updateUIButton({ type: this.config.btnType.fullScreen });
+    this.switchFullScreenPipConfig();
   }
 
-  togglePipMode(isEnablePipMode = false) {
-    if (isEnablePipMode) {
+  togglePipMode(isEnablePipMode) {
+    if (isEnablePipMode && !document.pictureInPictureElement) {
       this.video.requestPictureInPicture();
+    } else if(!!document.pictureInPictureElement) {
+      document.exitPictureInPicture();
     }
-    this.config.isEnablePipMode = isEnablePipMode;
-    this.config.isEnableFullScreen = !this.config.isEnablePipMode;
-    this.updateUIButton({ type: this.config.btnType.pip });
+    this.switchFullScreenPipConfig();
   }
 
   toggleMute() {
@@ -157,19 +163,32 @@ class OTTMediaPlayer {
   updateUIButton(config = { type: '' }) {
     switch (config.type) {
       case this.config.btnType.playPause:
-        this.playPauseBtn.innerHTML = `<i class="fa ${this.video.paused ? 'fa-play' : 'fa-pause'}"></i>`;
+        this.playPauseBtn.innerHTML = `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i>`;
         break;
       case this.config.btnType.volume:
-        this.volumeBtn.innerHTML = (this.video.muted) ? '<i class="fa fa-volume-mute"></i>' : '<i class="fa fa-volume-up"></i>';
+        this.volumeBtn.innerHTML = `<i class="fa fa-volume-${!!this.video.muted ? 'mute' : 'up'}"></i>`;
         break;
       case this.config.btnType.fullScreen:
       case this.config.btnType.pip:
-        this.fullScreenBtn.innerHTML = `<i class="fa ${!!this.config.isEnableFullScreen ? 'fa-compress' : 'fa-expand'}"></i>`;
+        this.fullScreenBtn.innerHTML = `<i class="fa fa-${!!this.config.isEnableFullScreen ? 'compress' : 'expand'}"></i>`;
         this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipMode ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
         break;
       case this.config.btnType.rotation:
-        this.rotationBtn.innerHTML = `<i class="fa ${!!this.config.isRotatedVideo ? 'fa-rotate-left' : 'fa-rotate-right'}"></i>`;
+        this.rotationBtn.innerHTML = `<i class="fa fa-rotate-${!!this.config.isRotatedVideo ? 'left' : 'right'}"></i>`;
         break;
+    }
+    console.warn('buttonUI', this.config.isEnableFullScreen, this.config.isEnablePipMode);
+  }
+  
+  toggleScreenRotation() {
+    if (screen.orientation) {
+      // Listen for orientation changes using onchange
+      console.log(`call to rotation`);
+      screen.orientation.onchange = (event) => {
+        const type = screen.orientation.type;
+        const angle = screen.orientation.angle;
+        console.log(`ScreenOrientation changed: ${type}, ${angle} degrees.`);
+      };
     }
   }
 
