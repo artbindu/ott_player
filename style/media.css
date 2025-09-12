@@ -311,6 +311,10 @@ input {
   gap: 4px;
 }
 
+#media-trim-feature {
+  margin-top: 5px;
+}
+
 /* player controls individual buttons */
 .control-btn {
   color: #00b894;

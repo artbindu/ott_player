@@ -43,7 +43,7 @@
    <section class="content player-card">
       <div class="video-wrapper">
          <video class="media-video-player" id="media-video-player">
-            <source src="data/4K.mp4" type="video/mp4">
+            <source src="data/sample.mp4" type="video/mp4">
          </video>
       </div>
       <!-- show media handler -->
@@ -98,11 +98,11 @@
                <option value="night">Night</option>
             </select>
          </div>
-         <div id="media-trim-buttons" class="button-row">
-            <button id="setTrimStart" class="control-btn" title="Set as Current Time">Start <i class="far fa-hand-point-right"></i> </button>
+         <div id="media-trim-feature" class="button-row">
             <input id="trimStartInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim Start">
+            <button id="setTrimStart" class="control-btn" title="Set as Current Time"><i class="far fa-hand-point-left"></i> Start</button>
+            <button id="setTrimEnd" class="control-btn" title="Set as Current Time">End <i class="far fa-hand-point-right"></i></button>
             <input id="trimEndInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim End">
-            <button id="setTrimEnd" class="control-btn" title="Set as Current Time"><i class="far fa-hand-point-left"></i> End</button>
             <button id="playTrimmed" class="control-btn" title="Play Trimmed Segment" disabled>Video Clip</button>
             <div class="auto-loop-group">
                <input type="checkbox" id="enableAutoLoop" class="control-btn" title="Enable Auto Loop" disabled>

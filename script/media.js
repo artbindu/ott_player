@@ -146,7 +146,8 @@ class OTTMediaPlayer {
     this.updateVolumeBar();
   }
 
-  togglePlayPause() {
+  togglePlayPause(isNative = true) {
+    if (isNative) { this.trimConfig.isTrimActive = false; }
     this.video.paused ? this.video.play() : this.video.pause();
     this.updateUIButton({ type: this.config.btnType.playPause });
   }
@@ -187,7 +188,7 @@ class OTTMediaPlayer {
         this.video.play();
         this.updateUIButton({ type: this.config.btnType.playPause });
       } else {
-        this.togglePlayPause();
+        this.togglePlayPause(false);
       }
     } else {
       this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
@@ -247,7 +248,6 @@ class OTTMediaPlayer {
     this.trimUIControls.repeateTrimBtn.disabled = !this.trimConfig.isTrimActive;
     this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` : 
                         this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
-    console.log('UI Btn: (disabled) ', !!this.trimUIControls.playTrimmedBtn.disabled, 'isPaused: ', !!this.video.paused);
   }
 
   updateTrimFromInput(type) {
@@ -305,7 +305,7 @@ class OTTMediaPlayer {
       this.video.currentTime = this.trimConfig.trimStart;
       this.updateTrimDisplays();
     }
-    this.togglePlayPause();
+    this.togglePlayPause(false);
   }
 
   updateVolumeBar() {
