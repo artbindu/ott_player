@@ -208,18 +208,18 @@ p {
 }
 
 /* seek bar design */
-#media-media-seekBar span,
+#media-seekBar-btns span,
 input {
   align-content: center;
   vertical-align: middle;
   width: 70%;
 }
-#media-media-seekBar span {
+#media-seekBar-btns span {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
   color: #910379;
 }
-#media-media-seekBar input {
+#media-seekBar-btns input {
   height: 10px;
 }
 
@@ -258,14 +258,16 @@ input {
   background: #444;
 }
 
-/* media control buttons design */
-#media-media-buttons {
-  align-content: center;
-  border: 5px;
-  text-align: center;
+
+.button-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-#media-media-buttons button {
+.button-row button {
   height: 25px;
   vertical-align: middle;
   padding: 2px 2px;
@@ -274,14 +276,31 @@ input {
   color: #910379;
 }
 
-#media-media-buttons select {
+.button-row select {
   color: #00b894;
   background: #222;
   border-radius: 6px;
   border: 1px solid #910379;
   padding: 4px 8px;
   font-size: 0.85em;
-  /* height: 24px; */
+}
+
+.button-row input[type="text"] {
+  color: #00b894;
+  background: #222;
+  border-radius: 6px;
+  border: 1px solid #910379;
+  padding: 4px 8px;
+  font-size: 0.85em;
+}
+
+.button-row input[type="checkbox"] {
+  accent-color: #00b894;
+}
+
+.button-row label {
+  color: #00b894;
+  font-size: 0.85em;
 }
 
 /* player controls individual buttons */

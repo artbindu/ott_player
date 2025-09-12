@@ -14,10 +14,19 @@ class OTTMediaPlayer {
         fullScreen: 'FULL-SCREEN',
         pip: 'PIP',
         rotation: 'ROTATION'
-      }
+      },
+      defaultTrimDuration: 5,
     };
     this.video = videoElement;
     this.controls = controls;
+    this.video.volume = 0.1;
+
+    // Trim properties
+    this.trimStart = 0;
+    this.trimEnd = this.video.duration || 0;
+    this.isTrimActive = false;
+    this.isEnableAutoLoop = false;
+
     this.init();
     // Set seekBar value to 0 by default
     if (this.controls.seekBar) {
@@ -45,8 +54,13 @@ class OTTMediaPlayer {
 
     this.playbackMode = this.controls.videoMode;
 
+    // Video Controls Events
     this.bindEvents();
     this.updateUIControls();
+
+    // Trim Feature Events
+    this.bindTrimEvents();
+    this.updateTrimDisplays();
   }
 
   updateUIControls() {
@@ -95,6 +109,23 @@ class OTTMediaPlayer {
         }
       }
     });
+  }
+
+  bindTrimEvents() {
+    // Bind trim buttons and inputs
+    this.setTrimStartBtn = document.getElementById('setTrimStart');
+    this.setTrimEndBtn = document.getElementById('setTrimEnd');
+    this.playTrimmedBtn = document.getElementById('playTrimmed');
+    this.trimStartInput = document.getElementById('trimStartInput');
+    this.trimEndInput = document.getElementById('trimEndInput');
+    this.enableAutoLoopBtn = document.getElementById('enableAutoLoop');
+
+    this.setTrimStartBtn.addEventListener('click', () => this.setTrimStart());
+    this.setTrimEndBtn.addEventListener('click', () => this.setTrimEnd());
+    this.playTrimmedBtn.addEventListener('click', () => this.playTrimmedSegment());
+    this.trimStartInput.addEventListener('input', () => this.updateTrimFromInput('start'));
+    this.trimEndInput.addEventListener('input', () => this.updateTrimFromInput('end'));
+    this.enableAutoLoopBtn.addEventListener('change', () => this.toggleAutoLoop());
   }
 
   toggleFullScreen(isEnableFullScreen) {
@@ -149,10 +180,97 @@ class OTTMediaPlayer {
   }
 
   updateSeekBar() {
-    this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
-    this.startPos.textContent = this.formatTime(this.video.currentTime);
-    this.endPos.textContent = this.formatTime(this.video.duration);
-    if (this.video.currentTime <= 1) this.updateUIButton({ type: this.config.btnType.playPause });
+    if (this.isTrimActive && this.video.currentTime >= this.trimEnd) {
+      this.video.currentTime = this.trimStart;
+      if(this.isAutoLoopEnabled) {
+        this.playTrimmedSegment();
+      } else {
+        this.togglePlayPause();
+      }
+    } else {
+      this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
+      this.startPos.textContent = this.formatTime(this.video.currentTime);
+      this.endPos.textContent = this.formatTime(this.video.duration);
+      if (this.video.currentTime <= 1) this.updateUIButton({ type: this.config.btnType.playPause });
+    }
+  }
+
+  setTrimStart() {
+    this.trimStart = this.video.currentTime;
+    if (this.trimStart >= this.trimEnd) {
+      this.trimEnd = Math.min(this.video.duration || 0, this.trimStart + this.config.defaultTrimDuration);
+    }
+    this.isTrimActive = true;
+    this.updateTrimDisplays();
+  }
+
+  setTrimEnd() {
+    this.trimEnd = this.video.currentTime;
+    if (this.trimEnd <= this.trimStart) {
+      this.trimStart = Math.max(0, this.trimStart - this.config.defaultTrimDuration);
+    }
+    this.isTrimActive = true;
+    this.updateTrimDisplays();
+  }
+
+  updateTrimDisplays() {
+    this.trimStartInput.value = this.formatTime(this.trimStart);
+    this.trimEndInput.value = this.formatTime(this.trimEnd);
+  }
+
+  updateTrimFromInput(type) {
+    const input = type === 'start' ? this.trimStartInput : this.trimEndInput;
+    const timeStr = input.value.trim();
+    const seconds = this.parseTime(timeStr);
+    if (seconds !== null) {
+      if (type === 'start') {
+        this.trimStart = seconds;
+      } else {
+        this.trimEnd = seconds;
+      }
+      this.isTrimActive = true;
+      // Validate and adjust if necessary
+      if (this.trimStart >= this.trimEnd) {
+        if (type === 'start') {
+          this.trimEnd = Math.min(this.video.duration || 0, this.trimStart + this.config.defaultTrimDuration);
+        } else {
+          this.trimStart = Math.max(0, this.trimEnd - 1);
+        }
+        this.updateTrimDisplays();
+      }
+    } else {
+      // Invalid input, revert to current value
+      input.value = this.formatTime(type === 'start' ? this.trimStart : this.trimEnd);
+    }
+  }
+
+  parseTime(timeStr) {
+    const parts = timeStr.split(':').map(p => parseInt(p, 10));
+    if (parts.length === 3 && parts.every(p => !isNaN(p))) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else if (parts.length === 2 && parts.every(p => !isNaN(p))) {
+      return parts[0] * 60 + parts[1];
+    } else if (parts.length === 1 && !isNaN(parts[0])) {
+      return parts[0];
+    }
+    return null;
+  }
+
+  playTrimmedSegment() {
+    if (!this.isTrimActive) {
+      this.video.play();
+      return;
+    }
+    if (this.trimStart >= this.trimEnd) {
+      alert('Invalid trim range. Start time must be before end time.');
+      return;
+    }
+    this.video.currentTime = this.trimStart;
+    this.video.play();
+  }
+
+  toggleAutoLoop() {
+    this.isAutoLoopEnabled = this.enableAutoLoopBtn.checked;
   }
 
   updateVolumeBar() {

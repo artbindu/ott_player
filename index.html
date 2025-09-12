@@ -33,7 +33,8 @@
                <button class="primary-btn" onclick="chooseLocalFile()">Play</button>
             </div>
             <div class="file-inputs" id="urlInputRow" style="display:none;">
-               <input type="text" id="headerVideoUrlInput" placeholder="Paste Video URL ...">
+               <input type="text" id="headerVideoUrlInput" placeholder="Paste Video URL ..."
+               value="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
                <button class="primary-btn" onclick="playFromHeaderUrl()">Play</button>
             </div>
          </section>
@@ -42,18 +43,18 @@
    <section class="content player-card">
       <div class="video-wrapper">
          <video class="media-video-player" id="media-video-player">
-            <source src="data/sample.mp4" type="video/mp4">
+            <source src="data/output.mp4" type="video/mp4">
          </video>
       </div>
       <!-- show media handler -->
       <div class="media-media-controls player-controls" id="media-media-controls">
          <div class="drag-handle" id="dragHandle" title="Drag to move controls">&#x2630;</div>
-         <div id="media-media-seekBar" class="seekbar-row">
+         <div id="media-seekBar-btns" class="seekbar-row">
             <span id="startPos">--:--:--</span>
             <input id="player-seekbar" type="range" min="0" max="100" step="1" value="0" />
             <span id="endPos">--:--:--</span>
          </div>
-         <div id="media-media-buttons" class="button-row">
+         <div id="media-ctrl-buttons" class="button-row">
             <button id="reset" class="control-btn" title="Reset"><i class="fa fa-stop-circle"></i></button>
             <select id="playbackRate" class="control-btn" title="Playback Speed">
                <option value="0.25">0.25</option>
@@ -97,8 +98,18 @@
                <option value="night">Night</option>
             </select>
          </div>
+         <div id="media-trim-buttons" class="button-row">
+            <input id="trimStartInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim Start" style="width:80px;">
+            <button id="setTrimStart" class="control-btn" title="Set as Current Time">Set Start</button>
+            <input id="trimEndInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim End" style="width:80px;">
+            <button id="setTrimEnd" class="control-btn" title="Set as Current Time">Set End</button>
+            <button id="playTrimmed" class="control-btn" title="Play Trimmed Segment">Trim Play</button>
+            <input type="checkbox" id="enableAutoLoop" class="control-btn" title="Enable Auto Loop">
+            <label class="control-btn">Auto Loop</label>
+         </div>
       </div>
    </section>
+   <!-- <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.min.js"></script> -->
    <script src="script/media.js"></script>
 </body>
 
