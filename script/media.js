@@ -1,5 +1,5 @@
 class OTTMediaPlayer {
-  constructor(videoElement, controls) {
+  constructor(videoElement, controls, playerFeatures) {
     this.config = {
       fwdTime: 10,
       rndTime: -10,
@@ -14,18 +14,21 @@ class OTTMediaPlayer {
         fullScreen: 'FULL-SCREEN',
         pip: 'PIP',
         rotation: 'ROTATION'
-      },
-      defaultTrimDuration: 5,
+      }
     };
     this.video = videoElement;
     this.controls = controls;
-    this.video.volume = 0.1;
+    this.video.volume = 0.05;
 
-    // Trim properties
-    this.trimStart = 0;
-    this.trimEnd = this.video.duration || 0;
-    this.isTrimActive = false;
-    this.isEnableAutoLoop = false;
+    // Player Features: Trim
+    this.trimUIControls = playerFeatures.trimFeature;
+    this.trimConfig = {
+      trimStart: 0,
+      trimEnd: this.video.duration || 0,
+      defaultVal: 5, // 5 Sec
+      isTrimActive: false,
+      isAutoLoopEnabled: false,
+    };
 
     this.init();
     // Set seekBar value to 0 by default
@@ -112,20 +115,14 @@ class OTTMediaPlayer {
   }
 
   bindTrimEvents() {
-    // Bind trim buttons and inputs
-    this.setTrimStartBtn = document.getElementById('setTrimStart');
-    this.setTrimEndBtn = document.getElementById('setTrimEnd');
-    this.playTrimmedBtn = document.getElementById('playTrimmed');
-    this.trimStartInput = document.getElementById('trimStartInput');
-    this.trimEndInput = document.getElementById('trimEndInput');
-    this.enableAutoLoopBtn = document.getElementById('enableAutoLoop');
-
-    this.setTrimStartBtn.addEventListener('click', () => this.setTrimStart());
-    this.setTrimEndBtn.addEventListener('click', () => this.setTrimEnd());
-    this.playTrimmedBtn.addEventListener('click', () => this.playTrimmedSegment());
-    this.trimStartInput.addEventListener('input', () => this.updateTrimFromInput('start'));
-    this.trimEndInput.addEventListener('input', () => this.updateTrimFromInput('end'));
-    this.enableAutoLoopBtn.addEventListener('change', () => this.toggleAutoLoop());
+    this.trimUIControls.trimStartBtn.addEventListener('click', () => this.setTrimStart());
+    this.trimUIControls.trimEndBtn.addEventListener('click', () => this.setTrimEnd());
+    this.trimUIControls.playTrimmedBtn.addEventListener('click', () => this.playTrimmedSegment());
+    this.trimUIControls.playTrimmedBtn.addEventListener('dblclick', () => this.resetTrimRange());
+    this.trimUIControls.trimStartInput.addEventListener('input', () => this.updateTrimFromInput('start'));
+    this.trimUIControls.trimEndInput.addEventListener('input', () => this.updateTrimFromInput('end'));
+    this.trimUIControls.isRepeateChkBox.addEventListener('change', () => this.toggleAutoLoop());
+    this.trimUIControls.repeateTrimBtn.addEventListener('click', () => this.toggleRepeteTrim());
   }
 
   toggleFullScreen(isEnableFullScreen) {
@@ -176,14 +173,19 @@ class OTTMediaPlayer {
 
   seekVideo() {
     this.video.currentTime = Math.floor(this.video.duration * parseInt(this.seekBar.value) / 100);
+    if(this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
+      this.trimConfig.isTrimActive = false;
+      this.updateTrimDisplays();
+    }
     this.updateSeekBar();
   }
 
   updateSeekBar() {
-    if (this.isTrimActive && this.video.currentTime >= this.trimEnd) {
-      this.video.currentTime = this.trimStart;
-      if(this.isAutoLoopEnabled) {
-        this.playTrimmedSegment();
+    if (this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
+      this.video.currentTime = this.trimConfig.trimStart;
+      if(this.trimConfig.isAutoLoopEnabled) {
+        this.video.play();
+        this.updateUIButton({ type: this.config.btnType.playPause });
       } else {
         this.togglePlayPause();
       }
@@ -196,51 +198,81 @@ class OTTMediaPlayer {
   }
 
   setTrimStart() {
-    this.trimStart = this.video.currentTime;
-    if (this.trimStart >= this.trimEnd) {
-      this.trimEnd = Math.min(this.video.duration || 0, this.trimStart + this.config.defaultTrimDuration);
+    this.trimConfig.trimStart = this.video.currentTime;
+    if (this.trimConfig.trimStart >= this.trimConfig.trimEnd) {
+      this.trimConfig.trimEnd = Math.max(this.video.duration || 0, this.trimConfig.trimStart + this.trimConfig.defaultVal);
     }
-    this.isTrimActive = true;
+    this.trimConfig.isTrimActive = true;
+    this.updateTrimDisplays();
+  }
+  setTrimEnd() {
+    this.trimConfig.trimEnd = this.video.currentTime;
+    if (this.trimConfig.trimEnd <= this.trimConfig.trimStart) {
+      this.trimConfig.trimStart = Math.max(0, this.trimConfig.trimStart - this.trimConfig.defaultVal);
+    }
+    this.trimConfig.isTrimActive = true;
+    this.updateTrimDisplays();
+  }
+  resetTrimRange() {
+    this.trimConfig.trimStart = 0;
+    this.trimConfig.trimEnd = this.video.duration || 0;
+    this.trimConfig.isTrimActive = false;
+    this.trimUIControls.playTrimmedBtn.disabled = true;
     this.updateTrimDisplays();
   }
 
-  setTrimEnd() {
-    this.trimEnd = this.video.currentTime;
-    if (this.trimEnd <= this.trimStart) {
-      this.trimStart = Math.max(0, this.trimStart - this.config.defaultTrimDuration);
-    }
-    this.isTrimActive = true;
-    this.updateTrimDisplays();
+  toggleAutoLoop() {
+    this.trimConfig.isAutoLoopEnabled = this.trimUIControls.isRepeateChkBox.checked;
+  }
+  toggleRepeteTrim() {
+    this.trimConfig.isAutoLoopEnabled = !this.trimConfig.isAutoLoopEnabled;
+    this.trimUIControls.isRepeateChkBox.checked = this.trimConfig.isAutoLoopEnabled;
+  }
+  isValidRange() {
+    return this.trimConfig.trimStart >= 0 && this.trimConfig.trimEnd > 0 && this.trimConfig.trimStart !== this.trimConfig.trimEnd
+  }
+  isBtwnTrimRange() {
+    return this.isValidRange() && this.trimConfig.isTrimActive &&
+      this.trimConfig.trimStart <= this.video.currentTime  && this.video.currentTime <= this.trimConfig.trimEnd;
   }
 
   updateTrimDisplays() {
-    this.trimStartInput.value = this.formatTime(this.trimStart);
-    this.trimEndInput.value = this.formatTime(this.trimEnd);
+    this.trimUIControls.trimStartInput.value = this.formatTime(this.trimConfig.trimStart);
+    this.trimUIControls.trimEndInput.value = this.formatTime(this.trimConfig.trimEnd);
+    
+    // UI Button Status
+    if(this.trimConfig.isTrimActive && this.isBtwnTrimRange()) {
+      this.trimUIControls.playTrimmedBtn.disabled = false;
+    }
+    this.trimUIControls.repeateTrimBtn.disabled = !this.trimConfig.isTrimActive;
+    this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` : 
+                        this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
+    console.log('UI Btn: (disabled) ', !!this.trimUIControls.playTrimmedBtn.disabled, 'isPaused: ', !!this.video.paused);
   }
 
   updateTrimFromInput(type) {
-    const input = type === 'start' ? this.trimStartInput : this.trimEndInput;
+    const input = type === 'start' ? this.trimUIControls.trimStartInput : this.trimUIControls.trimEndInput;
     const timeStr = input.value.trim();
     const seconds = this.parseTime(timeStr);
     if (seconds !== null) {
       if (type === 'start') {
-        this.trimStart = seconds;
+        this.trimConfig.trimStart = seconds;
       } else {
-        this.trimEnd = seconds;
+        this.trimConfig.trimEnd = seconds;
       }
-      this.isTrimActive = true;
+      this.trimConfig.isTrimActive = true;
       // Validate and adjust if necessary
-      if (this.trimStart >= this.trimEnd) {
+      if (this.trimConfig.trimStart >= this.trimConfig.trimEnd) {
         if (type === 'start') {
-          this.trimEnd = Math.min(this.video.duration || 0, this.trimStart + this.config.defaultTrimDuration);
+          this.trimConfig.trimEnd = Math.min(this.video.duration || 0, this.trimConfig.trimStart + this.trimConfig.defaultVal);
         } else {
-          this.trimStart = Math.max(0, this.trimEnd - 1);
+          this.trimConfig.trimStart = Math.max(0, this.trimConfig.trimEnd - 1);
         }
         this.updateTrimDisplays();
       }
     } else {
       // Invalid input, revert to current value
-      input.value = this.formatTime(type === 'start' ? this.trimStart : this.trimEnd);
+      input.value = this.formatTime(type === 'start' ? this.trimConfig.trimStart : this.trimConfig.trimEnd);
     }
   }
 
@@ -257,20 +289,23 @@ class OTTMediaPlayer {
   }
 
   playTrimmedSegment() {
-    if (!this.isTrimActive) {
-      this.video.play();
+    if (!this.trimConfig.isTrimActive) {
+      if((this.video.currentTime > (this.trimConfig.trimEnd + 1)) || (this.video.currentTime < (this.trimConfig.trimStart-1))) {
+        this.trimConfig.isTrimActive = true;
+        this.video.pause();
+        this.playTrimmedSegment();
+      }
       return;
     }
-    if (this.trimStart >= this.trimEnd) {
+    if (this.trimConfig.trimStart >= this.trimConfig.trimEnd) {
       alert('Invalid trim range. Start time must be before end time.');
       return;
     }
-    this.video.currentTime = this.trimStart;
-    this.video.play();
-  }
-
-  toggleAutoLoop() {
-    this.isAutoLoopEnabled = this.enableAutoLoopBtn.checked;
+    if(this.video.currentTime < this.trimConfig.trimStart || this.video.currentTime >= this.trimConfig.trimEnd) {
+      this.video.currentTime = this.trimConfig.trimStart;
+      this.updateTrimDisplays();
+    }
+    this.togglePlayPause();
   }
 
   updateVolumeBar() {
@@ -303,6 +338,8 @@ class OTTMediaPlayer {
     switch (config.type) {
       case this.config.btnType.playPause:
         this.playPauseBtn.innerHTML = `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i>`;
+        this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` : 
+                        this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
         break;
       case this.config.btnType.volume:
         this.volumeBtn.innerHTML = `<i class="fa fa-volume-${!!this.video.muted ? 'mute' : 'up'}"></i>`;
@@ -425,9 +462,20 @@ document.addEventListener('DOMContentLoaded', function () {
     videoMode: document.getElementById('videoMode'),
   };
 
+  const trimFeature = {
+    trimStartBtn: document.getElementById('setTrimStart'),
+    trimEndBtn: document.getElementById('setTrimEnd'),
+    playTrimmedBtn: document.getElementById('playTrimmed'),
+    trimStartInput: document.getElementById('trimStartInput'),
+    trimEndInput: document.getElementById('trimEndInput'),
+    isRepeateChkBox: document.getElementById('enableAutoLoop'),
+    repeateTrimBtn: document.getElementById('repeatTrim'),
+  };
+
   const player = new OTTMediaPlayer(
     document.getElementById('media-video-player'),
-    playerConfig
+    playerConfig, 
+    { trimFeature }
   );
   OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
   // Attach playFromHeaderUrl to global for button usage

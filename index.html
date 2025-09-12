@@ -43,7 +43,7 @@
    <section class="content player-card">
       <div class="video-wrapper">
          <video class="media-video-player" id="media-video-player">
-            <source src="data/output.mp4" type="video/mp4">
+            <source src="data/4K.mp4" type="video/mp4">
          </video>
       </div>
       <!-- show media handler -->
@@ -99,13 +99,15 @@
             </select>
          </div>
          <div id="media-trim-buttons" class="button-row">
-            <input id="trimStartInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim Start" style="width:80px;">
-            <button id="setTrimStart" class="control-btn" title="Set as Current Time">Set Start</button>
-            <input id="trimEndInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim End" style="width:80px;">
-            <button id="setTrimEnd" class="control-btn" title="Set as Current Time">Set End</button>
-            <button id="playTrimmed" class="control-btn" title="Play Trimmed Segment">Trim Play</button>
-            <input type="checkbox" id="enableAutoLoop" class="control-btn" title="Enable Auto Loop">
-            <label class="control-btn">Auto Loop</label>
+            <button id="setTrimStart" class="control-btn" title="Set as Current Time">Start <i class="far fa-hand-point-right"></i> </button>
+            <input id="trimStartInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim Start">
+            <input id="trimEndInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim End">
+            <button id="setTrimEnd" class="control-btn" title="Set as Current Time"><i class="far fa-hand-point-left"></i> End</button>
+            <button id="playTrimmed" class="control-btn" title="Play Trimmed Segment" disabled>Video Clip</button>
+            <div class="auto-loop-group">
+               <input type="checkbox" id="enableAutoLoop" class="control-btn" title="Enable Auto Loop" disabled>
+               <button id="repeatTrim" class="control-btn" title="Enable Auto Loop" disabled>Repeat</button>
+            </div>
          </div>
       </div>
    </section>

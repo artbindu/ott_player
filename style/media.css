@@ -290,8 +290,10 @@ input {
   background: #222;
   border-radius: 6px;
   border: 1px solid #910379;
-  padding: 4px 8px;
+  padding: 4px 4px;
   font-size: 0.85em;
+  width: 60px;
+  text-align: center;;
 }
 
 .button-row input[type="checkbox"] {
@@ -301,6 +303,12 @@ input {
 .button-row label {
   color: #00b894;
   font-size: 0.85em;
+}
+
+.auto-loop-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* player controls individual buttons */
