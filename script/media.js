@@ -60,6 +60,7 @@ class OTTMediaPlayer {
     // Video Controls Events
     this.bindEvents();
     this.updateUIControls();
+    this.bindKeyPressEvent();
 
     // Trim Feature Events
     this.bindTrimEvents();
@@ -110,6 +111,75 @@ class OTTMediaPlayer {
         if (!this.config.isEnablePipMode && !!document.pictureInPictureElement) {
           this.switchFullScreenPipConfig();
         }
+      }
+    });
+  }
+
+  bindKeyPressEvent() {
+    document.addEventListener('keypress', (event) => {
+      switch(event.code) {
+        case 'Space':
+          this.togglePlayPause();
+          break;
+        case 'KeyA':
+        case 'ArrowLeft':
+          this.toggleForwardPlayback(this.config.rndTime);
+          break;
+        case 'KeyD':
+        case 'ArrowRight':
+          this.toggleForwardPlayback(this.config.fwdTime);
+          break;
+        case 'KeyF':
+          if(document.fullscreenElement)
+            document.exitFullscreen();
+          this.toggleFullScreen(!this.config.isEnableFullScreen);
+          break;
+        case 'KeyP':
+          if(document.pictureInPictureElement)
+            document.exitPictureInPicture();
+          this.togglePipMode(!this.config.isEnablePipMode);
+          break;
+        case 'Equal': // Volume Up
+        case 'Plus':
+          this.volumeBar.value = this.video.volume < 1 ? (Number(this.volumeBar.value || 0) + 0.01).toFixed(2) : this.volumeBar.value;
+          this.setVolume();
+          break;
+        case 'Minus': // Volume Down
+        case 'Hypen':
+          this.volumeBar.value = this.video.volume > 0 ? ((Number(this.volumeBar.value || 1) - 0.01)%1).toFixed(2) : this.volumeBar.value;
+          this.setVolume();
+          break;
+        case 'KeyM': // Mute
+          this.toggleMute();
+          break;
+        case 'Digit0':
+        case 'Digit1':
+        case 'Digit2':
+        case 'Digit3':
+        case 'Digit4':
+        case 'Digit5':
+        case 'Digit6':
+        case 'Digit7':
+        case 'Digit8':
+        case 'Digit9':
+          this.volumeBar.value = event.key/10;
+          this.setVolume();
+          break;
+        case 'KeyT': // Trim Start
+          this.setTrimStart();
+          break;
+        case 'KeyC': // Trim Cut (End)
+          this.setTrimEnd();
+          break;
+        case 'KeyG': // Play Trim Range Video
+          this.playTrimmedSegment();
+          break;
+        case 'KeyR': // Reset Trim Range
+          this.resetTrimRange();
+          break;
+        default:
+          console.log('invalid key press Event: ', event.code);
+          break;
       }
     });
   }
