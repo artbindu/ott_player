@@ -43,7 +43,7 @@
    <section class="content player-card">
       <div class="video-wrapper">
          <video class="media-video-player" id="media-video-player">
-            <source src="data/sample.mp4" type="video/mp4">
+            <source src="./data/output.mp4" type="video/mp4">
          </video>
       </div>
       <!-- show media handler -->
@@ -108,11 +108,14 @@
                <input type="checkbox" id="enableAutoLoop" class="control-btn" title="Enable Auto Loop" disabled>
                <button id="repeatTrim" class="control-btn" title="Enable Auto Loop" disabled>Repeat</button>
             </div>
+            <button onclick="trimVideo()">Trim Video</button>
          </div>
       </div>
    </section>
-   <!-- <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.min.js"></script> -->
+   <!-- https://www.jsdelivr.com/package/npm/@ffmpeg/ffmpeg -->
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.min.js"></script>
    <script src="script/media.js"></script>
+   <script src="script/video-trim.js"></script>
 </body>
 
 </html>
