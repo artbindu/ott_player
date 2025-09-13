@@ -178,6 +178,13 @@ class OTTMediaPlayer {
         case 'KeyR': // Reset Trim Range
           this.resetTrimRange();
           break;
+        case 'KeyO': // Video Rotation
+          if(document.fullscreenElement && !this.config.rotationCount) {
+            console.warn("Screen Rotation will not work");
+            return;
+          }
+          this.toggleScreenRotation();
+          break;
         default:
           console.log('invalid key press Event: ', event.code);
           break;
