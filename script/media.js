@@ -5,7 +5,7 @@ class OTTMediaPlayer {
       rndTime: -10,
       isEnableFullScreen: false,
       isEnablePipMode: false,
-      isRotatedVideo: false,
+      rotationCount: 0,
       btnType: {
         playPause: 'PLAY-PAUSE',
         volume: 'VOLUME',
@@ -119,6 +119,7 @@ class OTTMediaPlayer {
     document.addEventListener('keypress', (event) => {
       switch(event.code) {
         case 'Space':
+        case 'Enter':
           this.togglePlayPause();
           break;
         case 'KeyA':
@@ -420,21 +421,15 @@ class OTTMediaPlayer {
         this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipMode ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
         break;
       case this.config.btnType.rotation:
-        this.rotationBtn.innerHTML = `<i class="fa fa-rotate-${!!this.config.isRotatedVideo ? 'left' : 'right'}"></i>`;
+        this.rotationBtn.innerHTML = `<i class="fa fa-undo" style="transform: rotate(${-90*this.config.rotationCount}deg);"></i>`;
         break;
     }
   }
 
   toggleScreenRotation() {
-    if (screen.orientation) {
-      // Listen for orientation changes using onchange
-      console.log(`call to rotation`);
-      screen.orientation.onchange = (event) => {
-        const type = screen.orientation.type;
-        const angle = screen.orientation.angle;
-        console.log(`ScreenOrientation changed: ${type}, ${angle} degrees.`);
-      };
-    }
+    this.config.rotationCount = (this.config.rotationCount + 1)%4;
+    this.video.style.transform = `rotate(${-90*this.config.rotationCount}deg)`;
+    this.updateUIButton({ type: this.config.btnType.rotation });
   }
 
   formatTime(seconds) {
