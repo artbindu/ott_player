@@ -514,6 +514,7 @@ class OTTMediaPlayer {
     const scriptList = {
       resolution: `${resolution.width} x ${resolution.height} ${isHighResolution ? '✅' : '🚫'}`,
       storeMediaInfo: `ffprobe -v quiet -print_format json -show_format -show_streams "{INPUTFILE}" > "trim/mediaInfo.json"`,
+      reEncode_video_and_Audio: `ffmpeg -i {INPUTFILE} -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 192k ${object.INPUTFILE.replace(/\.[\w\d]+$/gi, '')}.mp4`,
       break0: '--------Full Video Audio-------------',
       // Trim Video with range in second
       trimeVideo_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
@@ -531,17 +532,21 @@ class OTTMediaPlayer {
 
       break3: '\n--------Video Crop Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
       cropVideo_extrime_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:0:({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_left_center_min: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(0+1)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_left_center_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(0+1)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_right_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(1+2)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_extrime_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:({VIDEO_WIDTH}-{CORP_WIDTH}):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       
       break4: '\n--------Reverse Corped Video Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
       cropVideo_extrime_left_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_left_center_min_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_extrime_right_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_left_center_mid_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_right_mid_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_extrime_right_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       
-      break5: '---------------------',
+      break5: '--------Merge Clips-------------',
+      mergedCropVideo: 'ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp4',
+      mergedCropVideo_no_Audio: 'ffmpeg -i "mergedCropVideo.mp4" -an {SCRIPTKEY}.mp4',
+      trimAudioFromVideo: 'ffmpeg -i {INPUTFILE} -ss {STARTTIME} -t {TRIMDURATION} -c copy {SCRIPTKEY}.mp3',
+      mergedAudio_And_Video: 'ffmpeg -i mergedCropVideo_no_Audio.mp4 -i trimAudioFromVideo.mp3 -c:v copy -c:a aac -shortest {SCRIPTKEY}.mp4'
     };
 
     console.clear();
