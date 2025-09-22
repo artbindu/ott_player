@@ -15,8 +15,8 @@
     "test": "echo \"No tests specified\" && exit 0"
   },
   "repository": {
-    "type": "bitbucket",
-    "url": ""
+    "type": "git",
+    "url": "https://github.com/artbindu/ott_player"
   },
   "author": "Biswasindhu Mandal",
   "license": "ISC",
