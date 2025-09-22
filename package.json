@@ -6,7 +6,13 @@
   "scripts": {
     "start": "npm run url && npm run http-server",
     "url": "start http://localhost:54321/index.html",
-    "http-server": "http-server -p 54321"
+    "http-server": "http-server -p 54321",
+    "build": "node build.js",
+    "build:dev": "http-server -p 54321 -o",
+    "build:prod": "npm run build && http-server dist -p 54321 -o",
+    "clean": "if exist dist rmdir /s /q dist",
+    "prebuild": "npm run clean",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "repository": {
     "type": "bitbucket",
@@ -16,5 +22,9 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^0.12.1"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "uglify-js": "^3.19.3"
   }
 }

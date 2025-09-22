@@ -1,0 +1,60 @@
+{
+  "githubPages": {
+    "description": "Deploy to GitHub Pages",
+    "requirements": [
+      "Enable Pages in repository settings",
+      "Set source to 'GitHub Actions'"
+    ],
+    "steps": [
+      "Push to main/master branch",
+      "GitHub Actions will automatically build and deploy"
+    ]
+  },
+  "netlify": {
+    "description": "Deploy to Netlify",
+    "requirements": [
+      "Create Netlify account",
+      "Install Netlify CLI: npm install -g netlify-cli",
+      "Set NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID secrets in repository"
+    ],
+    "steps": [
+      "Push to main/master branch",
+      "GitHub Actions will automatically build and deploy to Netlify"
+    ]
+  },
+  "vercel": {
+    "description": "Deploy to Vercel",
+    "requirements": [
+      "Create Vercel account",
+      "Install Vercel CLI: npm install -g vercel",
+      "Run: vercel --prod in project directory"
+    ],
+    "steps": [
+      "Install Vercel CLI",
+      "Run: vercel --prod",
+      "Follow CLI prompts to deploy"
+    ]
+  },
+  "surge": {
+    "description": "Deploy to Surge.sh",
+    "requirements": [
+      "Install Surge: npm install -g surge",
+      "Run: surge dist/ your-domain.surge.sh"
+    ],
+    "steps": [
+      "Build project: npm run build",
+      "Deploy: surge dist/ your-chosen-domain.surge.sh"
+    ]
+  },
+  "manual": {
+    "description": "Manual deployment",
+    "requirements": [
+      "Web server with static file support"
+    ],
+    "steps": [
+      "Build project: npm run build",
+      "Upload contents of 'dist' folder to web server",
+      "Configure server to serve index.html as default page"
+    ]
+  }
+}
