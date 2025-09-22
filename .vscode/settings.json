@@ -1,18 +1,17 @@
 {
     "files.exclude": {
         "node_modules": true,
-        "*/node_modules/": true,
-        "**/node_modules/": true,
+        ".DS_Store": true,
         "**/.DS_Store": true,
-        ".vscode": true
+        // ".vscode": true
     },
     "editor.minimap.enabled": false,
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.expand": false,
     "explorer.fileNesting.patterns": {
-        "README.md": "*.md, *.gitignore, *.ico, LICENSE",
-        "package.json": "package-lock.json",
-        "obfuscator.json": "prod.obfuscator.json"
+        "README.md": "*.md, .gitignore, *.ico, LICENSE",
+        "package.json": "*.json",
+        "index.html": "*.js"
     },
     "cSpell.words": []
 }
