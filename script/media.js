@@ -489,7 +489,7 @@ class OTTMediaPlayer {
 
   ffmpegScript() {
     
-    const resolution = {
+    const videoResolution = {
       width: this.video.videoWidth,
       height: this.video.videoHeight
     };
@@ -498,21 +498,21 @@ class OTTMediaPlayer {
       FHD: { width: 1920, height: 1080},
       HD:  { width: 1080,  height: 720} 
     };
-    const isHighResolution = Math.max(resolution.width,resolution.height) >= Math.max(cropVideo.FourK.width, cropVideo.FourK.height);
+    const isHighResolution = Math.max(videoResolution.width,videoResolution.height) >= Math.max(cropVideo.FourK.width, cropVideo.FourK.height);
 
     const object = {
       INPUTFILE: this.video.name,
       STARTTIME: this.trimConfig.trimStart.toFixed(1),
       TRIMDURATION: (this.trimConfig.trimEnd - this.trimConfig.trimStart).toFixed(1),
       OUTPUTFILE: `trim/${this.trimConfig.trimStart.toFixed(2)}`,
-      VIDEO_WIDTH: Math.max(resolution.width,resolution.height),
-      VIDEO_HEIGHT: Math.min(resolution.width,resolution.height),
-      CORP_HEIGHT: isHighResolution ?  Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(cropVideo.HD.width, cropVideo.HD.height),
-      CORP_WIDTH: isHighResolution ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height) : Math.min(cropVideo.HD.width, cropVideo.HD.height)
+      VIDEO_WIDTH: videoResolution.width,
+      VIDEO_HEIGHT: videoResolution.height,
+      CORP_HEIGHT: isHighResolution ?  Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(videoResolution.height, cropVideo.HD.height),
+      CORP_WIDTH: isHighResolution ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height) : Math.min(videoResolution.width, cropVideo.HD.height)
     };
 
     const scriptList = {
-      resolution: `${resolution.width} x ${resolution.height} ${isHighResolution ? '✅' : '🚫'}`,
+      videoResolution: `${videoResolution.width} x ${videoResolution.height} ${isHighResolution ? '✅' : '🚫'}`,
       storeMediaInfo: `ffprobe -v quiet -print_format json -show_format -show_streams "{INPUTFILE}" > "trim/mediaInfo.json"`,
       reEncode_video_and_Audio: `ffmpeg -i {INPUTFILE} -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 192k ${object.INPUTFILE.replace(/\.[\w\d]+$/gi, '')}.mp4`,
       break0: '--------Full Video Audio-------------',
@@ -545,9 +545,12 @@ class OTTMediaPlayer {
       break5: '--------Merge Clips-------------',
       mergedCropVideo: 'ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp4',
       mergedCropVideo_no_Audio: 'ffmpeg -i "mergedCropVideo.mp4" -an {SCRIPTKEY}.mp4',
-      trimAudioFromVideo: 'ffmpeg -i {INPUTFILE} -ss {STARTTIME} -t {TRIMDURATION} -c copy {SCRIPTKEY}.mp3',
-      mergedAudio_And_Video: 'ffmpeg -i mergedCropVideo_no_Audio.mp4 -i trimAudioFromVideo.mp3 -c:v copy -c:a aac -shortest {SCRIPTKEY}.mp4'
-    };
+      trimAudioFromVideo: 'ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c copy "{SCRIPTKEY}.mp3"',
+      mergedCropAudios: 'ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp3',
+      mergedAudio_And_Video: 'ffmpeg -i mergedCropVideo_no_Audio.mp4 -i trimAudioFromVideo.mp3 -c:v copy -c:a aac -shortest {SCRIPTKEY}.mp4',
+      mergedAudio_And_Video_90deg: 'ffmpeg -i "mergedAudio_And_Video.mp4" -vf "transpose=1" "{SCRIPTKEY}.mp4"',
+      mergedAudio_And_Video_270deg: 'ffmpeg -i "mergedAudio_And_Video.mp4" -vf "transpose=1,transpose=1,transpose=1" "{SCRIPTKEY}.mp4"',
+    }
 
     console.clear();
     Object.keys(scriptList).forEach(script => 
