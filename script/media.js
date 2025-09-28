@@ -288,7 +288,7 @@ class OTTMediaPlayer {
       this.lastUpdateTime = now;
     }
 
-    if(shouldUpdateUI && this.config.isEnableAutoColorChange && parseInt(this.video.currentTime)%3 === 0) {
+    if(shouldUpdateUI && this.config.isEnableAutoColorChange && parseInt(this.video.currentTime)%1 === 0) {
       this.updateAutoColorChange();
     }
   }
@@ -416,7 +416,7 @@ class OTTMediaPlayer {
   }
 
   updateAutoColorChange () {
-    this.video.style.filter = this.video.style.filter.replace(/(?<=(hue-rotate\())\d+(?=deg\))/gi, x => Number(x)+10);
+    this.video.style.filter = this.video.style.filter.replace(/(?<=(hue-rotate\())\d+(?=deg\))/gi, x => parseInt(Math.random(0,1) * 360));
     // console.warn('pos: ', parseInt(this.video.currentTime), 'style: ', this.video.style.filter);
   };
 
@@ -444,7 +444,7 @@ class OTTMediaPlayer {
         return 'blur(2px)';
       case 'autocolorchange':
         this.config.isEnableAutoColorChange = true;
-        return `hue-rotate(${parseInt(Math.random(0,1) * 360)}deg) saturate(300%)`;
+        return `hue-rotate(${parseInt(Math.random(0,1) * 360)}deg) contrast(120%) brightness(90%)`;
       default:
         return '';
     }
