@@ -410,6 +410,12 @@ class OTTMediaPlayer {
       case 'night':
         this.video.style.filter = 'brightness(60%) contrast(110%)';
         break;
+      case 'glow':
+        this.video.style.filter = 'sepia(80%) saturate(120%) brightness(110%)';
+        break;
+      case 'heat':
+        this.video.style.filter = 'contrast(130%) saturate(140%) hue-rotate(15deg)';
+        break;
     }
   }
 
