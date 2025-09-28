@@ -569,6 +569,10 @@ function toggleInputModeDropdown() {
   var mode = document.getElementById('inputModeDropdown').value;
   document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
   document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
+  document.getElementById('dataFilesRow').style.display = (mode === 'data') ? '' : 'none';
+  if (mode === 'data') {
+    loadDataFiles();
+  }
 }
 
 // Choose local file from file input
@@ -585,9 +589,56 @@ function chooseLocalFile() {
   }
 }
 
+// Load video files from data directory
+function loadDataFiles() {
+  fetch('/data/')
+    .then(response => response.text())
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const links = doc.querySelectorAll('a');
+      const videoFiles = Array.from(links)
+        .map(a => a.href.split('/').pop())
+        .filter(filename => /\.(mp4|webm|ogg|avi|mkv)$/i.test(filename));
+      const container = document.getElementById('dataFilesRow');
+      container.innerHTML = '';
+      const select = document.createElement('select');
+      select.className = 'control-btn';
+      select.onchange = () => {
+        if (select.value) {
+          playFromData(select.value);
+        }
+      };
+      const defaultOption = document.createElement('option');
+      defaultOption.textContent = 'Select a video file...';
+      defaultOption.value = '';
+      select.appendChild(defaultOption);
+      videoFiles.forEach(filename => {
+        const option = document.createElement('option');
+        option.value = filename;
+        option.textContent = filename;
+        select.appendChild(option);
+      });
+      container.appendChild(select);
+    })
+    .catch(error => console.error('Error loading data files:', error));
+}
+
+// Play video from data directory
+function playFromData(filename) {
+  const video = document.getElementById('media-video-player');
+  video.pause();
+  video.src = `data/${filename}`;
+  video.name = filename;
+  video.load();
+  video.play();
+}
+
 // Attach to global for HTML usage
 window.toggleInputModeDropdown = toggleInputModeDropdown;
 window.chooseLocalFile = chooseLocalFile;
+window.loadDataFiles = loadDataFiles;
+window.playFromData = playFromData;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {

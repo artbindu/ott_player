@@ -6,10 +6,10 @@
   "scripts": {
     "start": "npm run url && npm run http-server",
     "url": "start http://localhost:54321/index.html",
-    "http-server": "http-server -p 54321",
+    "http-server": "http-server -p 54321 -d",
     "build": "node build.js",
-    "build:dev": "http-server -p 54321 -o",
-    "build:prod": "npm run build && http-server dist -p 54321 -o",
+    "build:dev": "http-server -p 54321 -o -d",
+    "build:prod": "npm run build && http-server dist -p 54321 -o -d",
     "clean": "if exist dist rmdir /s /q dist",
     "prebuild": "npm run clean",
     "test": "echo \"No tests specified\" && exit 0"
