@@ -1,3 +1,4 @@
+const localMoviePath = 'data/movielist/';
 class OTTMediaPlayer {
   constructor(videoElement, controls, playerFeatures) {
     this.config = {
@@ -620,7 +621,7 @@ function chooseLocalFile() {
 
 // Load video files from data directory
 function loadDataFiles() {
-  fetch('/data/')
+  fetch(`./${localMoviePath}`)
     .then(response => response.text())
     .then(html => {
       const parser = new DOMParser();
@@ -657,7 +658,7 @@ function loadDataFiles() {
 function playFromData(filename) {
   const video = document.getElementById('media-video-player');
   video.pause();
-  video.src = `data/${filename}`;
+  video.src = `${localMoviePath}${filename}`;
   video.name = filename;
   video.load();
   video.play();
