@@ -116,7 +116,7 @@ class OTTMediaPlayer {
   }
 
   bindKeyPressEvent() {
-    document.addEventListener('keypress', (event) => {
+    document.addEventListener('keydown', (event) => {      
       switch(event.code) {
         case 'Space':
         case 'Enter':
@@ -185,8 +185,14 @@ class OTTMediaPlayer {
           }
           this.toggleScreenRotation();
           break;
+        case 'ArrowUp': // Previous Video Mode
+          this.cycleVideoMode(-1);
+          break;
+        case 'ArrowDown': // Next Video Mode
+          this.cycleVideoMode(1);
+          break;
         default:
-          console.log('invalid key press Event: ', event.code);
+          console.warn('invalid key press Event: ', event.code);
           break;
       }
     });
@@ -416,7 +422,24 @@ class OTTMediaPlayer {
       case 'heat':
         this.video.style.filter = 'contrast(130%) saturate(140%) hue-rotate(15deg)';
         break;
+      case 'sepia':
+        this.video.style.filter = 'sepia(100%)';
+        break;
+      case 'invert':
+        this.video.style.filter = 'invert(100%)';
+        break;
+      case 'blur':
+        this.video.style.filter = 'blur(2px)';
+        break;
     }
+  }
+
+  cycleVideoMode(direction) {
+    const select = this.playbackMode;
+    const currentIndex = select.selectedIndex;
+    const newIndex = (currentIndex + direction + select.options.length) % select.options.length;
+    select.selectedIndex = newIndex;
+    select.dispatchEvent(new Event('change'));
   }
 
   updateUIButton(config = { type: '' }) {
