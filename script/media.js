@@ -15,7 +15,8 @@ class OTTMediaPlayer {
         fullScreen: 'FULL-SCREEN',
         pip: 'PIP',
         rotation: 'ROTATION'
-      }
+      },
+      isEnableAutoColorChange: false,
     };
     this.video = videoElement;
     this.controls = controls;
@@ -32,6 +33,7 @@ class OTTMediaPlayer {
     };
 
     this.init();
+    this.lastUpdateTime = 0;
     // Set seekBar value to 0 by default
     if (this.controls.seekBar) {
       this.controls.seekBar.value = 0;
@@ -267,6 +269,9 @@ class OTTMediaPlayer {
   }
 
   updateSeekBar() {
+    const now = Date.now();
+    const shouldUpdateUI = (now - this.lastUpdateTime >= 1000) || this.video.seeking;
+
     if (this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
       this.video.currentTime = this.trimConfig.trimStart;
       if(this.trimConfig.isAutoLoopEnabled) {
@@ -275,11 +280,16 @@ class OTTMediaPlayer {
       } else {
         this.togglePlayPause(false);
       }
-    } else {
+    } else if (shouldUpdateUI) {
       this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
       this.startPos.textContent = this.formatTime(this.video.currentTime);
       this.endPos.textContent = this.formatTime(this.video.duration);
       if (this.video.currentTime <= 1) this.updateUIButton({ type: this.config.btnType.playPause });
+      this.lastUpdateTime = now;
+    }
+
+    if(shouldUpdateUI && this.config.isEnableAutoColorChange && parseInt(this.video.currentTime)%3 === 0) {
+      this.updateAutoColorChange();
     }
   }
 
@@ -401,37 +411,42 @@ class OTTMediaPlayer {
   }
 
   setVideoMode() {
+    this.config.isEnableAutoColorChange = false;
+    this.video.style.filter = this.getVideoMode();
+  }
+
+  updateAutoColorChange () {
+    this.video.style.filter = this.video.style.filter.replace(/(?<=(hue-rotate\())\d+(?=deg\))/gi, x => Number(x)+10);
+    // console.warn('pos: ', parseInt(this.video.currentTime), 'style: ', this.video.style.filter);
+  };
+
+  getVideoMode() {
     switch (this.playbackMode.value) {
       case 'normal':
-        this.video.style.filter = '';
-        break;
+        return '';
       case 'cinema':
-        this.video.style.filter = 'contrast(120%) brightness(90%)';
-        break;
+        return 'contrast(120%) brightness(90%)';
       case 'vivid':
-        this.video.style.filter = 'contrast(140%) brightness(110%) saturate(120%)';
-        break;
+        return 'contrast(140%) brightness(110%) saturate(120%)';
       case 'bw':
-        this.video.style.filter = 'grayscale(100%)';
-        break;
+        return 'grayscale(100%)';
       case 'night':
-        this.video.style.filter = 'brightness(60%) contrast(110%)';
-        break;
+        return 'brightness(60%) contrast(110%)';
       case 'glow':
-        this.video.style.filter = 'sepia(80%) saturate(120%) brightness(110%)';
-        break;
+        return 'sepia(80%) saturate(120%) brightness(110%)';
       case 'heat':
-        this.video.style.filter = 'contrast(130%) saturate(140%) hue-rotate(15deg)';
-        break;
+        return 'contrast(130%) saturate(140%) hue-rotate(15deg)';
       case 'sepia':
-        this.video.style.filter = 'sepia(100%)';
-        break;
+        return 'sepia(100%)';
       case 'invert':
-        this.video.style.filter = 'invert(100%)';
-        break;
+        return 'invert(100%)';
       case 'blur':
-        this.video.style.filter = 'blur(2px)';
-        break;
+        return 'blur(2px)';
+      case 'autocolorchange':
+        this.config.isEnableAutoColorChange = true;
+        return `hue-rotate(${parseInt(Math.random(0,1) * 360)}deg) saturate(300%)`;
+      default:
+        return '';
     }
   }
 
@@ -646,7 +661,7 @@ function loadDataFiles() {
       videoFiles.forEach(filename => {
         const option = document.createElement('option');
         option.value = filename;
-        option.textContent = filename;
+        option.textContent = decodeURI(filename);
         select.appendChild(option);
       });
       container.appendChild(select);
