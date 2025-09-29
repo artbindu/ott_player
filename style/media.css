@@ -99,6 +99,9 @@ p {
 .file-inputs label {
   font-size: 1rem;
 }
+#directoryName {
+  color: white;
+}
 
 .file-inputs input[type="file"],
 .file-inputs input[type="text"] {

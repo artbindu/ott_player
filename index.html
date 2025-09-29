@@ -39,8 +39,10 @@
                <button class="primary-btn" onclick="playFromHeaderUrl()">Play</button>
             </div>
             <div class="file-inputs" id="directoryInputRow" style="display:none;">
-               <input type="file" webkitdirectory id="directoryInput" onchange="loadDirectoryFiles()">
-               <select id="mediaDropdown" class="control-btn" onchange="playSelectedMedia()"></select>
+               <button class="primary-btn" onclick="document.getElementById('directoryInput').click()">Choose Directory</button>
+               <span id="directoryName">No Directory</span>
+               <input type="file" webkitdirectory id="directoryInput" onchange="loadDirectoryFiles()" style="display:none;">
+               <select id="mediaDropdown" class="control-btn" onchange="playSelectedMedia()" hidden></select>
             </div>
          </section>
       </div>

@@ -634,6 +634,7 @@ function chooseLocalFile() {
 function loadDirectoryFiles() {
   const directoryInput = document.getElementById('directoryInput');
   const mediaDropdown = document.getElementById('mediaDropdown');
+  const directoryName = document.getElementById('directoryName');
   mediaDropdown.innerHTML = '';
   const defaultOption = document.createElement('option');
   defaultOption.textContent = 'Select a media file...';
@@ -641,6 +642,8 @@ function loadDirectoryFiles() {
   mediaDropdown.appendChild(defaultOption);
 
   if (directoryInput.files && directoryInput.files.length > 0) {
+    const dirName = directoryInput.files[0].webkitRelativePath.split('/')[0];
+    directoryName.textContent = `${dirName}(${directoryInput.files.length})`;
     Array.from(directoryInput.files)
       .filter(file => file.type.startsWith('video/') || file.type.startsWith('audio/'))
       .forEach(file => {
@@ -650,6 +653,10 @@ function loadDirectoryFiles() {
         option.dataset.file = file; // Store file reference
         mediaDropdown.appendChild(option);
       });
+    mediaDropdown.hidden = false;
+  } else {
+    directoryName.textContent = 'No Directory';
+    mediaDropdown.hidden = true;
   }
 }
 
