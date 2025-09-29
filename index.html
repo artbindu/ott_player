@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8" />
+   <title>Media Player</title>
+   <link href="style/media.min.css" rel="stylesheet" type="text/css" />
+   <link rel="icon" type="image/x-icon" href="favicon.ico">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<body>
+   <header class="page-header">
+      <div class="page-header-content">
+         <section class="header-left">
+            <a href="https://github.com/artbindu">
+               <img src="favicon.ico" alt="Logo" class="header-logo">
+            </a>
+            <div>
+               <h1 class="site-title">OTT Player</h1>
+            <p class="site-subtitle">Your Custom Media Experience</p>
+            </div>
+         </section>
+         <section class="header-right">
+            <div class="file-inputs" id="inputModeDropdownRow">
+               <select id="inputModeDropdown" class="control-btn" onchange="toggleInputModeDropdown()">
+                  <option value="file" selected>Choose File</option>
+                  <option value="url">Add Web URL</option>
+                  <option value="directory">Choose Directory</option>
+               </select>
+            </div>
+            <div class="file-inputs" id="fileInputRow">
+               <input type="file" id="fName">
+               <button class="primary-btn" onclick="chooseLocalFile()">Play</button>
+            </div>
+            <div class="file-inputs" id="urlInputRow" style="display:none;">
+               <input type="text" id="headerVideoUrlInput" placeholder="Paste Video URL ..."
+               value="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+               <button class="primary-btn" onclick="playFromHeaderUrl()">Play</button>
+            </div>
+            <div class="file-inputs" id="directoryInputRow" style="display:none;">
+               <input type="file" webkitdirectory id="directoryInput" onchange="loadDirectoryFiles()">
+               <select id="mediaDropdown" class="control-btn" onchange="playSelectedMedia()"></select>
+            </div>
+         </section>
+      </div>
+   </header>
+   <section class="content player-card">
+      <div class="video-wrapper">
+         <video class="media-video-player" id="media-video-player">
+            <source src="data/sample.mp4" type="video/mp4">
+         </video>
+      </div>
+      <!-- show media handler -->
+      <div class="media-media-controls player-controls" id="media-media-controls">
+         <div class="drag-handle" id="dragHandle" title="Drag to move controls">&#x2630;</div>
+         <div id="media-seekBar-btns" class="seekbar-row">
+            <span id="startPos">--:--:--</span>
+            <input id="player-seekbar" type="range" min="0" max="100" step="1" value="0" />
+            <span id="endPos">--:--:--</span>
+         </div>
+         <div id="media-ctrl-buttons" class="button-row">
+            <button id="reset" class="control-btn" title="Reset"><i class="fa fa-stop-circle"></i></button>
+            <select id="playbackRate" class="control-btn" title="Playback Speed">
+               <option value="0.25">0.25</option>
+               <option value="0.5">0.50</option>
+               <option value="0.75">0.75</option>
+               <option value="1" selected>Auto</option>
+               <option value="1.1">1.10</option>
+               <option value="1.25">1.25</option>
+               <option value="1.5">1.50</option>
+               <option value="1.75">1.75</option>
+               <option value="2">2.00</option>
+            </select>
+            <button id="backword" class="control-btn" title="Skip Forward">
+               <i class="fa fa-backward"></i>
+            </button>
+            <button id="playPause" class="control-btn" title="Play/Pause">
+               <i class="fa fa-play"></i>/<i class="fa fa-pause"></i>
+            </button>
+            <button id="forward" class="control-btn" title="Skip Rewind">
+               <i class="fa fa-forward"></i>
+            </button>
+            <button id="fullScreen" class="control-btn" title="Full Screen">
+               <i class="fa fa-expand"></i>
+            </button>
+            <button id="pipMode" class="control-btn" title="Picture in Picture">
+               <i class="fa fa-window-restore" style="transform: rotate(180deg);"></i>
+            </button>
+            <button id="screenRotation" class="control-btn" title="Rotate Screen">
+               <i class="fa fa-undo"></i>
+            </button>
+            <input id="volumeBar" class="control-btn" type="range" min="0" max="1" step="0.01" value="1" title="Volume" style="width:80px;">
+            <button id="volume" class="control-btn" title="Mute/Unmute">
+               <i class="fa fa-volume-up"></i>
+            </button>
+            <span id="volumeValue" class="control-btn" hidden>00</span>
+            <select id="videoMode" class="control-btn" title="Video Mode">
+               <option value="normal">Normal</option>
+               <option value="bw">Grayscale</option>
+               <option value="sepia">Sepia</option>
+               <option value="glow">Warm Glow</option>
+               <option value="cinema">Cinema</option>
+               <option value="vivid">Vivid</option>
+               <option value="night">Night</option>
+               <option value="heat">Intense Heat</option>
+               <option value="invert">Invert</option>
+               <option value="blur">Blur</option>
+               <option value="autocolorchange">Auto Change</option>
+            </select>
+         </div>
+         <div id="media-trim-feature" class="button-row">
+            <input id="trimStartInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim Start">
+            <button id="setTrimStart" class="control-btn" title="Set as Current Time"><i class="far fa-hand-point-left"></i> Start</button>
+            <button id="setTrimEnd" class="control-btn" title="Set as Current Time">End <i class="far fa-hand-point-right"></i></button>
+            <input id="trimEndInput" class="control-btn" type="text" placeholder="00:00:00" title="Trim End">
+            <button id="playTrimmed" class="control-btn" title="Play Trimmed Segment" disabled>Video Clip</button>
+            <div class="auto-loop-group">
+               <input type="checkbox" id="enableAutoLoop" class="control-btn" title="Enable Auto Loop" disabled>
+               <button id="repeatTrim" class="control-btn" title="Enable Auto Loop" disabled>Repeat</button>
+            </div>
+         </div>
+      </div>
+   </section>
+   <!-- <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.min.js"></script> -->
+   <script src="script/media.min.js"></script>
+</body>
+
+</html>
