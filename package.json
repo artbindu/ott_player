@@ -4,15 +4,11 @@
   "description": "create a custom media player using native html",
   "main": "http-server -p 54321 -o",
   "scripts": {
-    "start": "npm run url && npm run http-server",
-    "url": "start http://localhost:54321/index.html",
-    "http-server": "http-server -p 54321 -d",
     "build": "node build.js",
-    "build:dev": "http-server -p 54321 -o -d",
     "build:prod": "npm run build && http-server dist -p 54321 -o -d",
-    "clean": "if exist dist rmdir /s /q dist",
+    "clean": "node -e \"const fs=require('fs'); try { fs.rmSync('dist', {recursive: true, force: true}); } catch(e) {}\"",
     "prebuild": "npm run clean",
-    "test": "echo \"No tests specified\" && exit 0"
+    "watch": "nodemon --exec npm run build"
   },
   "repository": {
     "type": "git",
@@ -25,6 +21,7 @@
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.3",
+    "nodemon": "^3.1.10",
     "uglify-js": "^3.19.3"
   }
 }

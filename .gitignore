@@ -4,6 +4,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 TODO.md
+package-lock.json
 
 # Build output
 dist/
