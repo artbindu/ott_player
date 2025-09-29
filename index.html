@@ -26,7 +26,7 @@
                <select id="inputModeDropdown" class="control-btn" onchange="toggleInputModeDropdown()">
                   <option value="file" selected>Choose File</option>
                   <option value="url">Add Web URL</option>
-                  <option value="data">Choose from Data</option>
+                  <option value="directory">Choose Directory</option>
                </select>
             </div>
             <div class="file-inputs" id="fileInputRow">
@@ -38,8 +38,9 @@
                value="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
                <button class="primary-btn" onclick="playFromHeaderUrl()">Play</button>
             </div>
-            <div class="file-inputs" id="dataFilesRow" style="display:none;">
-               <!-- Video files from data directory will be populated here dynamically -->
+            <div class="file-inputs" id="directoryInputRow" style="display:none;">
+               <input type="file" webkitdirectory id="directoryInput" onchange="loadDirectoryFiles()">
+               <select id="mediaDropdown" class="control-btn" onchange="playSelectedMedia()"></select>
             </div>
          </section>
       </div>

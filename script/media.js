@@ -1,4 +1,3 @@
-const localMoviePath = 'data/movielist/';
 class OTTMediaPlayer {
   constructor(videoElement, controls, playerFeatures) {
     this.config = {
@@ -614,10 +613,7 @@ function toggleInputModeDropdown() {
   var mode = document.getElementById('inputModeDropdown').value;
   document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
   document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
-  document.getElementById('dataFilesRow').style.display = (mode === 'data') ? '' : 'none';
-  if (mode === 'data') {
-    loadDataFiles();
-  }
+  document.getElementById('directoryInputRow').style.display = (mode === 'directory') ? '' : 'none';
 }
 
 // Choose local file from file input
@@ -634,56 +630,48 @@ function chooseLocalFile() {
   }
 }
 
-// Load video files from data directory
-function loadDataFiles() {
-  fetch(`./${localMoviePath}`)
-    .then(response => response.text())
-    .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const links = doc.querySelectorAll('a');
-      const videoFiles = Array.from(links)
-        .map(a => a.href.split('/').pop())
-        .filter(filename => /\.(mp4|webm|ogg|avi|mkv)$/i.test(filename));
-      const container = document.getElementById('dataFilesRow');
-      container.innerHTML = '';
-      const select = document.createElement('select');
-      select.className = 'control-btn';
-      select.onchange = () => {
-        if (select.value) {
-          playFromData(select.value);
-        }
-      };
-      const defaultOption = document.createElement('option');
-      defaultOption.textContent = 'Select a video file...';
-      defaultOption.value = '';
-      select.appendChild(defaultOption);
-      videoFiles.forEach(filename => {
+// Load media files from selected directory
+function loadDirectoryFiles() {
+  const directoryInput = document.getElementById('directoryInput');
+  const mediaDropdown = document.getElementById('mediaDropdown');
+  mediaDropdown.innerHTML = '';
+  const defaultOption = document.createElement('option');
+  defaultOption.textContent = 'Select a media file...';
+  defaultOption.value = '';
+  mediaDropdown.appendChild(defaultOption);
+
+  if (directoryInput.files && directoryInput.files.length > 0) {
+    Array.from(directoryInput.files)
+      .filter(file => file.type.startsWith('video/') || file.type.startsWith('audio/'))
+      .forEach(file => {
         const option = document.createElement('option');
-        option.value = filename;
-        option.textContent = decodeURI(filename);
-        select.appendChild(option);
+        option.value = URL.createObjectURL(file);
+        option.textContent = file.name;
+        option.dataset.file = file; // Store file reference
+        mediaDropdown.appendChild(option);
       });
-      container.appendChild(select);
-    })
-    .catch(error => console.error('Error loading data files:', error));
+  }
 }
 
-// Play video from data directory
-function playFromData(filename) {
-  const video = document.getElementById('media-video-player');
-  video.pause();
-  video.src = `${localMoviePath}${filename}`;
-  video.name = filename;
-  video.load();
-  video.play();
+// Play selected media from dropdown
+function playSelectedMedia() {
+  const mediaDropdown = document.getElementById('mediaDropdown');
+  const selectedValue = mediaDropdown.value;
+  if (selectedValue) {
+    const video = document.getElementById('media-video-player');
+    video.pause();
+    video.src = selectedValue;
+    video.name = mediaDropdown.options[mediaDropdown.selectedIndex].textContent;
+    video.load();
+    video.play();
+  }
 }
 
 // Attach to global for HTML usage
 window.toggleInputModeDropdown = toggleInputModeDropdown;
 window.chooseLocalFile = chooseLocalFile;
-window.loadDataFiles = loadDataFiles;
-window.playFromData = playFromData;
+window.loadDirectoryFiles = loadDirectoryFiles;
+window.playSelectedMedia = playSelectedMedia;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
