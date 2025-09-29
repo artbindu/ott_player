@@ -25,7 +25,7 @@ jobs:
       run: npm ci
 
     - name: Run build
-      run: npm run build:prod
+      run: npm run build
 
     - name: Test build output
       run: |
@@ -63,7 +63,7 @@ jobs:
       run: npm ci
 
     - name: Build for production
-      run: npm run build:prod
+      run: npm run build
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
