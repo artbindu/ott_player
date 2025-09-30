@@ -2,12 +2,12 @@
   "name": "mediaplayer",
   "version": "1.0.0",
   "description": "create a custom media player using native html",
-  "main": "http-server -p 54321 -o",
+  "main": "http-server -p 54322 -o",
   "scripts": {
-    "build": "node build.js",
-    "build:prod": "npm run build && http-server dist -p 54321 -o -d",
     "clean": "node -e \"const fs=require('fs'); try { fs.rmSync('dist', {recursive: true, force: true}); } catch(e) {}\"",
     "prebuild": "npm run clean",
+    "build": "node build.js",
+    "start": "npm run build && http-server dist -p 54322 -o -d",
     "watch": "nodemon --exec npm run build"
   },
   "repository": {

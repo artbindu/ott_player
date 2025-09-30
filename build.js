@@ -29,14 +29,10 @@ try {
 
 // Copy data directory
 try {
-    const dataDir = path.join(buildDir, 'data');
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-    }
-    fs.copyFileSync('data/sample.mp4', path.join(dataDir, 'sample.mp4'));
-    console.log('✅ Copied sample video file');
+    fs.cpSync('data', path.join(buildDir, 'data'), { recursive: true, force: true });
+    console.log('✅ Copied data directory');
 } catch (error) {
-    console.error('❌ Error copying data files:', error.message);
+    console.error('❌ Error copying data directory:', error.message);
 }
 
 // Minify CSS

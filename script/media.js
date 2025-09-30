@@ -19,7 +19,7 @@ class OTTMediaPlayer {
     };
     this.video = videoElement;
     this.controls = controls;
-    this.video.volume = 0.5;
+    this.video.volume = 1.0;
 
     // Player Features: Trim
     this.trimUIControls = playerFeatures.trimFeature;
