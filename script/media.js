@@ -98,6 +98,7 @@ class OTTMediaPlayer {
     // Native Video Events
     this.video.addEventListener('volumechange', () => this.updateVolumeBar());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
+    this.video.addEventListener('ended', () => this.onVideoEnded());
     // PiP Mode Configuration
     this.pipModeBtn.addEventListener('click', () => this.togglePipMode(!this.config.isEnablePipMode));
     this.video.addEventListener('leavepictureinpicture', () => {
@@ -484,6 +485,13 @@ class OTTMediaPlayer {
     this.updateUIButton({ type: this.config.btnType.rotation });
   }
 
+  onVideoEnded() {
+    const mediaDropdown = document.getElementById('mediaDropdown');
+    if(mediaDropdown && mediaDropdown.selectedIndex < mediaDropdown.options.length) {
+      playNextMedia();
+    }
+  }
+
   formatTime(seconds) {
     if (isNaN(seconds)) return '--:--:--';
     const h = Math.floor(seconds / 3600);
@@ -684,6 +692,9 @@ function playPreviousMedia() {
   if (mediaDropdown.selectedIndex > 1) { // Index 0 is default, 1 is first file
     mediaDropdown.selectedIndex--;
     playSelectedMedia();
+  } else if(mediaDropdown.selectedIndex === 1) {
+    mediaDropdown.selectedIndex = mediaDropdown.options.length - 1;
+    playSelectedMedia();
   }
 }
 
@@ -692,6 +703,9 @@ function playNextMedia() {
   const mediaDropdown = document.getElementById('mediaDropdown');
   if (mediaDropdown.selectedIndex < mediaDropdown.options.length - 1) {
     mediaDropdown.selectedIndex++;
+    playSelectedMedia();
+  } else if(mediaDropdown.selectedIndex === mediaDropdown.options.length - 1) {
+    mediaDropdown.selectedIndex = 1;
     playSelectedMedia();
   }
 }
