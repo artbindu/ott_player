@@ -556,9 +556,10 @@ class OTTMediaPlayer {
     };
 
     const scriptList = {
+      break: "------ Basic Video Information & Transformation --------",
       videoResolution: `${videoResolution.width} x ${videoResolution.height} ${isHighResolution ? '✅' : '🚫'}`,
       storeMediaInfo: `ffprobe -v quiet -print_format json -show_format -show_streams "{INPUTFILE}" > "trim/mediaInfo.json"`,
-      reEncode_video_and_Audio: `ffmpeg -i {INPUTFILE} -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 192k ${object.INPUTFILE.replace(/\.[\w\d]+$/gi, '')}.mp4`,
+      reEncode_video_and_Audio: `ffmpeg -i "{INPUTFILE}" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 192k "${object.INPUTFILE.replace(/\.[\w\d]+$/gi, '')}.mp4"`,
       break0: '--------Full Video Audio-------------',
       // Trim Video with range in second
       trimeVideo_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
@@ -614,6 +615,7 @@ function toggleInputModeDropdown() {
   document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
   document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
   document.getElementById('directoryInputRow').style.display = (mode === 'directory') ? '' : 'none';
+  document.getElementById('navButtonsRow').style.display = 'none'; // Hide nav buttons when not in directory mode
 }
 
 // Choose local file from file input
@@ -654,9 +656,11 @@ function loadDirectoryFiles() {
         mediaDropdown.appendChild(option);
       });
     mediaDropdown.hidden = false;
+    document.getElementById('navButtonsRow').style.display = ''; // Show nav buttons when media files are loaded
   } else {
     directoryName.textContent = 'No Directory';
     mediaDropdown.hidden = true;
+    document.getElementById('navButtonsRow').style.display = 'none'; // Hide nav buttons when no files
   }
 }
 
@@ -674,11 +678,31 @@ function playSelectedMedia() {
   }
 }
 
+// Navigate to previous media in directory
+function playPreviousMedia() {
+  const mediaDropdown = document.getElementById('mediaDropdown');
+  if (mediaDropdown.selectedIndex > 1) { // Index 0 is default, 1 is first file
+    mediaDropdown.selectedIndex--;
+    playSelectedMedia();
+  }
+}
+
+// Navigate to next media in directory
+function playNextMedia() {
+  const mediaDropdown = document.getElementById('mediaDropdown');
+  if (mediaDropdown.selectedIndex < mediaDropdown.options.length - 1) {
+    mediaDropdown.selectedIndex++;
+    playSelectedMedia();
+  }
+}
+
 // Attach to global for HTML usage
 window.toggleInputModeDropdown = toggleInputModeDropdown;
 window.chooseLocalFile = chooseLocalFile;
 window.loadDirectoryFiles = loadDirectoryFiles;
 window.playSelectedMedia = playSelectedMedia;
+window.playPreviousMedia = playPreviousMedia;
+window.playNextMedia = playNextMedia;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {

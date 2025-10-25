@@ -88,6 +88,12 @@ p {
   font-style: italic;
 }
 
+.header-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .file-inputs {
   display: flex;
   align-items: center;

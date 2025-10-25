@@ -22,12 +22,18 @@
             </div>
          </section>
          <section class="header-right">
-            <div class="file-inputs" id="inputModeDropdownRow">
-               <select id="inputModeDropdown" class="control-btn" onchange="toggleInputModeDropdown()">
-                  <option value="file" selected>Choose File</option>
-                  <option value="url">Add Web URL</option>
-                  <option value="directory">Choose Directory</option>
-               </select>
+            <div class="header-inline">
+               <div class="file-inputs" id="navButtonsRow" style="display:none;">
+                  <button class="control-btn" onclick="playPreviousMedia()" title="Previous Media"><i class="fa fa-chevron-left"></i> Prev</button>
+                  <button class="control-btn" onclick="playNextMedia()" title="Next Media">Next <i class="fa fa-chevron-right"></i></button>
+               </div>
+               <div class="file-inputs" id="inputModeDropdownRow">
+                  <select id="inputModeDropdown" class="control-btn" onchange="toggleInputModeDropdown()">
+                     <option value="file" selected>Choose File</option>
+                     <option value="url">Add Web URL</option>
+                     <option value="directory">Choose Directory</option>
+                  </select>
+               </div>
             </div>
             <div class="file-inputs" id="fileInputRow">
                <input type="file" id="fName">
