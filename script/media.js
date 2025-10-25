@@ -665,6 +665,11 @@ function loadDirectoryFiles() {
       });
     mediaDropdown.hidden = false;
     document.getElementById('navButtonsRow').style.display = ''; // Show nav buttons when media files are loaded
+    // Automatically select and play the first media file
+    if (mediaDropdown.options.length > 1) {
+      mediaDropdown.selectedIndex = 1;
+      playSelectedMedia();
+    }
   } else {
     directoryName.textContent = 'No Directory';
     mediaDropdown.hidden = true;
