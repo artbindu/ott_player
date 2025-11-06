@@ -5,6 +5,7 @@ class OTTMediaPlayer {
       rndTime: -10,
       isEnableFullScreen: false,
       isEnablePipMode: false,
+      isEnableTheaterMode: false,
       rotationCount: 0,
       btnType: {
         playPause: 'PLAY-PAUSE',
@@ -13,7 +14,8 @@ class OTTMediaPlayer {
         volume: 'VOLUME',
         fullScreen: 'FULL-SCREEN',
         pip: 'PIP',
-        rotation: 'ROTATION'
+        rotation: 'ROTATION',
+        theaterMode: 'THEATER-MODE',
       },
       isEnableAutoColorChange: false,
     };
@@ -56,6 +58,7 @@ class OTTMediaPlayer {
     this.fullScreenBtn = this.controls.fullScreenBtn;
     this.pipModeBtn = this.controls.pipModeBtn;
     this.rotationBtn = this.controls.rotationBtn;
+    this.theaterModeBtn = this.controls.theaterModeBtn;
 
     this.playbackMode = this.controls.videoMode;
 
@@ -95,6 +98,7 @@ class OTTMediaPlayer {
     this.seekBar.addEventListener('input', () => this.seekVideo());
 
     this.rotationBtn.addEventListener('click', () => this.toggleScreenRotation());
+    this.theaterModeBtn.addEventListener('click', () => this.toogleTheaterMode(!this.config.isEnableTheaterMode));
     // Native Video Events
     this.video.addEventListener('volumechange', () => this.updateVolumeBar());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
@@ -119,8 +123,8 @@ class OTTMediaPlayer {
   }
 
   bindKeyPressEvent() {
-    document.addEventListener('keydown', (event) => {      
-      switch(event.code) {
+    document.addEventListener('keydown', (event) => {
+      switch (event.code) {
         case 'Space':
         case 'Enter':
           this.togglePlayPause();
@@ -140,12 +144,12 @@ class OTTMediaPlayer {
           playPreviousMedia();
           break;
         case 'KeyF':
-          if(document.fullscreenElement)
+          if (document.fullscreenElement)
             document.exitFullscreen();
           this.toggleFullScreen(!this.config.isEnableFullScreen);
           break;
         case 'KeyP':
-          if(document.pictureInPictureElement)
+          if (document.pictureInPictureElement)
             document.exitPictureInPicture();
           this.togglePipMode(!this.config.isEnablePipMode);
           break;
@@ -156,7 +160,7 @@ class OTTMediaPlayer {
           break;
         case 'Minus': // Volume Down
         case 'Hypen':
-          this.volumeBar.value = this.video.volume > 0 ? ((Number(this.volumeBar.value || 1) - 0.01)%1).toFixed(2) : this.volumeBar.value;
+          this.volumeBar.value = this.video.volume > 0 ? ((Number(this.volumeBar.value || 1) - 0.01) % 1).toFixed(2) : this.volumeBar.value;
           this.setVolume();
           break;
         case 'KeyM': // Mute
@@ -172,7 +176,7 @@ class OTTMediaPlayer {
         case 'Digit7':
         case 'Digit8':
         case 'Digit9':
-          this.volumeBar.value = event.key/10;
+          this.volumeBar.value = event.key / 10;
           this.setVolume();
           break;
         case 'KeyT': // Trim Start
@@ -188,7 +192,7 @@ class OTTMediaPlayer {
           this.resetTrimRange();
           break;
         case 'KeyO': // Video Rotation
-          if(document.fullscreenElement && !this.config.rotationCount) {
+          if (document.fullscreenElement && !this.config.rotationCount) {
             console.warn("Screen Rotation will not work");
             return;
           }
@@ -216,6 +220,45 @@ class OTTMediaPlayer {
     this.trimUIControls.trimEndInput.addEventListener('input', () => this.updateTrimFromInput('end'));
     this.trimUIControls.isRepeateChkBox.addEventListener('change', () => this.toggleAutoLoop());
     this.trimUIControls.repeateTrimBtn.addEventListener('click', () => this.toggleRepeteTrim());
+  }
+
+  theaterModeCssConfig(isEnableTheaterMode) {
+    // player section styles
+    const playerCard = document.querySelector('.content.player-card');
+    playerCard.style.position = isEnableTheaterMode ? 'fixed' : '';
+    playerCard.style.top = isEnableTheaterMode ? '0' : '';
+    playerCard.style.left = isEnableTheaterMode ? '0' : '';
+    playerCard.style.width = isEnableTheaterMode ? '100vw' : '';
+    playerCard.style.height = isEnableTheaterMode ? '100vh' : '';
+    playerCard.style.zIndex = isEnableTheaterMode ? '9999' : '';
+    // video styles
+    const video = document.querySelector('.media-video-player');
+    video.style.position = isEnableTheaterMode ? 'fixed' : '';
+    video.style.top = isEnableTheaterMode ? '0' : '';
+    video.style.left = isEnableTheaterMode ? '0' : '';
+    video.style.width = isEnableTheaterMode ? '100vw' : '';
+    video.style.height = isEnableTheaterMode ? '100vh' : '';
+    video.style.zIndex = isEnableTheaterMode ? '10000' : '';
+    video.style.objectFit = isEnableTheaterMode ? 'fill' : '';
+    // video controls zIndex
+    const controls = document.getElementById('media-media-controls');
+    controls.style.zIndex = isEnableTheaterMode ? '10001' : '';
+  }
+
+  toogleTheaterMode(isEnableTheaterMode) {
+    this.config.isEnableTheaterMode = isEnableTheaterMode;
+    if (isEnableTheaterMode) {
+      // Exit Pip mode if enabled
+      if (!!document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      }
+    }
+    this.theaterModeCssConfig(isEnableTheaterMode);
+    if(!isEnableTheaterMode) {
+      this.config.isEnableFullScreen = false;
+      this.config.isEnablePipMode = false;
+    }
+    this.updateUIButton({ type: this.config.btnType.theaterMode });
   }
 
   toggleFullScreen(isEnableFullScreen) {
@@ -267,7 +310,7 @@ class OTTMediaPlayer {
 
   seekVideo() {
     this.video.currentTime = Math.floor(this.video.duration * parseInt(this.seekBar.value) / 100);
-    if(this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
+    if (this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
       this.trimConfig.isTrimActive = false;
       this.updateTrimDisplays();
     }
@@ -280,7 +323,7 @@ class OTTMediaPlayer {
 
     if (this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
       this.video.currentTime = this.trimConfig.trimStart;
-      if(this.trimConfig.isAutoLoopEnabled) {
+      if (this.trimConfig.isAutoLoopEnabled) {
         this.video.play();
         this.updateUIButton({ type: this.config.btnType.playPause });
       } else {
@@ -294,7 +337,7 @@ class OTTMediaPlayer {
       this.lastUpdateTime = now;
     }
 
-    if(shouldUpdateUI && this.config.isEnableAutoColorChange && parseInt(this.video.currentTime)%1 === 0) {
+    if (shouldUpdateUI && this.config.isEnableAutoColorChange && parseInt(this.video.currentTime) % 1 === 0) {
       this.updateAutoColorChange();
     }
   }
@@ -335,20 +378,20 @@ class OTTMediaPlayer {
   }
   isBtwnTrimRange() {
     return this.isValidRange() && this.trimConfig.isTrimActive &&
-      this.trimConfig.trimStart <= this.video.currentTime  && this.video.currentTime <= this.trimConfig.trimEnd;
+      this.trimConfig.trimStart <= this.video.currentTime && this.video.currentTime <= this.trimConfig.trimEnd;
   }
 
   updateTrimDisplays() {
     this.trimUIControls.trimStartInput.value = this.formatTime(this.trimConfig.trimStart);
     this.trimUIControls.trimEndInput.value = this.formatTime(this.trimConfig.trimEnd);
-    
+
     // UI Button Status
-    if(this.trimConfig.isTrimActive && this.isBtwnTrimRange()) {
+    if (this.trimConfig.isTrimActive && this.isBtwnTrimRange()) {
       this.trimUIControls.playTrimmedBtn.disabled = false;
     }
     this.trimUIControls.repeateTrimBtn.disabled = !this.trimConfig.isTrimActive;
-    this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` : 
-                        this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
+    this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` :
+      this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
   }
 
   updateTrimFromInput(type) {
@@ -391,7 +434,7 @@ class OTTMediaPlayer {
 
   playTrimmedSegment() {
     if (!this.trimConfig.isTrimActive) {
-      if((this.video.currentTime > (this.trimConfig.trimEnd + 1)) || (this.video.currentTime < (this.trimConfig.trimStart-1))) {
+      if ((this.video.currentTime > (this.trimConfig.trimEnd + 1)) || (this.video.currentTime < (this.trimConfig.trimStart - 1))) {
         this.trimConfig.isTrimActive = true;
         this.video.pause();
         this.playTrimmedSegment();
@@ -402,7 +445,7 @@ class OTTMediaPlayer {
       alert('Invalid trim range. Start time must be before end time.');
       return;
     }
-    if(this.video.currentTime < this.trimConfig.trimStart || this.video.currentTime >= this.trimConfig.trimEnd) {
+    if (this.video.currentTime < this.trimConfig.trimStart || this.video.currentTime >= this.trimConfig.trimEnd) {
       this.video.currentTime = this.trimConfig.trimStart;
       this.updateTrimDisplays();
     }
@@ -421,8 +464,8 @@ class OTTMediaPlayer {
     this.video.style.filter = this.getVideoMode();
   }
 
-  updateAutoColorChange () {
-    this.video.style.filter = this.video.style.filter.replace(/(?<=(hue-rotate\())\d+(?=deg\))/gi, x => parseInt(Math.random(0,1) * 360));
+  updateAutoColorChange() {
+    this.video.style.filter = this.video.style.filter.replace(/(?<=(hue-rotate\())\d+(?=deg\))/gi, x => parseInt(Math.random(0, 1) * 360));
     // console.warn('pos: ', parseInt(this.video.currentTime), 'style: ', this.video.style.filter);
   };
 
@@ -450,7 +493,7 @@ class OTTMediaPlayer {
         return 'blur(2px)';
       case 'autocolorchange':
         this.config.isEnableAutoColorChange = true;
-        return `hue-rotate(${parseInt(Math.random(0,1) * 360)}deg) contrast(120%) brightness(90%)`;
+        return `hue-rotate(${parseInt(Math.random(0, 1) * 360)}deg) contrast(120%) brightness(90%)`;
       default:
         return '';
     }
@@ -468,8 +511,8 @@ class OTTMediaPlayer {
     switch (config.type) {
       case this.config.btnType.playPause:
         this.playPauseBtn.innerHTML = `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i>`;
-        this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` : 
-                        this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
+        this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` :
+          this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
         break;
       case this.config.btnType.volume:
         this.volumeBtn.innerHTML = `<i class="fa fa-volume-${!!this.video.muted ? 'mute' : 'up'}"></i>`;
@@ -480,20 +523,23 @@ class OTTMediaPlayer {
         this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipMode ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
         break;
       case this.config.btnType.rotation:
-        this.rotationBtn.innerHTML = `<i class="fa fa-undo" style="transform: rotate(${-90*this.config.rotationCount}deg);"></i>`;
+        this.rotationBtn.innerHTML = `<i class="fa fa-undo" style="transform: rotate(${-90 * this.config.rotationCount}deg);"></i>`;
+        break;
+      case this.config.btnType.theaterMode:
+        this.theaterModeBtn.innerHTML = `<i class="fas fa-theater-masks"></i>`;
         break;
     }
   }
 
   toggleScreenRotation() {
-    this.config.rotationCount = (this.config.rotationCount + 1)%4;
-    this.video.style.transform = `rotate(${-90*this.config.rotationCount}deg)`;
+    this.config.rotationCount = (this.config.rotationCount + 1) % 4;
+    this.video.style.transform = `rotate(${-90 * this.config.rotationCount}deg)`;
     this.updateUIButton({ type: this.config.btnType.rotation });
   }
 
   onVideoEnded() {
     const mediaDropdown = document.getElementById('mediaDropdown');
-    if(mediaDropdown && mediaDropdown.selectedIndex < mediaDropdown.options.length) {
+    if (mediaDropdown && mediaDropdown.selectedIndex < mediaDropdown.options.length) {
       playNextMedia();
     }
   }
@@ -546,17 +592,16 @@ class OTTMediaPlayer {
   }
 
   ffmpegScript() {
-    
     const videoResolution = {
       width: this.video.videoWidth,
       height: this.video.videoHeight
     };
     const cropVideo = {
-      FourK: {width: 3840,  height: 2160},
-      FHD: { width: 1920, height: 1080},
-      HD:  { width: 1080,  height: 720} 
+      FourK: { width: 3840, height: 2160 },
+      FHD: { width: 1920, height: 1080 },
+      HD: { width: 1080, height: 720 }
     };
-    const isHighResolution = Math.max(videoResolution.width,videoResolution.height) >= Math.max(cropVideo.FourK.width, cropVideo.FourK.height);
+    const isHighResolution = Math.max(videoResolution.width, videoResolution.height) >= Math.max(cropVideo.FourK.width, cropVideo.FourK.height);
 
     const object = {
       INPUTFILE: this.video.name,
@@ -565,7 +610,7 @@ class OTTMediaPlayer {
       OUTPUTFILE: `trim/${this.trimConfig.trimStart.toFixed(2)}`,
       VIDEO_WIDTH: videoResolution.width,
       VIDEO_HEIGHT: videoResolution.height,
-      CORP_HEIGHT: isHighResolution ?  Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(videoResolution.height, cropVideo.HD.height),
+      CORP_HEIGHT: isHighResolution ? Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(videoResolution.height, cropVideo.HD.height),
       CORP_WIDTH: isHighResolution ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height) : Math.min(videoResolution.width, cropVideo.HD.height)
     };
 
@@ -594,13 +639,13 @@ class OTTMediaPlayer {
       cropVideo_left_center_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(0+1)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_right_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(1+2)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_extrime_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:({VIDEO_WIDTH}-{CORP_WIDTH}):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      
+
       break4: '\n--------Reverse Corped Video Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
       cropVideo_extrime_left_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_left_center_mid_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_right_mid_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_extrime_right_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      
+
       break5: '--------Merge Clips-------------',
       mergedCropVideo: 'ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp4',
       mergedCropVideo_no_Audio: 'ffmpeg -i "mergedCropVideo.mp4" -an {SCRIPTKEY}.mp4',
@@ -612,12 +657,12 @@ class OTTMediaPlayer {
     }
 
     console.clear();
-    Object.keys(scriptList).forEach(script => 
+    Object.keys(scriptList).forEach(script =>
       console.log(
         scriptList[script]
-              .replace(/\{SCRIPTKEY\}/gi, script)
-              .replace(/\{SCRIPTKEY-REV\}/gi, script.replace('_reverse', ''))
-              .replace(/\{\w+\}/gi, (x) => object[x.replace(/[\}\{]/gi, '')])
+          .replace(/\{SCRIPTKEY\}/gi, script)
+          .replace(/\{SCRIPTKEY-REV\}/gi, script.replace('_reverse', ''))
+          .replace(/\{\w+\}/gi, (x) => object[x.replace(/[\}\{]/gi, '')])
       )
     );
   }
@@ -703,7 +748,7 @@ function playPreviousMedia() {
   if (mediaDropdown.selectedIndex > 1) { // Index 0 is default, 1 is first file
     mediaDropdown.selectedIndex--;
     playSelectedMedia();
-  } else if(mediaDropdown.selectedIndex === 1) {
+  } else if (mediaDropdown.selectedIndex === 1) {
     mediaDropdown.selectedIndex = mediaDropdown.options.length - 1;
     playSelectedMedia();
   }
@@ -715,7 +760,7 @@ function playNextMedia() {
   if (mediaDropdown.selectedIndex < mediaDropdown.options.length - 1) {
     mediaDropdown.selectedIndex++;
     playSelectedMedia();
-  } else if(mediaDropdown.selectedIndex === mediaDropdown.options.length - 1) {
+  } else if (mediaDropdown.selectedIndex === mediaDropdown.options.length - 1) {
     mediaDropdown.selectedIndex = 1;
     playSelectedMedia();
   }
@@ -744,6 +789,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fullScreenBtn: document.getElementById('fullScreen'),
     pipModeBtn: document.getElementById('pipMode'),
     rotationBtn: document.getElementById('screenRotation'),
+    theaterModeBtn: document.getElementById('theaterMode'),
 
     volumeBar: document.getElementById('volumeBar'),
     volumeValue: document.getElementById('volumeValue'),
@@ -764,7 +810,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const player = new OTTMediaPlayer(
     document.getElementById('media-video-player'),
-    playerConfig, 
+    playerConfig,
     { trimFeature }
   );
   OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
