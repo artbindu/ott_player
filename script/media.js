@@ -133,6 +133,12 @@ class OTTMediaPlayer {
         case 'ArrowRight':
           this.toggleForwardPlayback(this.config.fwdTime);
           break;
+        case 'KeyN':
+          playNextMedia();
+          break;
+        case 'KeyV':
+          playPreviousMedia();
+          break;
         case 'KeyF':
           if(document.fullscreenElement)
             document.exitFullscreen();
