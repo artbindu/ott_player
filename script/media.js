@@ -6,16 +6,19 @@ class OTTMediaPlayer {
       isEnableFullScreen: false,
       isEnablePipMode: false,
       isEnableTheaterMode: false,
+      isEnableMultiview: false,
+      multiviewCount: 0,
       rotationCount: 0,
+      multiviewVideos: [],
       btnType: {
         playPause: 'PLAY-PAUSE',
         volume: 'VOLUME',
         seek: 'SEEK',
-        volume: 'VOLUME',
         fullScreen: 'FULL-SCREEN',
         pip: 'PIP',
         rotation: 'ROTATION',
         theaterMode: 'THEATER-MODE',
+        multiviewMode: 'MULTIVIEW-MODE',
       },
       isEnableAutoColorChange: false,
     };
@@ -59,6 +62,7 @@ class OTTMediaPlayer {
     this.pipModeBtn = this.controls.pipModeBtn;
     this.rotationBtn = this.controls.rotationBtn;
     this.theaterModeBtn = this.controls.theaterModeBtn;
+    this.multiviewModeBtn = this.controls.multiviewModeBtn;
 
     this.playbackMode = this.controls.videoMode;
 
@@ -98,7 +102,8 @@ class OTTMediaPlayer {
     this.seekBar.addEventListener('input', () => this.seekVideo());
 
     this.rotationBtn.addEventListener('click', () => this.toggleScreenRotation());
-    this.theaterModeBtn.addEventListener('click', () => this.toogleTheaterMode(!this.config.isEnableTheaterMode));
+    this.theaterModeBtn.addEventListener('click', () => this.toggleTheaterMode(!this.config.isEnableTheaterMode));
+    this.multiviewModeBtn.addEventListener('click', () => this.toggleMultiviewMode());
     // Native Video Events
     this.video.addEventListener('volumechange', () => this.updateVolumeBar());
     this.video.addEventListener('timeupdate', () => this.updateSeekBar());
@@ -144,9 +149,11 @@ class OTTMediaPlayer {
           playPreviousMedia();
           break;
         case 'KeyF':
-          if (document.fullscreenElement)
-            document.exitFullscreen();
+          if (document.fullscreenElement) document.exitFullscreen();
           this.toggleFullScreen(!this.config.isEnableFullScreen);
+          break;
+        case 'KeyH':
+          toggleTheaterMode(!this.config.isEnableTheaterMode);
           break;
         case 'KeyP':
           if (document.pictureInPictureElement)
@@ -222,7 +229,7 @@ class OTTMediaPlayer {
     this.trimUIControls.repeateTrimBtn.addEventListener('click', () => this.toggleRepeteTrim());
   }
 
-  theaterModeCssConfig(isEnableTheaterMode) {
+  theaterModeCssConfig(isEnableTheaterMode, isEnableMultiview = false) {
     // player section styles
     const playerCard = document.querySelector('.content.player-card');
     playerCard.style.position = isEnableTheaterMode ? 'fixed' : '';
@@ -232,7 +239,7 @@ class OTTMediaPlayer {
     playerCard.style.height = isEnableTheaterMode ? '100vh' : '';
     playerCard.style.zIndex = isEnableTheaterMode ? '9999' : '';
     // video styles
-    const video = document.querySelector('.media-video-player');
+    const video = document.querySelector(isEnableMultiview ? '.multiview-video-player' : '.media-video-player');
     video.style.position = isEnableTheaterMode ? 'fixed' : '';
     video.style.top = isEnableTheaterMode ? '0' : '';
     video.style.left = isEnableTheaterMode ? '0' : '';
@@ -245,7 +252,7 @@ class OTTMediaPlayer {
     controls.style.zIndex = isEnableTheaterMode ? '10001' : '';
   }
 
-  toogleTheaterMode(isEnableTheaterMode) {
+  toggleTheaterMode(isEnableTheaterMode) {
     this.config.isEnableTheaterMode = isEnableTheaterMode;
     if (isEnableTheaterMode) {
       // Exit Pip mode if enabled
@@ -259,6 +266,67 @@ class OTTMediaPlayer {
       this.config.isEnablePipMode = false;
     }
     this.updateUIButton({ type: this.config.btnType.theaterMode });
+  }
+
+  toggleMultiviewMode() {
+    this.config.isEnableMultiview = !this.config.isEnableMultiview;
+    if (this.config.isEnableMultiview) {
+      // Exit other modes if enabled
+      if (!!document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      }
+      this.config.isEnableTheaterMode = false;
+      this.theaterModeCssConfig(false, true);
+      this.config.multiviewCount = 1; // Dual video mode
+      this.createMultiviewLayout();
+    } else {
+      this.config.multiviewCount = 0;
+      this.destroyMultiviewLayout();
+    }
+    if (!this.config.isEnableMultiview) {
+      this.config.isEnableFullScreen = false;
+      this.config.isEnablePipMode = false;
+    }
+    this.updateUIButton({ type: this.config.btnType.multiviewMode });
+  }
+
+  createMultiviewLayout() {
+    const container = document.getElementById('multiview-container');
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = '1fr 1fr';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.gap = '5px';
+    container.innerHTML = ''; // Clear any existing content
+
+    for (let i = 0; i < this.config.multiviewCount; i++) {
+      const video = document.createElement('video');
+      video.src = this.video.src;
+      video.currentTime = this.video.currentTime;
+      video.volume = this.video.volume;
+      video.muted = true;
+      video.playbackRate = this.video.playbackRate;
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.objectFit = 'contain';
+
+      container.appendChild(video);
+      this.config.multiviewVideos.push(video);
+    }
+
+    this.video.style.display = 'none';
+    // Start playing multiview videos
+    this.config.multiviewVideos.forEach(v => v.play());
+  }
+
+  destroyMultiviewLayout() {
+    const container = document.getElementById('multiview-container');
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+    }
+    this.config.multiviewVideos = [];
+    this.video.style.display = '';
   }
 
   toggleFullScreen(isEnableFullScreen) {
@@ -282,20 +350,36 @@ class OTTMediaPlayer {
     this.updateVolumeBar();
   }
 
+  toggleResetPlayer() {
+    this.video.currentTime = 0;
+    this.video.play();
+    if (this.config.isEnableMultiview) {
+      this.config.multiviewVideos.forEach(v => {
+        v.currentTime = 0;
+        v.play();
+      });
+    }
+    this.updateUIButton({ type: this.config.btnType.playPause });
+  }
+
   togglePlayPause(isNative = true) {
     if (isNative) { this.trimConfig.isTrimActive = false; }
-    this.video.paused ? this.video.play() : this.video.pause();
+    if (this.video.paused) {
+      this.video.play();
+      if (this.config.isEnableMultiview) {
+        this.config.multiviewVideos.forEach(v => v.play());
+      }
+    } else {
+      this.video.pause();
+      if (this.config.isEnableMultiview) {
+        this.config.multiviewVideos.forEach(v => v.pause());
+      }
+    }
     this.updateUIButton({ type: this.config.btnType.playPause });
   }
 
   setPlaybackSpeed() {
     this.video.playbackRate = parseFloat(this.playbackRate.value);
-  }
-
-  toggleResetPlayer() {
-    this.video.currentTime = 0;
-    this.video.play();
-    this.updateUIButton({ type: this.config.btnType.playPause });
   }
 
   toggleForwardPlayback(amount = 0) {
@@ -528,6 +612,9 @@ class OTTMediaPlayer {
       case this.config.btnType.theaterMode:
         this.theaterModeBtn.innerHTML = `<i class="fas fa-theater-masks"></i>`;
         break;
+      case this.config.btnType.multiviewMode:
+        this.multiviewModeBtn.innerHTML = `<i class="fas ${this.config.isEnableMultiview ? 'fa-th-large' : 'fa-th'}"></i>`;
+        break;
     }
   }
 
@@ -716,6 +803,7 @@ function loadDirectoryFiles() {
       });
     mediaDropdown.hidden = false;
     document.getElementById('navButtonsRow').style.display = ''; // Show nav buttons when media files are loaded
+    window.player.controls.multiviewModeBtn.style.display = ''; // Show multiview button when directory is loaded
     // Automatically select and play the first media file
     if (mediaDropdown.options.length > 1) {
       mediaDropdown.selectedIndex = 1;
@@ -725,6 +813,7 @@ function loadDirectoryFiles() {
     directoryName.textContent = 'No Directory';
     mediaDropdown.hidden = true;
     document.getElementById('navButtonsRow').style.display = 'none'; // Hide nav buttons when no files
+    window.player.controls.multiviewModeBtn.style.display = 'none'; // Hide multiview button when no directory
   }
 }
 
@@ -733,12 +822,78 @@ function playSelectedMedia() {
   const mediaDropdown = document.getElementById('mediaDropdown');
   const selectedValue = mediaDropdown.value;
   if (selectedValue) {
-    const video = document.getElementById('media-video-player');
-    video.pause();
-    video.src = selectedValue;
-    video.name = mediaDropdown.options[mediaDropdown.selectedIndex].textContent;
-    video.load();
-    video.play();
+    if (window.player && window.player.config.isEnableMultiview) {
+      // In multiview mode, maintain a stack of up to 6 videos: add new at top, remove oldest if exceeding
+      const container = document.getElementById('multiview-container');
+      if (window.player.config.multiviewVideos.length >= 6) {
+        // Remove the oldest video (last in array)
+        const lastVideo = window.player.config.multiviewVideos.pop();
+        container.removeChild(lastVideo);
+      }
+      const video = document.createElement('video');
+      video.src = selectedValue;
+      video.name = mediaDropdown.options[mediaDropdown.selectedIndex].textContent;
+      video.currentTime = window.player.video.currentTime;
+      video.volume = window.player.video.volume;
+      video.muted = true;
+      video.playbackRate = window.player.video.playbackRate;
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.objectFit = 'contain';
+      // Insert at the top of the container
+      container.insertBefore(video, container.firstChild);
+      window.player.config.multiviewVideos.unshift(video);
+      video.play();
+
+
+      // Add ended event for automatic next/random video
+      video.addEventListener('ended', () => {
+        // Remove ended video from container and array
+        const index = window.player.config.multiviewVideos.indexOf(video);
+        if (index > -1) {
+          window.player.config.multiviewVideos.splice(index, 1);
+          container.removeChild(video);
+        }
+        // Pick next or random video from directory
+        let nextIndex = -1;
+        for (let i = 1; i < mediaDropdown.options.length; i++) {
+          if (mediaDropdown.options[i].textContent === video.name) {
+            nextIndex = i + 1;
+            if (nextIndex >= mediaDropdown.options.length) {
+              // No next, pick random
+              nextIndex = Math.floor(Math.random() * (mediaDropdown.options.length - 1)) + 1;
+            }
+            break;
+          }
+        }
+        if (nextIndex > 0) {
+          mediaDropdown.selectedIndex = nextIndex;
+          playSelectedMedia();
+        }
+      });
+      // Adjust grid layout based on number of videos (up to 6)
+      const count = window.player.config.multiviewVideos.length;
+      if (count === 1) {
+        container.style.gridTemplateColumns = '1fr';
+      } else if (count === 2) {
+        container.style.gridTemplateColumns = '1fr 1fr';
+      } else if (count <= 4) {
+        container.style.gridTemplateColumns = '1fr 1fr';
+        container.style.gridTemplateRows = '1fr 1fr';
+      } else {
+        // For 5-6 videos, use 3 columns (2 rows)
+        container.style.gridTemplateColumns = '1fr 1fr 1fr';
+        container.style.gridTemplateRows = '1fr 1fr';
+      }
+    } else {
+      // Normal mode: set the main video
+      const video = document.getElementById('media-video-player');
+      video.pause();
+      video.src = selectedValue;
+      video.name = mediaDropdown.options[mediaDropdown.selectedIndex].textContent;
+      video.load();
+      video.play();
+    }
   }
 }
 
@@ -790,6 +945,7 @@ document.addEventListener('DOMContentLoaded', function () {
     pipModeBtn: document.getElementById('pipMode'),
     rotationBtn: document.getElementById('screenRotation'),
     theaterModeBtn: document.getElementById('theaterMode'),
+    multiviewModeBtn: document.getElementById('multiviewMode'),
 
     volumeBar: document.getElementById('volumeBar'),
     volumeValue: document.getElementById('volumeValue'),
@@ -813,6 +969,8 @@ document.addEventListener('DOMContentLoaded', function () {
     playerConfig,
     { trimFeature }
   );
+  window.player = player; // Make player global for access in other functions
+  player.controls.multiviewModeBtn.style.display = 'none'; // Hide multiview button by default
   OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
   // Attach playFromHeaderUrl to global for button usage
   window.playFromHeaderUrl = function () {
