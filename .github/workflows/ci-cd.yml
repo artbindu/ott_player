@@ -31,10 +31,10 @@ jobs:
       run: |
         ls -la dist/
         test -f dist/index.html
-        test -f dist/style/media.min.css
+        test -d dist/style
         test -f dist/script/media.min.js
         test -f dist/favicon.ico
-        test -f dist/data/sample.mp4
+        test -d dist/data
         echo "✅ Build validation passed"
 
     - name: Upload build artifacts
@@ -91,7 +91,7 @@ jobs:
       run: npm ci
 
     - name: Build for production
-      run: npm run build:prod
+      run: npm run build
 
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v1.2

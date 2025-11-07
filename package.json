@@ -4,9 +4,9 @@
   "description": "create a custom media player using native html",
   "main": "http-server -p 54322 -o",
   "scripts": {
-    "clean": "node -e \"const fs=require('fs'); try { fs.rmSync('dist', {recursive: true, force: true}); } catch(e) {}\"",
+    "clean": "rm -rf dist",
     "prebuild": "npm run clean",
-    "build": "node build.js",
+    "build": "mkdir -p dist && rollup -c && cp index.html dist/ && sed -i '' 's/script\\/media\\.js/script\\/media.min.js/g' dist/index.html && cp -r style dist/ && cp favicon.ico dist/ && cp -r data dist/",
     "server": "http-server dist -p 54322 -o -d",
     "start": "npm run build && npm run server",
     "watch": "nodemon --exec npm run build"
@@ -21,8 +21,11 @@
     "http-server": "^0.12.1"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
     "clean-css-cli": "^5.6.3",
     "nodemon": "^3.1.10",
+    "rollup": "^2.79.2",
+    "rollup-plugin-terser": "^7.0.2",
     "uglify-js": "^3.19.3"
   }
 }
