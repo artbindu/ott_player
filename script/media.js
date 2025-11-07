@@ -1,3 +1,5 @@
+import Utils from './utils.js';
+
 class OTTMediaPlayer {
   constructor(videoElement, controls, playerFeatures) {
     this.config = {
@@ -7,16 +9,7 @@ class OTTMediaPlayer {
       isEnablePipMode: false,
       isEnableTheaterMode: false,
       rotationCount: 0,
-      btnType: {
-        playPause: 'PLAY-PAUSE',
-        volume: 'VOLUME',
-        seek: 'SEEK',
-        volume: 'VOLUME',
-        fullScreen: 'FULL-SCREEN',
-        pip: 'PIP',
-        rotation: 'ROTATION',
-        theaterMode: 'THEATER-MODE',
-      },
+      btnType: Utils.buttonType,
       isEnableAutoColorChange: false,
     };
     this.video = videoElement;
@@ -65,7 +58,7 @@ class OTTMediaPlayer {
     // Video Controls Events
     this.bindEvents();
     this.updateUIControls();
-    this.bindKeyPressEvent();
+    Utils.bindKeyPressEvent(this);
 
     // Trim Feature Events
     this.bindTrimEvents();
@@ -124,84 +117,70 @@ class OTTMediaPlayer {
 
   bindKeyPressEvent() {
     document.addEventListener('keydown', (event) => {
-      switch (event.code) {
-        case 'Space':
-        case 'Enter':
+      switch (Utils.keyType(event.code)) {
+        case 'PLAY_PAUSE':
           this.togglePlayPause();
           break;
-        case 'KeyA':
-        case 'ArrowLeft':
+        case 'FAST_FORWARD':
           this.toggleForwardPlayback(this.config.rndTime);
           break;
-        case 'KeyD':
-        case 'ArrowRight':
+        case 'FAST_BACKWARD':
           this.toggleForwardPlayback(this.config.fwdTime);
           break;
-        case 'KeyN':
+        case 'PLAY_NEXT':
           playNextMedia();
           break;
-        case 'KeyV':
+        case 'PLAY_PREVIOUS':
           playPreviousMedia();
           break;
-        case 'KeyF':
+        case 'FULL_SCREEN':
           if (document.fullscreenElement)
             document.exitFullscreen();
           this.toggleFullScreen(!this.config.isEnableFullScreen);
           break;
-        case 'KeyP':
+        case 'PIP_MODE':
           if (document.pictureInPictureElement)
             document.exitPictureInPicture();
           this.togglePipMode(!this.config.isEnablePipMode);
           break;
-        case 'Equal': // Volume Up
-        case 'Plus':
+        case 'VOLUME_UP':
           this.volumeBar.value = this.video.volume < 1 ? (Number(this.volumeBar.value || 0) + 0.01).toFixed(2) : this.volumeBar.value;
           this.setVolume();
           break;
-        case 'Minus': // Volume Down
-        case 'Hypen':
+        case 'VOLUME_DOWN':
           this.volumeBar.value = this.video.volume > 0 ? ((Number(this.volumeBar.value || 1) - 0.01) % 1).toFixed(2) : this.volumeBar.value;
           this.setVolume();
           break;
-        case 'KeyM': // Mute
+        case 'VOLUME_MUTE': // Mute
           this.toggleMute();
           break;
-        case 'Digit0':
-        case 'Digit1':
-        case 'Digit2':
-        case 'Digit3':
-        case 'Digit4':
-        case 'Digit5':
-        case 'Digit6':
-        case 'Digit7':
-        case 'Digit8':
-        case 'Digit9':
+        case 'VOLUME_BAR_VALUE':
           this.volumeBar.value = event.key / 10;
           this.setVolume();
           break;
-        case 'KeyT': // Trim Start
+        case 'TRIM_START_TIME':
           this.setTrimStart();
           break;
-        case 'KeyC': // Trim Cut (End)
+        case 'TRIM_END_TIME':
           this.setTrimEnd();
           break;
-        case 'KeyG': // Play Trim Range Video
+        case 'PLAY_TRIMED_VIDEO':
           this.playTrimmedSegment();
           break;
-        case 'KeyR': // Reset Trim Range
+        case 'RESET_TRIME_RANGE':
           this.resetTrimRange();
           break;
-        case 'KeyO': // Video Rotation
+        case 'VIDEO_RATION':
           if (document.fullscreenElement && !this.config.rotationCount) {
             console.warn("Screen Rotation will not work");
             return;
           }
           this.toggleScreenRotation();
           break;
-        case 'ArrowUp': // Previous Video Mode
+        case 'PREVIOUS_VIDEO_MODE': // Previous Video Mode
           this.cycleVideoMode(-1);
           break;
-        case 'ArrowDown': // Next Video Mode
+        case 'NEXT_VIDEO_MODE': // Next Video Mode
           this.cycleVideoMode(1);
           break;
         default:

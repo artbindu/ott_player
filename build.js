@@ -50,7 +50,7 @@ try {
     if (!fs.existsSync(scriptDir)) {
         fs.mkdirSync(scriptDir, { recursive: true });
     }
-    execSync('npx uglifyjs script/media.js -o dist/script/media.min.js --compress --mangle', { stdio: 'inherit' });
+    execSync('npx uglifyjs script/utils.js script/media.js -o dist/script/media.min.js --compress --mangle', { stdio: 'inherit' });
     console.log('✅ Minified JavaScript');
 } catch (error) {
     console.error('❌ Error minifying JavaScript:', error.message);
