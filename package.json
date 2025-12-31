@@ -4,8 +4,6 @@
   "description": "create a custom media player using native html",
   "main": "http-server -p 54322 -o",
   "scripts": {
-    "clean": "node -e \"const fs=require('fs'); try { fs.rmSync('dist', {recursive: true, force: true}); } catch(e) {}\"",
-    "prebuild": "npm run clean",
     "build": "node build.js",
     "server": "http-server dist -p 54322 -o -d",
     "start": "npm run build && npm run server",
