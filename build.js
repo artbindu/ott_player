@@ -11,14 +11,6 @@ if (!fs.existsSync(buildDir)) {
     console.log('✅ Created build directory');
 }
 
-// Copy HTML file
-try {
-    fs.copyFileSync('index.html', path.join(buildDir, 'index.html'));
-    console.log('✅ Copied index.html');
-} catch (error) {
-    console.error('❌ Error copying index.html:', error.message);
-}
-
 // Copy favicon
 try {
     fs.copyFileSync('favicon.ico', path.join(buildDir, 'favicon.ico'));
@@ -69,7 +61,7 @@ try {
 
 // Update HTML to reference minified files
 try {
-    let htmlContent = fs.readFileSync(path.join(buildDir, 'index.html'), 'utf8');
+    let htmlContent = fs.readFileSync('index.html', 'utf8');
 
     // Update CSS reference
     htmlContent = htmlContent.replace(
@@ -84,7 +76,7 @@ try {
     );
 
     fs.writeFileSync(path.join(buildDir, 'index.html'), htmlContent);
-    console.log('✅ Updated HTML references');
+    console.log('✅ Created and updated index.html with minified references');
 } catch (error) {
     console.error('❌ Error updating HTML references:', error.message);
 }
