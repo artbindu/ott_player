@@ -91,7 +91,7 @@ jobs:
       run: npm ci
 
     - name: Build for production
-      run: npm run build:prod
+      run: npm run build
 
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v1.2
