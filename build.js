@@ -52,8 +52,12 @@ try {
     }
     execSync('npx uglifyjs script/media.js -o dist/script/media.min.js --compress --mangle', { stdio: 'inherit' });
     console.log('✅ Minified JavaScript');
+    
+    // Obfuscate the minified JavaScript
+    execSync('npx javascript-obfuscator dist/script/media.min.js --output dist/script/media.min.js --compact true --control-flow-flattening true', { stdio: 'inherit' });
+    console.log('✅ Obfuscated JavaScript');
 } catch (error) {
-    console.error('❌ Error minifying JavaScript:', error.message);
+    console.error('❌ Error minifying/obfuscating JavaScript:', error.message);
     // Fallback: copy original JS file if minification fails
     try {
         fs.copyFileSync('script/media.js', path.join(buildDir, 'script', 'media.js'));
