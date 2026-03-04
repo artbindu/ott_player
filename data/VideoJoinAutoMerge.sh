@@ -13,3 +13,6 @@ OUTPUT_FILE="mergevideolist.txt"
 find "$DIR" -maxdepth 1 -type f -printf "%T@ %p\n" | sort -n | cut -d' ' -f2- | while read -r file; do
   echo "file $file" >> "$OUTPUT_FILE"
 done
+
+# Auto Merge Videos
+ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy mergedCropVideo.mp4
