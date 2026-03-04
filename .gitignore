@@ -12,6 +12,7 @@ build/
 data/*
 !data/sample.mp4
 !data/movie.mp4
+!data/*.sh
 Telegram Desktop
 Movie
 Movie List
