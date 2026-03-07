@@ -610,8 +610,8 @@ class OTTMediaPlayer {
       OUTPUTFILE: `trim/${this.trimConfig.trimStart.toFixed(2)}`,
       VIDEO_WIDTH: videoResolution.width,
       VIDEO_HEIGHT: videoResolution.height,
-      CORP_HEIGHT: isHighResolution ? Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(videoResolution.height, cropVideo.HD.height),
-      CORP_WIDTH: isHighResolution ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height) : Math.min(videoResolution.width, cropVideo.HD.height)
+      CROP_HEIGHT: isHighResolution ? Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(videoResolution.height, cropVideo.HD.height),
+      CROP_WIDTH: isHighResolution ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height) : Math.min(videoResolution.width, cropVideo.HD.height)
     };
 
     const scriptList = {
@@ -627,9 +627,10 @@ class OTTMediaPlayer {
       rotateVideoAntiClockWise90: `ffmpeg -i "{INPUTFILE}" -vf "transpose=1,transpose=1,transpose=1" "{OUTPUTFILE}_{SCRIPTKEY}_anticlock90.mp4"`,
 
       break2: '\n--------Video Crop Center | Left | Right-------------',
-      cropVideo_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + {CORP_WIDTH}*0):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_center: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + {CORP_WIDTH}*1):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + {CORP_WIDTH}*2):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + {CROP_WIDTH}*0):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_center_OLD: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + {CROP_WIDTH}*1):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_center: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH})/2):(({VIDEO_HEIGHT}-{CROP_HEIGHT})/2)" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + {CROP_WIDTH}*2):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
       break3: '\n--------Reverse Corped Video Center | Left | Right-------------',
       cropVideo_left_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
@@ -637,10 +638,10 @@ class OTTMediaPlayer {
       cropVideo_right_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
       break4: '\n--------Video Crop Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
-      cropVideo_extrime_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:0:({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_left_center_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(0+1)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_center_right_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:(({VIDEO_WIDTH}-{CORP_WIDTH}*3)/2 + ({CORP_WIDTH}*(1+2)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      cropVideo_extrime_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CORP_WIDTH}:{CORP_HEIGHT}:({VIDEO_WIDTH}-{CORP_WIDTH}):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_extrime_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:0:({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_left_center_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + ({CROP_WIDTH}*(0+1)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_center_right_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + ({CROP_WIDTH}*(1+2)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      cropVideo_extrime_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:({VIDEO_WIDTH}-{CROP_WIDTH}):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
       break5: '\n--------Reverse Corped Video Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
       cropVideo_extrime_left_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
