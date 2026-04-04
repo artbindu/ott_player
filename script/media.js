@@ -8,14 +8,14 @@ class OTTMediaPlayer {
       isEnableTheaterMode: false,
       rotationCount: 0,
       btnType: {
-        playPause: 'PLAY-PAUSE',
-        volume: 'VOLUME',
-        seek: 'SEEK',
-        volume: 'VOLUME',
-        fullScreen: 'FULL-SCREEN',
-        pip: 'PIP',
-        rotation: 'ROTATION',
-        theaterMode: 'THEATER-MODE',
+        playPause: "PLAY-PAUSE",
+        volume: "VOLUME",
+        seek: "SEEK",
+        volume: "VOLUME",
+        fullScreen: "FULL-SCREEN",
+        pip: "PIP",
+        rotation: "ROTATION",
+        theaterMode: "THEATER-MODE",
       },
       isEnableAutoColorChange: false,
     };
@@ -84,165 +84,259 @@ class OTTMediaPlayer {
       this.config.isEnablePipMode = !!document.pictureInPictureElement;
       this.updateUIButton({ type: this.config.btnType.fullScreen });
     }, 100);
-  }
+  };
 
   bindEvents() {
-    this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
-    this.playbackRate.addEventListener('change', () => this.setPlaybackSpeed());
-    this.playbackMode.addEventListener('change', () => this.setVideoMode());
-    this.resetPlayback.addEventListener('click', () => this.toggleResetPlayer());
-    this.forwardPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.config.fwdTime));
-    this.backwordPlayback.addEventListener('click', () => this.toggleForwardPlayback(this.config.rndTime));
-    this.volumeBar.addEventListener('input', () => this.setVolume());
-    this.volumeBtn.addEventListener('click', () => this.toggleMute());
-    this.seekBar.addEventListener('input', () => this.seekVideo());
+    this.playPauseBtn.addEventListener("click", () => this.togglePlayPause());
+    this.playbackRate.addEventListener("change", () => this.setPlaybackSpeed());
+    this.playbackMode.addEventListener("change", () => this.setVideoMode());
+    this.resetPlayback.addEventListener("click", () =>
+      this.toggleResetPlayer(),
+    );
+    this.forwardPlayback.addEventListener("click", () =>
+      this.toggleForwardPlayback(this.config.fwdTime),
+    );
+    this.backwordPlayback.addEventListener("click", () =>
+      this.toggleForwardPlayback(this.config.rndTime),
+    );
+    this.volumeBar.addEventListener("input", () => this.setVolume());
+    this.volumeBtn.addEventListener("click", () => this.toggleMute());
+    this.seekBar.addEventListener("input", () => this.seekVideo());
 
-    this.rotationBtn.addEventListener('click', () => this.toggleScreenRotation());
-    this.theaterModeBtn.addEventListener('click', () => this.toogleTheaterMode(!this.config.isEnableTheaterMode));
+    this.rotationBtn.addEventListener("click", () =>
+      this.toggleScreenRotation(),
+    );
+    this.theaterModeBtn.addEventListener("click", () =>
+      this.toogleTheaterMode(!this.config.isEnableTheaterMode),
+    );
     // Native Video Events
-    this.video.addEventListener('volumechange', () => this.updateVolumeBar());
-    this.video.addEventListener('timeupdate', () => this.updateSeekBar());
-    this.video.addEventListener('ended', () => this.onVideoEnded());
+    this.video.addEventListener("volumechange", () => this.updateVolumeBar());
+    this.video.addEventListener("timeupdate", () => this.updateSeekBar());
+    this.video.addEventListener("ended", () => this.onVideoEnded());
+    // this.video.addEventListener("loadedmetadata", () =>
+    //   this.printMediaTracks(),
+    // );
+    // if (this.video.textTracks) {
+    //   this.video.textTracks.onaddtrack = () => this.printMediaTracks();
+    // }
     // PiP Mode Configuration
-    this.pipModeBtn.addEventListener('click', () => this.togglePipMode(!this.config.isEnablePipMode));
-    this.video.addEventListener('leavepictureinpicture', () => {
+    this.pipModeBtn.addEventListener("click", () =>
+      this.togglePipMode(!this.config.isEnablePipMode),
+    );
+    this.video.addEventListener("leavepictureinpicture", () => {
       if (this.config.isEnablePipMode && !document.pictureInPictureElement) {
         this.switchFullScreenPipConfig();
       }
     });
     // Full Screen Configuration
-    this.fullScreenBtn.addEventListener('click', () => this.toggleFullScreen(!this.config.isEnableFullScreen));
-    document.addEventListener('fullscreenchange', () => {
+    this.fullScreenBtn.addEventListener("click", () =>
+      this.toggleFullScreen(!this.config.isEnableFullScreen),
+    );
+    document.addEventListener("fullscreenchange", () => {
       if (!document.fullscreenElement) {
         this.toggleFullScreen(!this.config.isEnableFullScreen);
-        if (!this.config.isEnablePipMode && !!document.pictureInPictureElement) {
+        if (
+          !this.config.isEnablePipMode &&
+          !!document.pictureInPictureElement
+        ) {
           this.switchFullScreenPipConfig();
         }
       }
     });
   }
 
+  // printMediaTracks() {
+  //   const videoTracks = [];
+  //   if (this.video.videoTracks && this.video.videoTracks.length) {
+  //     Array.from(this.video.videoTracks).forEach((track, index) => {
+  //       videoTracks.push({
+  //         index,
+  //         id: track.id || "",
+  //         kind: track.kind || "main",
+  //         label: track.label || "Video Track",
+  //         language: track.language || "und",
+  //         selected: !!track.selected,
+  //       });
+  //     });
+  //   } else {
+  //     videoTracks.push({
+  //       index: 0,
+  //       id: this.video.currentSrc || this.video.src || "",
+  //       kind: "main",
+  //       label: "Default Video Track",
+  //       language: "und",
+  //       selected: true,
+  //       resolution: `${this.video.videoWidth || 0}x${this.video.videoHeight || 0}`,
+  //     });
+  //   }
+
+  //   const subtitleTracks = [];
+  //   if (this.video.textTracks && this.video.textTracks.length) {
+  //     Array.from(this.video.textTracks)
+  //       .filter((track) =>
+  //         ["subtitles", "captions"].includes((track.kind || "").toLowerCase()),
+  //       )
+  //       .forEach((track, index) => {
+  //         subtitleTracks.push({
+  //           index,
+  //           kind: track.kind || "",
+  //           label: track.label || "",
+  //           language: track.language || "und",
+  //           mode: track.mode || "disabled",
+  //         });
+  //       });
+  //   }
+
+  //   console.group("Media Track Scan");
+  //   console.log("Video Tracks:", videoTracks);
+  //   console.log(
+  //     "Subtitle Tracks:",
+  //     subtitleTracks.length ? subtitleTracks : "No subtitle tracks found",
+  //   );
+  //   console.groupEnd();
+  // }
+
   bindKeyPressEvent() {
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener("keydown", (event) => {
       switch (event.code) {
-        case 'Space':
-        case 'Enter':
+        case "Space":
+        case "Enter":
           this.togglePlayPause();
           break;
-        case 'KeyA':
-        case 'ArrowLeft':
+        case "KeyA":
+        case "ArrowLeft":
           this.toggleForwardPlayback(this.config.rndTime);
           break;
-        case 'KeyD':
-        case 'ArrowRight':
+        case "KeyD":
+        case "ArrowRight":
           this.toggleForwardPlayback(this.config.fwdTime);
           break;
-        case 'KeyN':
+        case "KeyN":
           playNextMedia();
           break;
-        case 'KeyV':
+        case "KeyV":
           playPreviousMedia();
           break;
-        case 'KeyF':
-          if (document.fullscreenElement)
-            document.exitFullscreen();
+        case "KeyF":
+          if (document.fullscreenElement) document.exitFullscreen();
           this.toggleFullScreen(!this.config.isEnableFullScreen);
           break;
-        case 'KeyP':
-          if (document.pictureInPictureElement)
-            document.exitPictureInPicture();
+        case "KeyP":
+          if (document.pictureInPictureElement) document.exitPictureInPicture();
           this.togglePipMode(!this.config.isEnablePipMode);
           break;
-        case 'Equal': // Volume Up
-        case 'Plus':
-          this.volumeBar.value = this.video.volume < 1 ? (Number(this.volumeBar.value || 0) + 0.01).toFixed(2) : this.volumeBar.value;
+        case "Equal": // Volume Up
+        case "Plus":
+          this.volumeBar.value =
+            this.video.volume < 1
+              ? (Number(this.volumeBar.value || 0) + 0.01).toFixed(2)
+              : this.volumeBar.value;
           this.setVolume();
           break;
-        case 'Minus': // Volume Down
-        case 'Hypen':
-          this.volumeBar.value = this.video.volume > 0 ? ((Number(this.volumeBar.value || 1) - 0.01) % 1).toFixed(2) : this.volumeBar.value;
+        case "Minus": // Volume Down
+        case "Hypen":
+          this.volumeBar.value =
+            this.video.volume > 0
+              ? ((Number(this.volumeBar.value || 1) - 0.01) % 1).toFixed(2)
+              : this.volumeBar.value;
           this.setVolume();
           break;
-        case 'KeyM': // Mute
+        case "KeyM": // Mute
           this.toggleMute();
           break;
-        case 'Digit0':
-        case 'Digit1':
-        case 'Digit2':
-        case 'Digit3':
-        case 'Digit4':
-        case 'Digit5':
-        case 'Digit6':
-        case 'Digit7':
-        case 'Digit8':
-        case 'Digit9':
+        case "Digit0":
+        case "Digit1":
+        case "Digit2":
+        case "Digit3":
+        case "Digit4":
+        case "Digit5":
+        case "Digit6":
+        case "Digit7":
+        case "Digit8":
+        case "Digit9":
           this.volumeBar.value = event.key / 10;
           this.setVolume();
           break;
-        case 'KeyT': // Trim Start
+        case "KeyT": // Trim Start
           this.setTrimStart();
           break;
-        case 'KeyC': // Trim Cut (End)
+        case "KeyC": // Trim Cut (End)
           this.setTrimEnd();
           break;
-        case 'KeyG': // Play Trim Range Video
+        case "KeyG": // Play Trim Range Video
           this.playTrimmedSegment();
           break;
-        case 'KeyR': // Reset Trim Range
+        case "KeyR": // Reset Trim Range
           this.resetTrimRange();
           break;
-        case 'KeyO': // Video Rotation
+        case "KeyO": // Video Rotation
           if (document.fullscreenElement && !this.config.rotationCount) {
             console.warn("Screen Rotation will not work");
             return;
           }
           this.toggleScreenRotation();
           break;
-        case 'ArrowUp': // Previous Video Mode
+        case "ArrowUp": // Previous Video Mode
           this.cycleVideoMode(-1);
           break;
-        case 'ArrowDown': // Next Video Mode
+        case "ArrowDown": // Next Video Mode
           this.cycleVideoMode(1);
           break;
         default:
-          console.warn('invalid key press Event: ', event.code);
+          console.warn("invalid key press Event: ", event.code);
           break;
       }
     });
   }
 
   bindTrimEvents() {
-    this.trimUIControls.trimStartBtn.addEventListener('click', () => this.setTrimStart());
-    this.trimUIControls.trimEndBtn.addEventListener('click', () => this.setTrimEnd());
-    this.trimUIControls.playTrimmedBtn.addEventListener('click', () => this.playTrimmedSegment());
-    this.trimUIControls.playTrimmedBtn.addEventListener('dblclick', () => this.resetTrimRange());
-    this.trimUIControls.trimStartInput.addEventListener('input', () => this.updateTrimFromInput('start'));
-    this.trimUIControls.trimEndInput.addEventListener('input', () => this.updateTrimFromInput('end'));
-    this.trimUIControls.isRepeateChkBox.addEventListener('change', () => this.toggleAutoLoop());
-    this.trimUIControls.repeateTrimBtn.addEventListener('click', () => this.toggleRepeteTrim());
+    this.trimUIControls.trimStartBtn.addEventListener("click", () =>
+      this.setTrimStart(),
+    );
+    this.trimUIControls.trimEndBtn.addEventListener("click", () =>
+      this.setTrimEnd(),
+    );
+    this.trimUIControls.playTrimmedBtn.addEventListener("click", () =>
+      this.playTrimmedSegment(),
+    );
+    this.trimUIControls.playTrimmedBtn.addEventListener("dblclick", () =>
+      this.resetTrimRange(),
+    );
+    this.trimUIControls.trimStartInput.addEventListener("input", () =>
+      this.updateTrimFromInput("start"),
+    );
+    this.trimUIControls.trimEndInput.addEventListener("input", () =>
+      this.updateTrimFromInput("end"),
+    );
+    this.trimUIControls.isRepeateChkBox.addEventListener("change", () =>
+      this.toggleAutoLoop(),
+    );
+    this.trimUIControls.repeateTrimBtn.addEventListener("click", () =>
+      this.toggleRepeteTrim(),
+    );
   }
 
   theaterModeCssConfig(isEnableTheaterMode) {
     // player section styles
-    const playerCard = document.querySelector('.content.player-card');
-    playerCard.style.position = isEnableTheaterMode ? 'fixed' : '';
-    playerCard.style.top = isEnableTheaterMode ? '0' : '';
-    playerCard.style.left = isEnableTheaterMode ? '0' : '';
-    playerCard.style.width = isEnableTheaterMode ? '100vw' : '';
-    playerCard.style.height = isEnableTheaterMode ? '100vh' : '';
-    playerCard.style.zIndex = isEnableTheaterMode ? '9999' : '';
+    const playerCard = document.querySelector(".content.player-card");
+    playerCard.style.position = isEnableTheaterMode ? "fixed" : "";
+    playerCard.style.top = isEnableTheaterMode ? "0" : "";
+    playerCard.style.left = isEnableTheaterMode ? "0" : "";
+    playerCard.style.width = isEnableTheaterMode ? "100vw" : "";
+    playerCard.style.height = isEnableTheaterMode ? "100vh" : "";
+    playerCard.style.zIndex = isEnableTheaterMode ? "9999" : "";
     // video styles
-    const video = document.querySelector('.media-video-player');
-    video.style.position = isEnableTheaterMode ? 'fixed' : '';
-    video.style.top = isEnableTheaterMode ? '0' : '';
-    video.style.left = isEnableTheaterMode ? '0' : '';
-    video.style.width = isEnableTheaterMode ? '100vw' : '';
-    video.style.height = isEnableTheaterMode ? '100vh' : '';
-    video.style.zIndex = isEnableTheaterMode ? '10000' : '';
-    video.style.objectFit = isEnableTheaterMode ? 'fill' : '';
+    const video = document.querySelector(".media-video-player");
+    video.style.position = isEnableTheaterMode ? "fixed" : "";
+    video.style.top = isEnableTheaterMode ? "0" : "";
+    video.style.left = isEnableTheaterMode ? "0" : "";
+    video.style.width = isEnableTheaterMode ? "100vw" : "";
+    video.style.height = isEnableTheaterMode ? "100vh" : "";
+    video.style.zIndex = isEnableTheaterMode ? "10000" : "";
+    video.style.objectFit = isEnableTheaterMode ? "fill" : "";
     // video controls zIndex
-    const controls = document.getElementById('media-media-controls');
-    controls.style.zIndex = isEnableTheaterMode ? '10001' : '';
+    const controls = document.getElementById("media-media-controls");
+    controls.style.zIndex = isEnableTheaterMode ? "10001" : "";
   }
 
   toogleTheaterMode(isEnableTheaterMode) {
@@ -254,7 +348,7 @@ class OTTMediaPlayer {
       }
     }
     this.theaterModeCssConfig(isEnableTheaterMode);
-    if(!isEnableTheaterMode) {
+    if (!isEnableTheaterMode) {
       this.config.isEnableFullScreen = false;
       this.config.isEnablePipMode = false;
     }
@@ -283,7 +377,9 @@ class OTTMediaPlayer {
   }
 
   togglePlayPause(isNative = true) {
-    if (isNative) { this.trimConfig.isTrimActive = false; }
+    if (isNative) {
+      this.trimConfig.isTrimActive = false;
+    }
     this.video.paused ? this.video.play() : this.video.pause();
     this.updateUIButton({ type: this.config.btnType.playPause });
   }
@@ -309,7 +405,9 @@ class OTTMediaPlayer {
   }
 
   seekVideo() {
-    this.video.currentTime = Math.floor(this.video.duration * parseInt(this.seekBar.value) / 100);
+    this.video.currentTime = Math.floor(
+      (this.video.duration * parseInt(this.seekBar.value)) / 100,
+    );
     if (this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
       this.trimConfig.isTrimActive = false;
       this.updateTrimDisplays();
@@ -319,7 +417,8 @@ class OTTMediaPlayer {
 
   updateSeekBar() {
     const now = Date.now();
-    const shouldUpdateUI = (now - this.lastUpdateTime >= 1000) || this.video.seeking;
+    const shouldUpdateUI =
+      now - this.lastUpdateTime >= 1000 || this.video.seeking;
 
     if (this.trimConfig.isTrimActive && !this.isBtwnTrimRange()) {
       this.video.currentTime = this.trimConfig.trimStart;
@@ -330,14 +429,21 @@ class OTTMediaPlayer {
         this.togglePlayPause(false);
       }
     } else if (shouldUpdateUI) {
-      this.seekBar.value = Math.floor(this.video.currentTime * 100 / this.video.duration);
+      this.seekBar.value = Math.floor(
+        (this.video.currentTime * 100) / this.video.duration,
+      );
       this.startPos.textContent = this.formatTime(this.video.currentTime);
       this.endPos.textContent = this.formatTime(this.video.duration);
-      if (this.video.currentTime <= 1) this.updateUIButton({ type: this.config.btnType.playPause });
+      if (this.video.currentTime <= 1)
+        this.updateUIButton({ type: this.config.btnType.playPause });
       this.lastUpdateTime = now;
     }
 
-    if (shouldUpdateUI && this.config.isEnableAutoColorChange && parseInt(this.video.currentTime) % 1 === 0) {
+    if (
+      shouldUpdateUI &&
+      this.config.isEnableAutoColorChange &&
+      parseInt(this.video.currentTime) % 1 === 0
+    ) {
       this.updateAutoColorChange();
     }
   }
@@ -345,7 +451,10 @@ class OTTMediaPlayer {
   setTrimStart() {
     this.trimConfig.trimStart = this.video.currentTime;
     if (this.trimConfig.trimStart >= this.trimConfig.trimEnd) {
-      this.trimConfig.trimEnd = Math.max(this.video.duration || 0, this.trimConfig.trimStart + this.trimConfig.defaultVal);
+      this.trimConfig.trimEnd = Math.max(
+        this.video.duration || 0,
+        this.trimConfig.trimStart + this.trimConfig.defaultVal,
+      );
     }
     this.trimConfig.isTrimActive = true;
     this.updateTrimDisplays();
@@ -353,7 +462,10 @@ class OTTMediaPlayer {
   setTrimEnd() {
     this.trimConfig.trimEnd = this.video.currentTime;
     if (this.trimConfig.trimEnd <= this.trimConfig.trimStart) {
-      this.trimConfig.trimStart = Math.max(0, this.trimConfig.trimStart - this.trimConfig.defaultVal);
+      this.trimConfig.trimStart = Math.max(
+        0,
+        this.trimConfig.trimStart - this.trimConfig.defaultVal,
+      );
     }
     this.trimConfig.isTrimActive = true;
     this.updateTrimDisplays();
@@ -367,39 +479,59 @@ class OTTMediaPlayer {
   }
 
   toggleAutoLoop() {
-    this.trimConfig.isAutoLoopEnabled = this.trimUIControls.isRepeateChkBox.checked;
+    this.trimConfig.isAutoLoopEnabled =
+      this.trimUIControls.isRepeateChkBox.checked;
   }
   toggleRepeteTrim() {
     this.trimConfig.isAutoLoopEnabled = !this.trimConfig.isAutoLoopEnabled;
-    this.trimUIControls.isRepeateChkBox.checked = this.trimConfig.isAutoLoopEnabled;
+    this.trimUIControls.isRepeateChkBox.checked =
+      this.trimConfig.isAutoLoopEnabled;
   }
   isValidRange() {
-    return this.trimConfig.trimStart >= 0 && this.trimConfig.trimEnd > 0 && this.trimConfig.trimStart !== this.trimConfig.trimEnd
+    return (
+      this.trimConfig.trimStart >= 0 &&
+      this.trimConfig.trimEnd > 0 &&
+      this.trimConfig.trimStart !== this.trimConfig.trimEnd
+    );
   }
   isBtwnTrimRange() {
-    return this.isValidRange() && this.trimConfig.isTrimActive &&
-      this.trimConfig.trimStart <= this.video.currentTime && this.video.currentTime <= this.trimConfig.trimEnd;
+    return (
+      this.isValidRange() &&
+      this.trimConfig.isTrimActive &&
+      this.trimConfig.trimStart <= this.video.currentTime &&
+      this.video.currentTime <= this.trimConfig.trimEnd
+    );
   }
 
   updateTrimDisplays() {
-    this.trimUIControls.trimStartInput.value = this.formatTime(this.trimConfig.trimStart);
-    this.trimUIControls.trimEndInput.value = this.formatTime(this.trimConfig.trimEnd);
+    this.trimUIControls.trimStartInput.value = this.formatTime(
+      this.trimConfig.trimStart,
+    );
+    this.trimUIControls.trimEndInput.value = this.formatTime(
+      this.trimConfig.trimEnd,
+    );
 
     // UI Button Status
     if (this.trimConfig.isTrimActive && this.isBtwnTrimRange()) {
       this.trimUIControls.playTrimmedBtn.disabled = false;
     }
     this.trimUIControls.repeateTrimBtn.disabled = !this.trimConfig.isTrimActive;
-    this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` :
-      this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
+    this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive
+      ? `<i class="fa ${!!this.video.paused ? "fa-play" : "fa-pause"}"></i> <i class="fa fa-cut"></i> Trim`
+      : this.trimUIControls.playTrimmedBtn.disabled
+        ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim'
+        : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
   }
 
   updateTrimFromInput(type) {
-    const input = type === 'start' ? this.trimUIControls.trimStartInput : this.trimUIControls.trimEndInput;
+    const input =
+      type === "start"
+        ? this.trimUIControls.trimStartInput
+        : this.trimUIControls.trimEndInput;
     const timeStr = input.value.trim();
     const seconds = this.parseTime(timeStr);
     if (seconds !== null) {
-      if (type === 'start') {
+      if (type === "start") {
         this.trimConfig.trimStart = seconds;
       } else {
         this.trimConfig.trimEnd = seconds;
@@ -407,8 +539,11 @@ class OTTMediaPlayer {
       this.trimConfig.isTrimActive = true;
       // Validate and adjust if necessary
       if (this.trimConfig.trimStart >= this.trimConfig.trimEnd) {
-        if (type === 'start') {
-          this.trimConfig.trimEnd = Math.min(this.video.duration || 0, this.trimConfig.trimStart + this.trimConfig.defaultVal);
+        if (type === "start") {
+          this.trimConfig.trimEnd = Math.min(
+            this.video.duration || 0,
+            this.trimConfig.trimStart + this.trimConfig.defaultVal,
+          );
         } else {
           this.trimConfig.trimStart = Math.max(0, this.trimConfig.trimEnd - 1);
         }
@@ -416,15 +551,17 @@ class OTTMediaPlayer {
       }
     } else {
       // Invalid input, revert to current value
-      input.value = this.formatTime(type === 'start' ? this.trimConfig.trimStart : this.trimConfig.trimEnd);
+      input.value = this.formatTime(
+        type === "start" ? this.trimConfig.trimStart : this.trimConfig.trimEnd,
+      );
     }
   }
 
   parseTime(timeStr) {
-    const parts = timeStr.split(':').map(p => parseInt(p, 10));
-    if (parts.length === 3 && parts.every(p => !isNaN(p))) {
+    const parts = timeStr.split(":").map((p) => parseInt(p, 10));
+    if (parts.length === 3 && parts.every((p) => !isNaN(p))) {
       return parts[0] * 3600 + parts[1] * 60 + parts[2];
-    } else if (parts.length === 2 && parts.every(p => !isNaN(p))) {
+    } else if (parts.length === 2 && parts.every((p) => !isNaN(p))) {
       return parts[0] * 60 + parts[1];
     } else if (parts.length === 1 && !isNaN(parts[0])) {
       return parts[0];
@@ -434,7 +571,10 @@ class OTTMediaPlayer {
 
   playTrimmedSegment() {
     if (!this.trimConfig.isTrimActive) {
-      if ((this.video.currentTime > (this.trimConfig.trimEnd + 1)) || (this.video.currentTime < (this.trimConfig.trimStart - 1))) {
+      if (
+        this.video.currentTime > this.trimConfig.trimEnd + 1 ||
+        this.video.currentTime < this.trimConfig.trimStart - 1
+      ) {
         this.trimConfig.isTrimActive = true;
         this.video.pause();
         this.playTrimmedSegment();
@@ -442,10 +582,13 @@ class OTTMediaPlayer {
       return;
     }
     if (this.trimConfig.trimStart >= this.trimConfig.trimEnd) {
-      alert('Invalid trim range. Start time must be before end time.');
+      alert("Invalid trim range. Start time must be before end time.");
       return;
     }
-    if (this.video.currentTime < this.trimConfig.trimStart || this.video.currentTime >= this.trimConfig.trimEnd) {
+    if (
+      this.video.currentTime < this.trimConfig.trimStart ||
+      this.video.currentTime >= this.trimConfig.trimEnd
+    ) {
       this.video.currentTime = this.trimConfig.trimStart;
       this.updateTrimDisplays();
     }
@@ -455,7 +598,7 @@ class OTTMediaPlayer {
 
   updateVolumeBar() {
     this.volumeBar.value = this.video.volume;
-    this.volumeValue.textContent = `${this.video.muted ? '00' : (this.video.volume * 99).toFixed(0)}%`;
+    this.volumeValue.textContent = `${this.video.muted ? "00" : (this.video.volume * 99).toFixed(0)}%`;
     this.updateUIButton({ type: this.config.btnType.volume });
   }
 
@@ -465,62 +608,71 @@ class OTTMediaPlayer {
   }
 
   updateAutoColorChange() {
-    this.video.style.filter = this.video.style.filter.replace(/(?<=(hue-rotate\())\d+(?=deg\))/gi, x => parseInt(Math.random(0, 1) * 360));
+    this.video.style.filter = this.video.style.filter.replace(
+      /(?<=(hue-rotate\())\d+(?=deg\))/gi,
+      (x) => parseInt(Math.random(0, 1) * 360),
+    );
     // console.warn('pos: ', parseInt(this.video.currentTime), 'style: ', this.video.style.filter);
-  };
+  }
 
   getVideoMode() {
     switch (this.playbackMode.value) {
-      case 'normal':
-        return '';
-      case 'cinema':
-        return 'contrast(120%) brightness(90%)';
-      case 'vivid':
-        return 'contrast(140%) brightness(110%) saturate(120%)';
-      case 'bw':
-        return 'grayscale(100%)';
-      case 'night':
-        return 'brightness(60%) contrast(110%)';
-      case 'glow':
-        return 'sepia(80%) saturate(120%) brightness(110%)';
-      case 'heat':
-        return 'contrast(130%) saturate(140%) hue-rotate(15deg)';
-      case 'sepia':
-        return 'sepia(100%)';
-      case 'invert':
-        return 'invert(100%)';
-      case 'blur':
-        return 'blur(2px)';
-      case 'autocolorchange':
+      case "normal":
+        return "";
+      case "cinema":
+        return "contrast(120%) brightness(90%)";
+      case "vivid":
+        return "contrast(140%) brightness(110%) saturate(120%)";
+      case "bw":
+        return "grayscale(100%)";
+      case "night":
+        return "brightness(60%) contrast(110%)";
+      case "glow":
+        return "sepia(80%) saturate(120%) brightness(110%)";
+      case "heat":
+        return "contrast(130%) saturate(140%) hue-rotate(15deg)";
+      case "sepia":
+        return "sepia(100%)";
+      case "invert":
+        return "invert(100%)";
+      case "blur":
+        return "blur(2px)";
+      case "autocolorchange":
         this.config.isEnableAutoColorChange = true;
         return `hue-rotate(${parseInt(Math.random(0, 1) * 360)}deg) contrast(120%) brightness(90%)`;
       default:
-        return '';
+        return "";
     }
   }
 
   cycleVideoMode(direction) {
     const select = this.playbackMode;
     const currentIndex = select.selectedIndex;
-    const newIndex = (currentIndex + direction + select.options.length) % select.options.length;
+    const newIndex =
+      (currentIndex + direction + select.options.length) %
+      select.options.length;
     select.selectedIndex = newIndex;
-    select.dispatchEvent(new Event('change'));
+    select.dispatchEvent(new Event("change"));
   }
 
-  updateUIButton(config = { type: '' }) {
+  updateUIButton(config = { type: "" }) {
     switch (config.type) {
       case this.config.btnType.playPause:
-        this.playPauseBtn.innerHTML = `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i>`;
-        this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig.isTrimActive ? `<i class="fa ${!!this.video.paused ? 'fa-play' : 'fa-pause'}"></i> <i class="fa fa-cut"></i> Trim` :
-          this.trimUIControls.playTrimmedBtn.disabled ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim' : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
+        this.playPauseBtn.innerHTML = `<i class="fa ${!!this.video.paused ? "fa-play" : "fa-pause"}"></i>`;
+        this.trimUIControls.playTrimmedBtn.innerHTML = this.trimConfig
+          .isTrimActive
+          ? `<i class="fa ${!!this.video.paused ? "fa-play" : "fa-pause"}"></i> <i class="fa fa-cut"></i> Trim`
+          : this.trimUIControls.playTrimmedBtn.disabled
+            ? '<i class="fa fa-cut"></i> <i class="fas fa-video"></i> Trim'
+            : '<i class="fa fa-bookmark"></i> <i class="fa fa-cut"></i> Trim';
         break;
       case this.config.btnType.volume:
-        this.volumeBtn.innerHTML = `<i class="fa fa-volume-${!!this.video.muted ? 'mute' : 'up'}"></i>`;
+        this.volumeBtn.innerHTML = `<i class="fa fa-volume-${!!this.video.muted ? "mute" : "up"}"></i>`;
         break;
       case this.config.btnType.fullScreen:
       case this.config.btnType.pip:
-        this.fullScreenBtn.innerHTML = `<i class="fa fa-${!!this.config.isEnableFullScreen ? 'compress' : 'expand'}"></i>`;
-        this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipMode ? 'fas fa-external-link-alt' : 'fa fa-window-restore'}"></i>`;
+        this.fullScreenBtn.innerHTML = `<i class="fa fa-${!!this.config.isEnableFullScreen ? "compress" : "expand"}"></i>`;
+        this.pipModeBtn.innerHTML = `<i class="${!!this.config.isEnablePipMode ? "fas fa-external-link-alt" : "fa fa-window-restore"}"></i>`;
         break;
       case this.config.btnType.rotation:
         this.rotationBtn.innerHTML = `<i class="fa fa-undo" style="transform: rotate(${-90 * this.config.rotationCount}deg);"></i>`;
@@ -538,44 +690,51 @@ class OTTMediaPlayer {
   }
 
   onVideoEnded() {
-    const mediaDropdown = document.getElementById('mediaDropdown');
-    if (mediaDropdown && mediaDropdown.selectedIndex < mediaDropdown.options.length) {
+    const mediaDropdown = document.getElementById("mediaDropdown");
+    if (
+      mediaDropdown &&
+      mediaDropdown.selectedIndex < mediaDropdown.options.length
+    ) {
       playNextMedia();
     }
   }
 
   formatTime(seconds) {
-    if (isNaN(seconds)) return '--:--:--';
+    if (isNaN(seconds)) return "--:--:--";
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
-    return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+    return [h, m, s].map((v) => v.toString().padStart(2, "0")).join(":");
   }
 
   // Static helper for draggable controls
   static makeControlsDraggable(controlsId, handleId) {
     const controls = document.getElementById(controlsId);
     const handle = document.getElementById(handleId);
-    let isDragging = false, startX, startY, origX, origY;
-    handle.addEventListener('mousedown', function (e) {
+    let isDragging = false,
+      startX,
+      startY,
+      origX,
+      origY;
+    handle.addEventListener("mousedown", function (e) {
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
       const rect = controls.getBoundingClientRect();
       origX = rect.left;
       origY = rect.top;
-      controls.style.transition = 'none';
-      controls.style.position = 'fixed';
+      controls.style.transition = "none";
+      controls.style.position = "fixed";
       controls.style.zIndex = 1000;
     });
-    document.addEventListener('mousemove', function (e) {
+    document.addEventListener("mousemove", function (e) {
       if (!isDragging) return;
       let dx = e.clientX - startX;
       let dy = e.clientY - startY;
-      controls.style.left = (origX + dx) + 'px';
-      controls.style.top = (origY + dy) + 'px';
+      controls.style.left = origX + dx + "px";
+      controls.style.top = origY + dy + "px";
     });
-    document.addEventListener('mouseup', function () {
+    document.addEventListener("mouseup", function () {
       isDragging = false;
     });
   }
@@ -594,96 +753,114 @@ class OTTMediaPlayer {
   ffmpegScript() {
     const videoResolution = {
       width: this.video.videoWidth,
-      height: this.video.videoHeight
+      height: this.video.videoHeight,
     };
     const cropVideo = {
       FourK: { width: 3840, height: 2160 },
       FHD: { width: 1920, height: 1080 },
-      HD: { width: 1080, height: 720 }
+      HD: { width: 1080, height: 720 },
     };
-    const isHighResolution = Math.max(videoResolution.width, videoResolution.height) >= Math.max(cropVideo.FourK.width, cropVideo.FourK.height);
+    const isHighResolution =
+      Math.max(videoResolution.width, videoResolution.height) >=
+      Math.max(cropVideo.FourK.width, cropVideo.FourK.height);
 
     const object = {
       INPUTFILE: this.video.name,
       STARTTIME: this.trimConfig.trimStart.toFixed(1),
-      TRIMDURATION: (this.trimConfig.trimEnd - this.trimConfig.trimStart).toFixed(1),
+      TRIMDURATION: (
+        this.trimConfig.trimEnd - this.trimConfig.trimStart
+      ).toFixed(1),
       OUTPUTFILE: `trim/${this.trimConfig.trimStart.toFixed(2)}`,
       VIDEO_WIDTH: videoResolution.width,
       VIDEO_HEIGHT: videoResolution.height,
-      CROP_HEIGHT: isHighResolution ? Math.max(cropVideo.FHD.width, cropVideo.FHD.height) : Math.max(videoResolution.height, cropVideo.HD.height),
-      CROP_WIDTH: isHighResolution ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height) : Math.min(videoResolution.width, cropVideo.HD.height)
+      CROP_HEIGHT: isHighResolution
+        ? Math.max(cropVideo.FHD.width, cropVideo.FHD.height)
+        : Math.max(videoResolution.height, cropVideo.HD.height),
+      CROP_WIDTH: isHighResolution
+        ? Math.min(cropVideo.FHD.width, cropVideo.FHD.height)
+        : Math.min(videoResolution.width, cropVideo.HD.height),
     };
 
     const scriptList = {
       break0: "------ Basic Video Information & Transformation --------",
-      videoResolution: `${videoResolution.width} x ${videoResolution.height} ${isHighResolution ? '✅' : '🚫'}`,
+      videoResolution: `${videoResolution.width} x ${videoResolution.height} ${isHighResolution ? "✅" : "🚫"}`,
       storeMediaInfo: `ffprobe -v quiet -print_format json -show_format -show_streams "{INPUTFILE}" > "trim/mediaInfo.json"`,
-      reEncode_video_and_Audio: `ffmpeg -i "{INPUTFILE}" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 192k "${object.INPUTFILE.replace(/\.[\w\d]+$/gi, '')}.mp4"`,
-      break1: '--------Full Video Audio-------------',
+      reEncode_video_and_Audio: `ffmpeg -i "{INPUTFILE}" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 192k "${object.INPUTFILE.replace(/\.[\w\d]+$/gi, "")}.mp4"`,
+      break1: "--------Full Video Audio-------------",
       // Trim Video with range in second
       trimeVideo_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       trimVideoWithoutAudio_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c:v libx264 -crf 23 -preset fast -an "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       rotateVideoClockWise90: `ffmpeg -i "{INPUTFILE}" -vf "transpose=1" "{OUTPUTFILE}_{SCRIPTKEY}_clock90.mp4"`,
       rotateVideoAntiClockWise90: `ffmpeg -i "{INPUTFILE}" -vf "transpose=1,transpose=1,transpose=1" "{OUTPUTFILE}_{SCRIPTKEY}_anticlock90.mp4"`,
 
-      break2: '\n--------Video Crop Center | Left | Right-------------',
+      break2: "\n--------Video Crop Center | Left | Right-------------",
       cropVideo_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + {CROP_WIDTH}*0):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_OLD: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + {CROP_WIDTH}*1):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH})/2):(({VIDEO_HEIGHT}-{CROP_HEIGHT})/2)" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + {CROP_WIDTH}*2):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
-      break3: '\n--------Reverse Corped Video Center | Left | Right-------------',
+      break3:
+        "\n--------Reverse Corped Video Center | Left | Right-------------",
       cropVideo_left_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_right_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
-      break4: '\n--------Video Crop Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
+      break4:
+        "\n--------Video Crop Extrime Left/Right | Middle of Left-Center/Right-Center-------------",
       cropVideo_extrime_left: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:0:({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_left_center_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + ({CROP_WIDTH}*(0+1)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_right_mid: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:(({VIDEO_WIDTH}-{CROP_WIDTH}*3)/2 + ({CROP_WIDTH}*(1+2)/2)):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_extrime_right: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -vf "crop={CROP_WIDTH}:{CROP_HEIGHT}:({VIDEO_WIDTH}-{CROP_WIDTH}):({VIDEO_HEIGHT}-1920)/2" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
-      break5: '\n--------Reverse Corped Video Extrime Left/Right | Middle of Left-Center/Right-Center-------------',
+      break5:
+        "\n--------Reverse Corped Video Extrime Left/Right | Middle of Left-Center/Right-Center-------------",
       cropVideo_extrime_left_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_left_center_mid_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_center_right_mid_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       cropVideo_extrime_right_reverse: `ffmpeg -i "{OUTPUTFILE}_{SCRIPTKEY-REV}.mp4" -vf reverse -af areverse -preset fast -c:v libx264 -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
 
-      break6: '--------Merge Clips-------------',
-      mergedCropVideo: 'ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp4',
-      mergedCropVideo_no_Audio: 'ffmpeg -i "mergedCropVideo.mp4" -an {SCRIPTKEY}.mp4',
-      trimAudioFromVideo: 'ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c copy "{SCRIPTKEY}.mp3"',
-      mergedCropAudios: 'ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp3',
-      mergedAudio_And_Video: 'ffmpeg -i mergedCropVideo_no_Audio.mp4 -i trimAudioFromVideo.mp3 -c:v copy -c:a aac -shortest {SCRIPTKEY}.mp4',
-      mergedAudio_And_Video_90deg: 'ffmpeg -i "mergedAudio_And_Video.mp4" -vf "transpose=1" "{SCRIPTKEY}.mp4"',
-      mergedAudio_And_Video_270deg: 'ffmpeg -i "mergedAudio_And_Video.mp4" -vf "transpose=1,transpose=1,transpose=1" "{SCRIPTKEY}.mp4"',
-    }
+      break6: "--------Merge Clips-------------",
+      mergedCropVideo:
+        "ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp4",
+      mergedCropVideo_no_Audio:
+        'ffmpeg -i "mergedCropVideo.mp4" -an {SCRIPTKEY}.mp4',
+      trimAudioFromVideo:
+        'ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c copy "{SCRIPTKEY}.mp3"',
+      mergedCropAudios:
+        "ffmpeg -f concat -safe 0 -i mergevideolist.txt -c copy {SCRIPTKEY}.mp3",
+      mergedAudio_And_Video:
+        "ffmpeg -i mergedCropVideo_no_Audio.mp4 -i trimAudioFromVideo.mp3 -c:v copy -c:a aac -shortest {SCRIPTKEY}.mp4",
+      mergedAudio_And_Video_90deg:
+        'ffmpeg -i "mergedAudio_And_Video.mp4" -vf "transpose=1" "{SCRIPTKEY}.mp4"',
+      mergedAudio_And_Video_270deg:
+        'ffmpeg -i "mergedAudio_And_Video.mp4" -vf "transpose=1,transpose=1,transpose=1" "{SCRIPTKEY}.mp4"',
+    };
 
     console.clear();
-    Object.keys(scriptList).forEach(script =>
+    Object.keys(scriptList).forEach((script) =>
       console.log(
         scriptList[script]
           .replace(/\{SCRIPTKEY\}/gi, script)
-          .replace(/\{SCRIPTKEY-REV\}/gi, script.replace('_reverse', ''))
-          .replace(/\{\w+\}/gi, (x) => object[x.replace(/[\}\{]/gi, '')])
-      )
+          .replace(/\{SCRIPTKEY-REV\}/gi, script.replace("_reverse", ""))
+          .replace(/\{\w+\}/gi, (x) => object[x.replace(/[\}\{]/gi, "")]),
+      ),
     );
   }
 }
 
 // Toggle input mode dropdown visibility
 function toggleInputModeDropdown() {
-  var mode = document.getElementById('inputModeDropdown').value;
-  document.getElementById('fileInputRow').style.display = (mode === 'file') ? '' : 'none';
-  document.getElementById('urlInputRow').style.display = (mode === 'url') ? '' : 'none';
-  document.getElementById('directoryInputRow').style.display = (mode === 'directory') ? '' : 'none';
-  document.getElementById('navButtonsRow').style.display = 'none'; // Hide nav buttons when not in directory mode
+  var mode = document.getElementById("inputModeDropdown").value;
+  document.getElementById("fileInputRow").style.display = mode === "file" ? "" : "none";
+  document.getElementById("urlInputRow").style.display = mode === "url" ? "" : "none";
+  document.getElementById("directoryInputRow").style.display = mode === "directory" ? "" : "none";
+  document.getElementById("navButtonsRow").style.display = "none"; // Hide nav buttons when not in directory mode
 }
 
 // Choose local file from file input
 function chooseLocalFile() {
-  const fileInput = document.getElementById('fName');
-  const video = document.getElementById('media-video-player');
+  const fileInput = document.getElementById("fName");
+  const video = document.getElementById("media-video-player");
   if (fileInput.files && fileInput.files[0]) {
     const fileURL = URL.createObjectURL(fileInput.files[0]);
     video.pause();
@@ -696,47 +873,50 @@ function chooseLocalFile() {
 
 // Load media files from selected directory
 function loadDirectoryFiles() {
-  const directoryInput = document.getElementById('directoryInput');
-  const mediaDropdown = document.getElementById('mediaDropdown');
-  const directoryName = document.getElementById('directoryName');
-  mediaDropdown.innerHTML = '';
-  const defaultOption = document.createElement('option');
-  defaultOption.textContent = 'Select a media file...';
-  defaultOption.value = '';
+  const directoryInput = document.getElementById("directoryInput");
+  const mediaDropdown = document.getElementById("mediaDropdown");
+  const directoryName = document.getElementById("directoryName");
+  mediaDropdown.innerHTML = "";
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "Select a media file...";
+  defaultOption.value = "";
   mediaDropdown.appendChild(defaultOption);
 
   if (directoryInput.files && directoryInput.files.length > 0) {
-    const dirName = directoryInput.files[0].webkitRelativePath.split('/')[0];
+    const dirName = directoryInput.files[0].webkitRelativePath.split("/")[0];
     directoryName.textContent = `${dirName}(${directoryInput.files.length})`;
     Array.from(directoryInput.files)
-      .filter(file => file.type.startsWith('video/') || file.type.startsWith('audio/'))
-      .forEach(file => {
-        const option = document.createElement('option');
+      .filter(
+        (file) =>
+          file.type.startsWith("video/") || file.type.startsWith("audio/"),
+      )
+      .forEach((file) => {
+        const option = document.createElement("option");
         option.value = URL.createObjectURL(file);
         option.textContent = file.name;
         option.dataset.file = file; // Store file reference
         mediaDropdown.appendChild(option);
       });
     mediaDropdown.hidden = false;
-    document.getElementById('navButtonsRow').style.display = ''; // Show nav buttons when media files are loaded
+    document.getElementById("navButtonsRow").style.display = ""; // Show nav buttons when media files are loaded
     // Automatically select and play the first media file
     if (mediaDropdown.options.length > 1) {
       mediaDropdown.selectedIndex = 1;
       playSelectedMedia();
     }
   } else {
-    directoryName.textContent = 'No Directory';
+    directoryName.textContent = "No Directory";
     mediaDropdown.hidden = true;
-    document.getElementById('navButtonsRow').style.display = 'none'; // Hide nav buttons when no files
+    document.getElementById("navButtonsRow").style.display = "none"; // Hide nav buttons when no files
   }
 }
 
 // Play selected media from dropdown
 function playSelectedMedia() {
-  const mediaDropdown = document.getElementById('mediaDropdown');
+  const mediaDropdown = document.getElementById("mediaDropdown");
   const selectedValue = mediaDropdown.value;
   if (selectedValue) {
-    const video = document.getElementById('media-video-player');
+    const video = document.getElementById("media-video-player");
     video.pause();
     video.src = selectedValue;
     video.name = mediaDropdown.options[mediaDropdown.selectedIndex].textContent;
@@ -747,8 +927,9 @@ function playSelectedMedia() {
 
 // Navigate to previous media in directory
 function playPreviousMedia() {
-  const mediaDropdown = document.getElementById('mediaDropdown');
-  if (mediaDropdown.selectedIndex > 1) { // Index 0 is default, 1 is first file
+  const mediaDropdown = document.getElementById("mediaDropdown");
+  if (mediaDropdown.selectedIndex > 1) {
+    // Index 0 is default, 1 is first file
     mediaDropdown.selectedIndex--;
     playSelectedMedia();
   } else if (mediaDropdown.selectedIndex === 1) {
@@ -759,7 +940,7 @@ function playPreviousMedia() {
 
 // Navigate to next media in directory
 function playNextMedia() {
-  const mediaDropdown = document.getElementById('mediaDropdown');
+  const mediaDropdown = document.getElementById("mediaDropdown");
   if (mediaDropdown.selectedIndex < mediaDropdown.options.length - 1) {
     mediaDropdown.selectedIndex++;
     playSelectedMedia();
@@ -778,69 +959,77 @@ window.playPreviousMedia = playPreviousMedia;
 window.playNextMedia = playNextMedia;
 
 // Auto-instantiate player and setup helpers on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   const playerConfig = {
-    startPos: document.getElementById('startPos'),
-    seekBar: document.getElementById('player-seekbar'),
-    endPos: document.getElementById('endPos'),
+    startPos: document.getElementById("startPos"),
+    seekBar: document.getElementById("player-seekbar"),
+    endPos: document.getElementById("endPos"),
 
-    resetPlayback: document.getElementById('reset'),
-    playbackRate: document.getElementById('playbackRate'),
-    backwordPlayback: document.getElementById('backword'),
-    playPauseBtn: document.getElementById('playPause'),
-    forwardPlayback: document.getElementById('forward'),
-    fullScreenBtn: document.getElementById('fullScreen'),
-    pipModeBtn: document.getElementById('pipMode'),
-    rotationBtn: document.getElementById('screenRotation'),
-    theaterModeBtn: document.getElementById('theaterMode'),
+    resetPlayback: document.getElementById("reset"),
+    playbackRate: document.getElementById("playbackRate"),
+    backwordPlayback: document.getElementById("backword"),
+    playPauseBtn: document.getElementById("playPause"),
+    forwardPlayback: document.getElementById("forward"),
+    fullScreenBtn: document.getElementById("fullScreen"),
+    pipModeBtn: document.getElementById("pipMode"),
+    rotationBtn: document.getElementById("screenRotation"),
+    theaterModeBtn: document.getElementById("theaterMode"),
 
-    volumeBar: document.getElementById('volumeBar'),
-    volumeValue: document.getElementById('volumeValue'),
-    volumeBtn: document.getElementById('volume'),
+    volumeBar: document.getElementById("volumeBar"),
+    volumeValue: document.getElementById("volumeValue"),
+    volumeBtn: document.getElementById("volume"),
 
-    videoMode: document.getElementById('videoMode'),
+    videoMode: document.getElementById("videoMode"),
   };
 
   const trimFeature = {
-    trimStartBtn: document.getElementById('setTrimStart'),
-    trimEndBtn: document.getElementById('setTrimEnd'),
-    playTrimmedBtn: document.getElementById('playTrimmed'),
-    trimStartInput: document.getElementById('trimStartInput'),
-    trimEndInput: document.getElementById('trimEndInput'),
-    isRepeateChkBox: document.getElementById('enableAutoLoop'),
-    repeateTrimBtn: document.getElementById('repeatTrim'),
+    trimStartBtn: document.getElementById("setTrimStart"),
+    trimEndBtn: document.getElementById("setTrimEnd"),
+    playTrimmedBtn: document.getElementById("playTrimmed"),
+    trimStartInput: document.getElementById("trimStartInput"),
+    trimEndInput: document.getElementById("trimEndInput"),
+    isRepeateChkBox: document.getElementById("enableAutoLoop"),
+    repeateTrimBtn: document.getElementById("repeatTrim"),
   };
 
   const player = new OTTMediaPlayer(
-    document.getElementById('media-video-player'),
+    document.getElementById("media-video-player"),
     playerConfig,
-    { trimFeature }
+    { trimFeature },
   );
-  OTTMediaPlayer.makeControlsDraggable('media-media-controls', 'dragHandle');
+
+  OTTMediaPlayer.makeControlsDraggable("media-media-controls", "dragHandle");
   // Attach playFromHeaderUrl to global for button usage
   window.playFromHeaderUrl = function () {
-    OTTMediaPlayer.playFromHeaderUrl('headerVideoUrlInput', 'media-video-player');
+    OTTMediaPlayer.playFromHeaderUrl(
+      "headerVideoUrlInput",
+      "media-video-player",
+    );
   };
   enableMobileDraggableControls();
 });
 
 // Make player-controls draggable on mobile and desktop, with focus fix
 function enableMobileDraggableControls() {
-  const controls = document.getElementById('media-media-controls');
-  const handle = document.getElementById('dragHandle');
-  let isDragging = false, startX, startY, origX, origY;
+  const controls = document.getElementById("media-media-controls");
+  const handle = document.getElementById("dragHandle");
+  let isDragging = false,
+    startX,
+    startY,
+    origX,
+    origY;
 
   function setPosition(x, y) {
-    controls.style.left = x + 'px';
-    controls.style.top = y + 'px';
-    controls.style.position = 'fixed';
+    controls.style.left = x + "px";
+    controls.style.top = y + "px";
+    controls.style.position = "fixed";
     controls.style.zIndex = 1000;
-    controls.style.transition = 'none';
+    controls.style.transition = "none";
     controls.focus(); // Ensure focus after move
   }
 
   // Desktop
-  handle.addEventListener('mousedown', function (e) {
+  handle.addEventListener("mousedown", function (e) {
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
@@ -848,21 +1037,21 @@ function enableMobileDraggableControls() {
     origX = rect.left;
     origY = rect.top;
     setPosition(origX, origY);
-    controls.setAttribute('tabindex', '-1'); // Make focusable if not already
+    controls.setAttribute("tabindex", "-1"); // Make focusable if not already
     controls.focus();
   });
-  document.addEventListener('mousemove', function (e) {
+  document.addEventListener("mousemove", function (e) {
     if (!isDragging) return;
     let dx = e.clientX - startX;
     let dy = e.clientY - startY;
     setPosition(origX + dx, origY + dy);
   });
-  document.addEventListener('mouseup', function () {
+  document.addEventListener("mouseup", function () {
     isDragging = false;
   });
 
   // Mobile (touch)
-  handle.addEventListener('touchstart', function (e) {
+  handle.addEventListener("touchstart", function (e) {
     isDragging = true;
     const touch = e.touches[0];
     startX = touch.clientX;
@@ -871,17 +1060,17 @@ function enableMobileDraggableControls() {
     origX = rect.left;
     origY = rect.top;
     setPosition(origX, origY);
-    controls.setAttribute('tabindex', '-1');
+    controls.setAttribute("tabindex", "-1");
     controls.focus();
   });
-  document.addEventListener('touchmove', function (e) {
+  document.addEventListener("touchmove", function (e) {
     if (!isDragging) return;
     const touch = e.touches[0];
     let dx = touch.clientX - startX;
     let dy = touch.clientY - startY;
     setPosition(origX + dx, origY + dy);
   });
-  document.addEventListener('touchend', function () {
+  document.addEventListener("touchend", function () {
     isDragging = false;
   });
 }
