@@ -22,6 +22,8 @@ class OTTMediaPlayer {
     this.video = videoElement;
     this.controls = controls;
     this.video.volume = 1.0;
+    this.trackScanCacheKey = "";
+    this.trackScanCacheResult = null;
 
     // Player Features: Trim
     this.trimUIControls = playerFeatures.trimFeature;
@@ -113,12 +115,15 @@ class OTTMediaPlayer {
     this.video.addEventListener("volumechange", () => this.updateVolumeBar());
     this.video.addEventListener("timeupdate", () => this.updateSeekBar());
     this.video.addEventListener("ended", () => this.onVideoEnded());
-    // this.video.addEventListener("loadedmetadata", () =>
-    //   this.printMediaTracks(),
-    // );
-    // if (this.video.textTracks) {
-    //   this.video.textTracks.onaddtrack = () => this.printMediaTracks();
-    // }
+    this.video.addEventListener("loadedmetadata", () =>
+      this.printMediaTracks(),
+    );
+    if (this.video.audioTracks) {
+      this.video.audioTracks.onaddtrack = () => this.printMediaTracks();
+    }
+    if (this.video.textTracks) {
+      this.video.textTracks.onaddtrack = () => this.printMediaTracks();
+    }
     // PiP Mode Configuration
     this.pipModeBtn.addEventListener("click", () =>
       this.togglePipMode(!this.config.isEnablePipMode),
@@ -145,56 +150,208 @@ class OTTMediaPlayer {
     });
   }
 
-  // printMediaTracks() {
-  //   const videoTracks = [];
-  //   if (this.video.videoTracks && this.video.videoTracks.length) {
-  //     Array.from(this.video.videoTracks).forEach((track, index) => {
-  //       videoTracks.push({
-  //         index,
-  //         id: track.id || "",
-  //         kind: track.kind || "main",
-  //         label: track.label || "Video Track",
-  //         language: track.language || "und",
-  //         selected: !!track.selected,
-  //       });
-  //     });
-  //   } else {
-  //     videoTracks.push({
-  //       index: 0,
-  //       id: this.video.currentSrc || this.video.src || "",
-  //       kind: "main",
-  //       label: "Default Video Track",
-  //       language: "und",
-  //       selected: true,
-  //       resolution: `${this.video.videoWidth || 0}x${this.video.videoHeight || 0}`,
-  //     });
-  //   }
+  getNativeAudioTracks() {
+    const audioTracks = [];
+    if (this.video.audioTracks && this.video.audioTracks.length) {
+      Array.from(this.video.audioTracks).forEach((track, index) => {
+        audioTracks.push({
+          index,
+          id: track.id || "",
+          kind: track.kind || "main",
+          label: track.label || "Audio Track",
+          language: track.language || "und",
+          enabled: !!track.enabled,
+        });
+      });
+    } else if (this.video.currentSrc || this.video.src) {
+      audioTracks.push({
+        index: 0,
+        id: this.video.currentSrc || this.video.src || "",
+        kind: "main",
+        label: "Default Audio Track",
+        language: "und",
+        enabled: true,
+      });
+    }
+    return audioTracks;
+  }
 
-  //   const subtitleTracks = [];
-  //   if (this.video.textTracks && this.video.textTracks.length) {
-  //     Array.from(this.video.textTracks)
-  //       .filter((track) =>
-  //         ["subtitles", "captions"].includes((track.kind || "").toLowerCase()),
-  //       )
-  //       .forEach((track, index) => {
-  //         subtitleTracks.push({
-  //           index,
-  //           kind: track.kind || "",
-  //           label: track.label || "",
-  //           language: track.language || "und",
-  //           mode: track.mode || "disabled",
-  //         });
-  //       });
-  //   }
+  getNativeSubtitleTracks() {
+    const subtitleTracks = [];
+    if (this.video.textTracks && this.video.textTracks.length) {
+      Array.from(this.video.textTracks)
+        .filter((track) =>
+          ["subtitles", "captions"].includes((track.kind || "").toLowerCase()),
+        )
+        .forEach((track, index) => {
+          subtitleTracks.push({
+            index,
+            kind: track.kind || "",
+            label: track.label || "",
+            language: track.language || "und",
+            mode: track.mode || "disabled",
+          });
+        });
+    }
 
-  //   console.group("Media Track Scan");
-  //   console.log("Video Tracks:", videoTracks);
-  //   console.log(
-  //     "Subtitle Tracks:",
-  //     subtitleTracks.length ? subtitleTracks : "No subtitle tracks found",
-  //   );
-  //   console.groupEnd();
-  // }
+    return subtitleTracks;
+  }
+
+  getTrackSourceKey() {
+    if (this.video.mediaFile) {
+      return [
+        "file",
+        this.video.mediaFile.name,
+        this.video.mediaFile.size,
+        this.video.mediaFile.lastModified,
+      ].join(":");
+    }
+    return `src:${this.video.currentSrc || this.video.src || ""}`;
+  }
+
+  isMp4TrackSource() {
+    const mediaFile = this.video.mediaFile;
+    if (mediaFile) {
+      return (
+        /\.(mp4|m4v|m4a)$/i.test(mediaFile.name || "") ||
+        /video\/mp4|audio\/mp4/i.test(mediaFile.type || "")
+      );
+    }
+
+    return /\.(mp4|m4v|m4a)([?#].*)?$/i.test(
+      this.video.currentSrc || this.video.src || "",
+    );
+  }
+
+  async readTrackSourceBuffer() {
+    if (this.video.mediaFile) {
+      return this.video.mediaFile.arrayBuffer();
+    }
+
+    const sourceUrl = this.video.currentSrc || this.video.src || "";
+    if (!sourceUrl || /^blob:/i.test(sourceUrl)) {
+      return null;
+    }
+
+    const response = await fetch(sourceUrl);
+    if (!response.ok) {
+      throw new Error(`Unable to fetch media source: ${response.status}`);
+    }
+
+    return response.arrayBuffer();
+  }
+
+  async getParsedMediaTracks() {
+    if (!this.isMp4TrackSource()) {
+      return { audioTracks: [], subtitleTracks: [], source: "native" };
+    }
+
+    if (!window.MP4Box || typeof window.MP4Box.createFile !== "function") {
+      return { audioTracks: [], subtitleTracks: [], source: "native" };
+    }
+
+    const cacheKey = this.getTrackSourceKey();
+    if (cacheKey && this.trackScanCacheKey === cacheKey && this.trackScanCacheResult) {
+      return this.trackScanCacheResult;
+    }
+
+    const buffer = await this.readTrackSourceBuffer();
+    if (!buffer) {
+      return { audioTracks: [], subtitleTracks: [], source: "native" };
+    }
+
+    const parsedTracks = await new Promise((resolve, reject) => {
+      const mp4boxFile = window.MP4Box.createFile();
+
+      mp4boxFile.onError = (error) => reject(new Error(error));
+      mp4boxFile.onReady = (info) => {
+        const trackList = Array.isArray(info.tracks) ? info.tracks : [];
+        const subtitleCodecPattern = /^(tx3g|wvtt|stpp|c608|c708)/i;
+
+        const audioTracks = trackList
+          .filter(
+            (track) =>
+              track.audio === true ||
+              track.type === "audio" ||
+              /mp4a|ac-3|ec-3|opus|flac|alac/i.test(track.codec || ""),
+          )
+          .map((track, index) => ({
+            index,
+            id: track.id || `audio-${index}`,
+            kind: track.kind?.schemeURI || "main",
+            label: track.name || `Audio Track ${index + 1}`,
+            language: track.language || "und",
+            enabled: track.enabled !== false,
+            codec: track.codec || "",
+          }));
+
+        const subtitleTracks = trackList
+          .filter(
+            (track) =>
+              track.type === "subtitles" ||
+              track.type === "metadata" ||
+              subtitleCodecPattern.test(track.codec || "") ||
+              /subtitle|caption/i.test(track.name || ""),
+          )
+          .map((track, index) => ({
+            index,
+            id: track.id || `subtitle-${index}`,
+            kind: track.kind?.schemeURI || "subtitles",
+            label: track.name || `Subtitle Track ${index + 1}`,
+            language: track.language || "und",
+            codec: track.codec || "",
+          }));
+
+        resolve({
+          audioTracks,
+          subtitleTracks,
+          source: "mp4box",
+        });
+      };
+
+      const data = buffer.slice(0);
+      data.fileStart = 0;
+      mp4boxFile.appendBuffer(data);
+      mp4boxFile.flush();
+    });
+
+    this.trackScanCacheKey = cacheKey;
+    this.trackScanCacheResult = parsedTracks;
+
+    return parsedTracks;
+  }
+
+  async printMediaTracks() {
+    const nativeAudioTracks = this.getNativeAudioTracks();
+    const nativeSubtitleTracks = this.getNativeSubtitleTracks();
+    let parsedTracks = { audioTracks: [], subtitleTracks: [], source: "native" };
+
+    try {
+      parsedTracks = await this.getParsedMediaTracks();
+    } catch (error) {
+      console.warn("Unable to inspect container tracks:", error.message || error);
+    }
+
+    const audioTracks =
+      parsedTracks.audioTracks.length > nativeAudioTracks.length
+        ? parsedTracks.audioTracks
+        : nativeAudioTracks;
+    const subtitleTracks =
+      parsedTracks.subtitleTracks.length > nativeSubtitleTracks.length
+        ? parsedTracks.subtitleTracks
+        : nativeSubtitleTracks;
+
+    console.group("Media Track Scan");
+    console.log("Track Detection Source:", parsedTracks.source);
+    console.log("Audio Track Count:", audioTracks.length);
+    console.log("Subtitle Track Count:", subtitleTracks.length);
+    console.log("Audio Tracks:", audioTracks.length ? audioTracks : "No audio tracks found");
+    console.log(
+      "Subtitle Tracks:",
+      subtitleTracks.length ? subtitleTracks : "No subtitle tracks found",
+    );
+    console.groupEnd();
+  }
 
   bindKeyPressEvent() {
     document.addEventListener("keydown", (event) => {
@@ -746,6 +903,7 @@ class OTTMediaPlayer {
     var video = document.getElementById(videoId);
     video.pause();
     video.src = url;
+    video.mediaFile = null;
     video.load();
     video.play();
   }
@@ -865,6 +1023,7 @@ function chooseLocalFile() {
     const fileURL = URL.createObjectURL(fileInput.files[0]);
     video.pause();
     video.src = fileURL;
+    video.mediaFile = fileInput.files[0];
     video.name = fileInput.files[0].name;
     video.load();
     video.play();
@@ -894,7 +1053,7 @@ function loadDirectoryFiles() {
         const option = document.createElement("option");
         option.value = URL.createObjectURL(file);
         option.textContent = file.name;
-        option.dataset.file = file; // Store file reference
+        option.mediaFile = file;
         mediaDropdown.appendChild(option);
       });
     mediaDropdown.hidden = false;
@@ -917,9 +1076,11 @@ function playSelectedMedia() {
   const selectedValue = mediaDropdown.value;
   if (selectedValue) {
     const video = document.getElementById("media-video-player");
+    const selectedOption = mediaDropdown.options[mediaDropdown.selectedIndex];
     video.pause();
     video.src = selectedValue;
-    video.name = mediaDropdown.options[mediaDropdown.selectedIndex].textContent;
+    video.mediaFile = selectedOption.mediaFile || null;
+    video.name = selectedOption.textContent;
     video.load();
     video.play();
   }

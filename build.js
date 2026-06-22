@@ -46,8 +46,8 @@ try {
     console.log('✅ Minified JavaScript');
     
     // Obfuscate the minified JavaScript
-    execSync('npx javascript-obfuscator dist/script/media.min.js --output dist/script/media.min.js --compact true --control-flow-flattening true', { stdio: 'inherit' });
-    console.log('✅ Obfuscated JavaScript');
+    // execSync('npx javascript-obfuscator dist/script/media.min.js --output dist/script/media.min.js --compact true --control-flow-flattening true', { stdio: 'inherit' });
+    // console.log('✅ Obfuscated JavaScript');
 } catch (error) {
     console.error('❌ Error minifying/obfuscating JavaScript:', error.message);
     // Fallback: copy original JS file if minification fails
