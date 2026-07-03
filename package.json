@@ -15,7 +15,7 @@
     "url": "https://github.com/artbindu/ott_player"
   },
   "author": "Biswasindhu Mandal",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "http-server": "^0.12.1"
   },

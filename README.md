@@ -3,6 +3,7 @@
 A lightweight OTT-style media player built with HTML, CSS, and JavaScript. It supports local files, folders, playlists, and URL playback, with advanced controls including playback speed, fullscreen, Picture-in-Picture, theater mode, video effects, rotation, trim & loop, FFmpeg script generation, keyboard shortcuts, and a responsive UI.
 
 ## Features
+
 - ▶️ Playback
 - ⚡ Speed
 - 📺 Fullscreen, PiP, Theater
@@ -15,8 +16,6 @@ A lightweight OTT-style media player built with HTML, CSS, and JavaScript. It su
 - ⌨️ Keyboard Shortcuts
 - 📱 Responsive UI
 
-## LIVE Demo: 
-- [Preview](https://artbindu.github.io/ott_player/)
 
 ## Getting Started
 
@@ -44,4 +43,4 @@ npm run build
 
 ## License
 
-ISC
+MIT
