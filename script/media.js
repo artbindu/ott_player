@@ -20,10 +20,12 @@ class OTTMediaPlayer {
       isEnableAutoColorChange: false,
       isEnableMobileAutoRotate: true,
       isMobileAutoRotationApplied: false,
+      hasShownMobileTheaterPopup: false,
     };
     this.video = videoElement;
     this.controls = controls;
     this.video.volume = 1.0;
+    this.mobileTheaterAlertTimeoutId = null;
 
     // Player Features: Trim
     this.trimUIControls = playerFeatures.trimFeature;
@@ -361,11 +363,50 @@ class OTTMediaPlayer {
       }
     }
     this.theaterModeCssConfig(isEnableTheaterMode);
+    this.maybeShowMobileTheaterPopup();
     if (!isEnableTheaterMode) {
       this.config.isEnableFullScreen = false;
       this.config.isEnablePipMode = false;
     }
     this.updateUIButton({ type: this.config.btnType.theaterMode });
+  }
+
+  maybeShowMobileTheaterPopup() {
+    const isLandscapeMode =
+      this.isMobileLandscapeUiMode() || !this.isPortraitView();
+    if (
+      !this.isMobileView() ||
+      !isLandscapeMode ||
+      !this.config.isEnableTheaterMode ||
+      this.config.hasShownMobileTheaterPopup
+    ) {
+      return;
+    }
+    this.config.hasShownMobileTheaterPopup = true;
+    if (this.isMobileView()) {
+      this.showMobileFloatingAlert("Auto enabled Theater Mode");
+    }
+  }
+
+  showMobileFloatingAlert(message) {
+    let alertElement = document.getElementById("mobileTheaterFloatingAlert");
+    if (!alertElement) {
+      alertElement = document.createElement("div");
+      alertElement.id = "mobileTheaterFloatingAlert";
+      alertElement.className = "mobile-theater-floating-alert";
+      document.body.appendChild(alertElement);
+    }
+
+    alertElement.textContent = message;
+    alertElement.classList.add("show");
+
+    if (this.mobileTheaterAlertTimeoutId) {
+      clearTimeout(this.mobileTheaterAlertTimeoutId);
+    }
+
+    this.mobileTheaterAlertTimeoutId = setTimeout(() => {
+      alertElement.classList.remove("show");
+    }, 2200);
   }
 
   isMobileLandscapeUiMode() {
@@ -404,8 +445,7 @@ class OTTMediaPlayer {
       this.isPortraitView();
 
     const shouldAutoRotate =
-      enableLandscapeUI &&
-      this.config.rotationCount === 0;
+      enableLandscapeUI && this.config.rotationCount === 0;
 
     document.body.classList.toggle("mobile-landscape-ui", enableLandscapeUI);
 
@@ -416,6 +456,8 @@ class OTTMediaPlayer {
     } else if (!this.isMobileView() && this.config.isEnableTheaterMode) {
       this.toogleTheaterMode(false);
     }
+
+    this.maybeShowMobileTheaterPopup();
 
     this.resetControlOverlayPosition();
 
@@ -447,7 +489,11 @@ class OTTMediaPlayer {
   }
 
   tryLockLandscapeOrientation() {
-    if (!this.isMobileView() || !screen.orientation || !screen.orientation.lock) {
+    if (
+      !this.isMobileView() ||
+      !screen.orientation ||
+      !screen.orientation.lock
+    ) {
       return;
     }
     screen.orientation.lock("landscape").catch(() => {});
@@ -833,7 +879,11 @@ class OTTMediaPlayer {
       controls.style.zIndex = 1000;
     });
     document.addEventListener("mousemove", function (e) {
-      if (!isDragging || document.body.classList.contains("mobile-landscape-ui")) return;
+      if (
+        !isDragging ||
+        document.body.classList.contains("mobile-landscape-ui")
+      )
+        return;
       let dx = e.clientX - startX;
       let dy = e.clientY - startY;
       controls.style.left = origX + dx + "px";
@@ -957,9 +1007,12 @@ class OTTMediaPlayer {
 // Toggle input mode dropdown visibility
 function toggleInputModeDropdown() {
   var mode = document.getElementById("inputModeDropdown").value;
-  document.getElementById("fileInputRow").style.display = mode === "file" ? "" : "none";
-  document.getElementById("urlInputRow").style.display = mode === "url" ? "" : "none";
-  document.getElementById("directoryInputRow").style.display = mode === "directory" ? "" : "none";
+  document.getElementById("fileInputRow").style.display =
+    mode === "file" ? "" : "none";
+  document.getElementById("urlInputRow").style.display =
+    mode === "url" ? "" : "none";
+  document.getElementById("directoryInputRow").style.display =
+    mode === "directory" ? "" : "none";
   document.getElementById("navButtonsRow").style.display = "none"; // Hide nav buttons when not in directory mode
 }
 
@@ -1151,7 +1204,8 @@ function enableMobileDraggableControls() {
     controls.focus();
   });
   document.addEventListener("mousemove", function (e) {
-    if (!isDragging || document.body.classList.contains("mobile-landscape-ui")) return;
+    if (!isDragging || document.body.classList.contains("mobile-landscape-ui"))
+      return;
     let dx = e.clientX - startX;
     let dy = e.clientY - startY;
     setPosition(origX + dx, origY + dy);
@@ -1175,7 +1229,8 @@ function enableMobileDraggableControls() {
     controls.focus();
   });
   document.addEventListener("touchmove", function (e) {
-    if (!isDragging || document.body.classList.contains("mobile-landscape-ui")) return;
+    if (!isDragging || document.body.classList.contains("mobile-landscape-ui"))
+      return;
     const touch = e.touches[0];
     let dx = touch.clientX - startX;
     let dy = touch.clientY - startY;

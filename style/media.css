@@ -316,6 +316,31 @@ input {
   font-size: 0.85em;
 }
 
+.mobile-theater-floating-alert {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  z-index: 10030;
+  max-width: calc(100vw - 24px);
+  background: rgba(15, 15, 15, 0.92);
+  color: #fff;
+  border: 1px solid #00b894;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.mobile-theater-floating-alert.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .auto-loop-group {
   display: flex;
   align-items: center;
@@ -497,6 +522,20 @@ input {
 }
 
 @media (max-width: 960px) and (orientation: portrait) {
+  body.mobile-landscape-ui .mobile-theater-floating-alert {
+    top: 50%;
+    left: calc(env(safe-area-inset-left, 0px) + 18px);
+    right: auto;
+    max-width: min(72vw, calc(100dvh - 36px));
+    transform: translateY(-50%) rotate(-90deg) translateY(-8px);
+    transform-origin: left center;
+    font-size: 0.78rem;
+  }
+
+  body.mobile-landscape-ui .mobile-theater-floating-alert.show {
+    transform: translateY(-50%) rotate(-90deg) translateY(0);
+  }
+
   body.mobile-landscape-ui {
     overflow: hidden;
   }
