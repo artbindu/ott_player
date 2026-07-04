@@ -18,6 +18,8 @@ class OTTMediaPlayer {
         theaterMode: "THEATER-MODE",
       },
       isEnableAutoColorChange: false,
+      isEnableMobileAutoRotate: true,
+      isMobileAutoRotationApplied: false,
     };
     this.video = videoElement;
     this.controls = controls;
@@ -64,6 +66,7 @@ class OTTMediaPlayer {
 
     // Video Controls Events
     this.bindEvents();
+    this.setupMobileAutoRotate();
     this.updateUIControls();
     this.bindKeyPressEvent();
 
@@ -133,6 +136,11 @@ class OTTMediaPlayer {
       this.toggleFullScreen(!this.config.isEnableFullScreen),
     );
     document.addEventListener("fullscreenchange", () => {
+      if (document.fullscreenElement) {
+        this.tryLockLandscapeOrientation();
+      } else {
+        this.tryUnlockOrientation();
+      }
       if (!document.fullscreenElement) {
         this.toggleFullScreen(!this.config.isEnableFullScreen);
         if (
@@ -317,6 +325,11 @@ class OTTMediaPlayer {
   }
 
   theaterModeCssConfig(isEnableTheaterMode) {
+    if (this.isMobileLandscapeUiMode()) {
+      document.body.classList.toggle("mobile-theater-on", isEnableTheaterMode);
+      return;
+    }
+
     // player section styles
     const playerCard = document.querySelector(".content.player-card");
     playerCard.style.position = isEnableTheaterMode ? "fixed" : "";
@@ -333,7 +346,7 @@ class OTTMediaPlayer {
     video.style.width = isEnableTheaterMode ? "100vw" : "";
     video.style.height = isEnableTheaterMode ? "100vh" : "";
     video.style.zIndex = isEnableTheaterMode ? "10000" : "";
-    video.style.objectFit = isEnableTheaterMode ? "fill" : "";
+    video.style.objectFit = isEnableTheaterMode ? "cover" : "";
     // video controls zIndex
     const controls = document.getElementById("media-media-controls");
     controls.style.zIndex = isEnableTheaterMode ? "10001" : "";
@@ -355,11 +368,95 @@ class OTTMediaPlayer {
     this.updateUIButton({ type: this.config.btnType.theaterMode });
   }
 
+  isMobileLandscapeUiMode() {
+    return document.body.classList.contains("mobile-landscape-ui");
+  }
+
   toggleFullScreen(isEnableFullScreen) {
     if (isEnableFullScreen) {
       this.video.requestFullscreen();
+      this.tryLockLandscapeOrientation();
     }
     this.switchFullScreenPipConfig();
+  }
+
+  isMobileView() {
+    return window.matchMedia("(max-width: 960px)").matches;
+  }
+
+  isPortraitView() {
+    return window.matchMedia("(orientation: portrait)").matches;
+  }
+
+  setupMobileAutoRotate() {
+    const refreshRotationState = () => this.applyMobileAutoRotate();
+    window.addEventListener("orientationchange", refreshRotationState);
+    window.addEventListener("resize", refreshRotationState);
+    this.video.addEventListener("loadedmetadata", refreshRotationState);
+    this.video.addEventListener("play", refreshRotationState);
+    this.applyMobileAutoRotate();
+  }
+
+  applyMobileAutoRotate() {
+    const enableLandscapeUI =
+      this.config.isEnableMobileAutoRotate &&
+      this.isMobileView() &&
+      this.isPortraitView();
+
+    const shouldAutoRotate =
+      enableLandscapeUI &&
+      this.config.rotationCount === 0;
+
+    document.body.classList.toggle("mobile-landscape-ui", enableLandscapeUI);
+
+    if (enableLandscapeUI) {
+      if (!this.config.isEnableTheaterMode) {
+        this.toogleTheaterMode(true);
+      }
+    } else if (!this.isMobileView() && this.config.isEnableTheaterMode) {
+      this.toogleTheaterMode(false);
+    }
+
+    this.resetControlOverlayPosition();
+
+    if (shouldAutoRotate) {
+      this.video.classList.add("mobile-auto-rotated");
+      this.config.isMobileAutoRotationApplied = true;
+      return;
+    }
+
+    if (this.config.isMobileAutoRotationApplied) {
+      this.video.classList.remove("mobile-auto-rotated");
+      this.config.isMobileAutoRotationApplied = false;
+    }
+  }
+
+  resetControlOverlayPosition() {
+    const controls = document.getElementById("media-media-controls");
+    if (!controls) {
+      return;
+    }
+    // Clear draggable inline positioning so CSS can place controls correctly.
+    controls.style.left = "";
+    controls.style.top = "";
+    controls.style.right = "";
+    controls.style.bottom = "";
+    controls.style.position = "";
+    controls.style.transition = "";
+    controls.style.zIndex = "";
+  }
+
+  tryLockLandscapeOrientation() {
+    if (!this.isMobileView() || !screen.orientation || !screen.orientation.lock) {
+      return;
+    }
+    screen.orientation.lock("landscape").catch(() => {});
+  }
+
+  tryUnlockOrientation() {
+    if (screen.orientation && screen.orientation.unlock) {
+      screen.orientation.unlock();
+    }
   }
 
   togglePipMode(isEnablePipMode) {
@@ -684,9 +781,16 @@ class OTTMediaPlayer {
   }
 
   toggleScreenRotation() {
+    if (this.config.isMobileAutoRotationApplied) {
+      this.video.classList.remove("mobile-auto-rotated");
+      this.config.isMobileAutoRotationApplied = false;
+    }
     this.config.rotationCount = (this.config.rotationCount + 1) % 4;
     this.video.style.transform = `rotate(${-90 * this.config.rotationCount}deg)`;
     this.updateUIButton({ type: this.config.btnType.rotation });
+    if (this.config.rotationCount === 0) {
+      this.applyMobileAutoRotate();
+    }
   }
 
   onVideoEnded() {
@@ -717,6 +821,7 @@ class OTTMediaPlayer {
       origX,
       origY;
     handle.addEventListener("mousedown", function (e) {
+      if (document.body.classList.contains("mobile-landscape-ui")) return;
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -728,7 +833,7 @@ class OTTMediaPlayer {
       controls.style.zIndex = 1000;
     });
     document.addEventListener("mousemove", function (e) {
-      if (!isDragging) return;
+      if (!isDragging || document.body.classList.contains("mobile-landscape-ui")) return;
       let dx = e.clientX - startX;
       let dy = e.clientY - startY;
       controls.style.left = origX + dx + "px";
@@ -1021,6 +1126,9 @@ function enableMobileDraggableControls() {
     origY;
 
   function setPosition(x, y) {
+    if (document.body.classList.contains("mobile-landscape-ui")) {
+      return;
+    }
     controls.style.left = x + "px";
     controls.style.top = y + "px";
     controls.style.position = "fixed";
@@ -1031,6 +1139,7 @@ function enableMobileDraggableControls() {
 
   // Desktop
   handle.addEventListener("mousedown", function (e) {
+    if (document.body.classList.contains("mobile-landscape-ui")) return;
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
@@ -1042,7 +1151,7 @@ function enableMobileDraggableControls() {
     controls.focus();
   });
   document.addEventListener("mousemove", function (e) {
-    if (!isDragging) return;
+    if (!isDragging || document.body.classList.contains("mobile-landscape-ui")) return;
     let dx = e.clientX - startX;
     let dy = e.clientY - startY;
     setPosition(origX + dx, origY + dy);
@@ -1053,6 +1162,7 @@ function enableMobileDraggableControls() {
 
   // Mobile (touch)
   handle.addEventListener("touchstart", function (e) {
+    if (document.body.classList.contains("mobile-landscape-ui")) return;
     isDragging = true;
     const touch = e.touches[0];
     startX = touch.clientX;
@@ -1065,7 +1175,7 @@ function enableMobileDraggableControls() {
     controls.focus();
   });
   document.addEventListener("touchmove", function (e) {
-    if (!isDragging) return;
+    if (!isDragging || document.body.classList.contains("mobile-landscape-ui")) return;
     const touch = e.touches[0];
     let dx = touch.clientX - startX;
     let dy = touch.clientY - startY;
