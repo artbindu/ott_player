@@ -1,3 +1,16 @@
+/*
+ * Primary application entry point.
+ *
+ * Current source layout:
+ * - src/script/config.js
+ * - src/script/utils.js
+ * - src/script/ottMediaPlayer.js
+ * - src/script/index.js (this file)
+ *
+ * Build output is bundled to dist/index.min.js.
+ * For backward compatibility, older pages may still include script/media.js,
+ * which dynamically loads the same script/* modules in order.
+ */
 import "./config.js";
 import { enableMobileDraggableControls } from "./utils.js";
 import { OTTMediaPlayer } from "./ottMediaPlayer.js";

@@ -1,13 +1,10 @@
 /*
- * Legacy compatibility entry point.
+ * Legacy compatibility loader shim.
  *
- * The player source has been split into:
- * - script/config.js
- * - script/utils.js
- * - script/ottMediaPlayer.js
- * - script/index.js
+ * This file supports older pages that still include script/media.js by
+ * dynamically loading modular script/* files in order.
  *
- * Keep this file to support older HTML pages still referencing script/media.js.
+ * Primary application entry is src/script/index.js.
  */
 (function () {
   if (
