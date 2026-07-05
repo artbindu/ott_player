@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, master, develop, monolithic_to_moduler ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, master, develop, monolithic_to_moduler ]
   workflow_dispatch:
 
 permissions:
@@ -41,9 +41,7 @@ jobs:
         ls -la dist/
         test -f dist/index.html
         test -f dist/style/media.min.css
-        test -f dist/script/media.min.js
-        test -f dist/favicon.ico
-        test -f dist/data/sample.mp4
+        test -f dist/index.min.js
         echo "✅ Build validation passed"
 
     - name: Setup GitHub Pages
