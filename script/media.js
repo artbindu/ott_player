@@ -944,7 +944,7 @@ class OTTMediaPlayer {
       break1: "--------Full Video Audio-------------",
       // Trim Video with range in second
       trimeVideo_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
-      trimVideoWithoutAudio_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -c:v libx264 -crf 23 -preset fast -an "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
+      trimVideoWithoutAudio_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -r 15 -c:v libx264 -crf 23 -preset fast -an "{OUTPUTFILE}_{SCRIPTKEY}.mp4"`,
       trimAudioOnlyFromVideo_sec: `ffmpeg -i "{INPUTFILE}" -ss {STARTTIME} -t {TRIMDURATION} -q:a 0 -map a "{OUTPUTFILE}_{SCRIPTKEY}.mp3"`,
       rotateVideoClockWise90: `ffmpeg -i "{INPUTFILE}" -vf "transpose=1" "{OUTPUTFILE}_{SCRIPTKEY}_clock90.mp4"`,
       rotateVideoAntiClockWise90: `ffmpeg -i "{INPUTFILE}" -vf "transpose=1,transpose=1,transpose=1" "{OUTPUTFILE}_{SCRIPTKEY}_anticlock90.mp4"`,
