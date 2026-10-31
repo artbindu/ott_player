@@ -27,6 +27,14 @@ try {
     console.error('❌ Error copying data directory:', error.message);
 }
 
+// Include the built player variants in the Pages artifact
+try {
+    fs.cpSync('samplePlayer', path.join(buildDir, 'samplePlayer'), { recursive: true, force: true });
+    console.log('✅ Copied samplePlayer directory');
+} catch (error) {
+    console.error('❌ Error copying samplePlayer directory:', error.message);
+}
+
 // Minify CSS
 try {
     execSync('npx cleancss -o dist/style/media.min.css style/media.css', { stdio: 'inherit' });
@@ -78,7 +86,7 @@ try {
     fs.writeFileSync(path.join(buildDir, 'index.html'), htmlContent);
     console.log('✅ Created and updated index.html with minified references');
 } catch (error) {
-    console.error('❌ Error updating HTML references:', error.message);
+    console.error('❌ Error updating HTML:', error.message);
 }
 
 console.log('\n🎉 Build completed successfully!');
