@@ -446,6 +446,58 @@ body {
     display: block;
 }
 
+.custom-manifest-form {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    background: #222;
+    border: 1px solid #3b3b3b;
+    border-radius: 6px;
+}
+
+.custom-manifest-form label {
+    color: #ddd;
+    font-size: 0.85rem;
+}
+
+.custom-manifest-form input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 9px 10px;
+    background: #111;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+}
+
+.custom-manifest-form input:focus-visible,
+.custom-manifest-form button:focus-visible {
+    outline: 2px solid #07bf26;
+    outline-offset: 2px;
+}
+
+.custom-manifest-form button {
+    padding: 9px 10px;
+    background: #07bf26;
+    border: 0;
+    border-radius: 4px;
+    color: #071109;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.custom-manifest-form button:hover {
+    background: #08d52b;
+}
+
+#custom-manifest-error {
+    min-height: 1em;
+    margin: 0;
+    color: #ff8585;
+    font-size: 0.8rem;
+}
+
 select option {
     white-space: normal;
     overflow-wrap: break-word;
@@ -525,4 +577,4 @@ a {
 }
 
 
-/*# sourceMappingURL=style.304c420b5b632022c210.css.map*/
+/*# sourceMappingURL=style.b4c5b1a79db0b29337b0.css.map*/
