@@ -10,8 +10,9 @@
     "explorer.fileNesting.expand": false,
     "explorer.fileNesting.patterns": {
         "README.md": "*.md, .gitignore, *.ico, LICENSE",
-        "package.json": "*.json, .nvmrc, .node-version, .yarnrc, .yarnrc.yml, .yarnrc.yaml",
-        "index.html": "*.js"
+        "package.json": "*.json, .nvmrc, .node-version, .yarnrc, .yarnrc.yml, .yarnrc.yaml, rollup.config.js, rollup.config.mjs, rollup.config.cjs, rollup.config.ts, tsconfig.json, tsconfig.*.json",
+        "index.js": "*.js",
+        "index.html": "*.js, *.css, *.ico"
     },
     "cSpell.words": []
 }
