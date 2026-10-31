@@ -2,6 +2,7 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: black;
+  margin: 0;
 }
 
 p {
@@ -92,6 +93,37 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.integration-link {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 6px;
+  background: rgba(24, 24, 24, 0.88);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.integration-link:hover,
+.integration-link:focus-visible {
+  border-color: #fff;
+  background: #00b894;
+  color: #fff;
+}
+
+.integration-link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .file-inputs {
@@ -347,4 +379,101 @@ input {
 }
 #volumeValue {
   font-size: 0.85em;
+}
+
+@media (max-width: 760px) {
+  .page-header-content {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .header-left {
+    min-width: 0;
+    margin: 0;
+    gap: 12px;
+    padding: 4px 12px 0;
+  }
+
+  .header-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0;
+  }
+
+  .site-title {
+    font-size: 1.55rem;
+    letter-spacing: 1px;
+  }
+
+  .site-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .header-right {
+    align-items: stretch;
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 12px 8px;
+    text-align: left;
+  }
+
+  .header-inline {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .integration-link {
+    min-height: 40px;
+    padding: 6px 9px;
+    font-size: 0.82rem;
+  }
+
+  #inputModeDropdownRow {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #inputModeDropdown {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .header-right .file-inputs {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  #fName[type="file"],
+  #headerVideoUrlInput[type="text"] {
+    flex: 1 1 180px;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .primary-btn {
+    min-height: 40px;
+  }
+
+  .player-card {
+    width: 100%;
+    height: 65svh;
+    min-height: 260px;
+  }
+
+  .video-wrapper,
+  .media-video-player {
+    width: 100%;
+    height: 100%;
+  }
+
+  .media-video-player {
+    object-fit: contain;
+  }
 }
