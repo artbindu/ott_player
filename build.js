@@ -29,10 +29,10 @@ try {
 
 // Include the built player variants in the Pages artifact
 try {
-    fs.cpSync('samplePlayer', path.join(buildDir, 'samplePlayer'), { recursive: true, force: true });
-    console.log('✅ Copied samplePlayer directory');
+    fs.cpSync('ott-player-lab', path.join(buildDir, 'ott-player-lab'), { recursive: true, force: true });
+    console.log('✅ Copied ott-player-lab directory');
 } catch (error) {
-    console.error('❌ Error copying samplePlayer directory:', error.message);
+    console.error('❌ Error copying ott-player-lab directory:', error.message);
 }
 
 // Minify CSS

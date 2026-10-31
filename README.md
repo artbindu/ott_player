@@ -4,12 +4,12 @@ A lightweight OTT-style media player built with HTML, CSS, and JavaScript. It su
 
 ## OTT Sample Players
 
-Explore the player integrations in the [OTT Sample Player](https://artbindu.github.io/ott_player/samplePlayer/) gallery:
+Explore the player integrations in the [OTT Sample Player](https://artbindu.github.io/ott_player/ott-player-lab/) gallery:
 
-- [DASH.js](https://artbindu.github.io/ott_player/samplePlayer/dashjs/)
-- [Bitmovin](https://artbindu.github.io/ott_player/samplePlayer/bitmovin/)
-- [RxPlayer](https://artbindu.github.io/ott_player/samplePlayer/rxplayer/)
-- [Native HLS](https://artbindu.github.io/ott_player/samplePlayer/hls/) (requires browser-native HLS support)
+- [DASH.js](https://artbindu.github.io/ott_player/ott-player-lab/dashjs/)
+- [Bitmovin](https://artbindu.github.io/ott_player/ott-player-lab/bitmovin/)
+- [RxPlayer](https://artbindu.github.io/ott_player/ott-player-lab/rxplayer/)
+- [Native HLS](https://artbindu.github.io/ott_player/ott-player-lab/hls/) (requires browser-native HLS support)
 
 ## Features
 
