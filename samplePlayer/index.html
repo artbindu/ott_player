@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OTT Sample Players</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101316; color: #f2f4f5; }
+    body { box-sizing: border-box; margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 560px); }
+    h1 { margin: 0 0 8px; font-size: 1.8rem; }
+    p { margin: 0 0 20px; color: #aeb8bf; }
+    nav { display: grid; gap: 10px; }
+    a { display: block; padding: 14px 16px; border: 1px solid #39434a; border-radius: 6px; color: #f2f4f5; text-decoration: none; }
+    a:hover, a:focus-visible { border-color: #07bf26; background: #1b2420; outline: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>OTT Sample Players</h1>
+    <p>Select a player implementation.</p>
+    <nav aria-label="Player implementations">
+      <a href="./dashjs/">DASH.js</a>
+      <a href="./bitmovin/">Bitmovin</a>
+      <a href="./rxplayer/">RxPlayer</a>
+      <a href="./hls/">Native HLS</a>
+    </nav>
+  </main>
+</body>
+</html>
