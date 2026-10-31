@@ -3,27 +3,175 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OTT Sample Players</title>
+  <title>OTT Player Integration Lab</title>
   <style>
-    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101316; color: #f2f4f5; }
-    body { box-sizing: border-box; margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
-    main { width: min(100%, 560px); }
-    h1 { margin: 0 0 8px; font-size: 1.8rem; }
-    p { margin: 0 0 20px; color: #aeb8bf; }
-    nav { display: grid; gap: 10px; }
-    a { display: block; padding: 14px 16px; border: 1px solid #39434a; border-radius: 6px; color: #f2f4f5; text-decoration: none; }
-    a:hover, a:focus-visible { border-color: #07bf26; background: #1b2420; outline: none; }
+    :root {
+      color-scheme: dark;
+      font-family: "Avenir Next", Avenir, sans-serif;
+      background: #101316;
+      color: #f2f4f5;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --muted: #aeb8bf;
+      --line: #39434a;
+      --accent: #56d68b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100svh;
+      background: #101316;
+    }
+
+    main {
+      width: min(100% - 48px, 1040px);
+      margin: 0 auto;
+      padding: 48px 0 32px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 720px;
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 2.6rem;
+      font-weight: 500;
+      line-height: 1.08;
+    }
+
+    .intro {
+      max-width: 100%;
+      margin: 14px 0 32px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .player-card {
+      display: flex;
+      min-height: 194px;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #171c20;
+    }
+
+    .player-type {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 1.55rem;
+      font-weight: 500;
+    }
+
+    .player-description {
+      margin: 8px 0 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .launch-link,
+    .docs-link {
+      color: #f2f4f5;
+      text-decoration-color: var(--accent);
+      text-underline-offset: 4px;
+    }
+
+    .launch-link {
+      margin-top: auto;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    a:hover { color: var(--accent); }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+    .gallery-note {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 20px;
+      margin-top: 24px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .gallery-note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .docs-link { white-space: nowrap; font-size: 0.85rem; }
+
+    @media (max-width: 640px) {
+      main { width: min(100% - 32px, 480px); padding-top: 32px; }
+      h1 { font-size: 2rem; }
+      .player-grid { grid-template-columns: 1fr; gap: 10px; }
+      .player-card { min-height: 0; padding: 18px; }
+      .gallery-note { grid-template-columns: 1fr; gap: 12px; }
+      .docs-link { white-space: normal; }
+    }
   </style>
 </head>
 <body>
   <main>
-    <h1>OTT Sample Players</h1>
-    <p>Select a player implementation.</p>
-    <nav aria-label="Player implementations">
-      <a href="./dashjs/">DASH.js</a>
-      <a href="./bitmovin/">Bitmovin</a>
-      <a href="./rxplayer/">RxPlayer</a>
-      <a href="./hls/">Native HLS</a>
+    <p class="eyebrow">🌸 OTT Player Integration Lab 🌸</p>
+    <h1>Explore OTT player integrations</h1>
+    <p class="intro">Four independently built adapters, one shared playback interface. Choose a player to open its live demo.</p>
+    <nav class="player-grid" aria-label="Deployed player implementations">
+      <article class="player-card">
+        <p class="player-type">MPEG-DASH / ABR / DRM</p>
+        <h2>DASH.js</h2>
+        <p class="player-description">Adaptive streaming and DRM support for MPEG-DASH workflows.</p>
+        <a class="launch-link" href="./dashjs/">Open DASH.js demo <span aria-hidden="true">&rarr;</span></a>
+      </article>
+      <article class="player-card">
+        <p class="player-type">Enterprise OTT</p>
+        <h2>Bitmovin</h2>
+        <p class="player-description">Enterprise playback with DRM and optional analytics configuration.</p>
+        <a class="launch-link" href="./bitmovin/">Open Bitmovin demo <span aria-hidden="true">&rarr;</span></a>
+      </article>
+      <article class="player-card">
+        <p class="player-type">Low latency / Live</p>
+        <h2>RxPlayer</h2>
+        <p class="player-description">A streaming engine suited to live and low-latency playback.</p>
+        <a class="launch-link" href="./rxplayer/">Open RxPlayer demo <span aria-hidden="true">&rarr;</span></a>
+      </article>
+      <article class="player-card">
+        <p class="player-type">Apple platforms</p>
+        <h2>Native HLS</h2>
+        <p class="player-description">Uses the browser media element for HLS; native HLS support is required.</p>
+        <a class="launch-link" href="./hls/">Open Native HLS demo <span aria-hidden="true">&rarr;</span></a>
+      </article>
     </nav>
   </main>
 </body>
