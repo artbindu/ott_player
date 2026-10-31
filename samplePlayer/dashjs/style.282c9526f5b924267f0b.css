@@ -576,5 +576,235 @@ a {
     border-radius: 4px;
 }
 
+@media (max-width: 860px) {
+    body {
+        display: block;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100svh;
+        overflow-x: hidden;
+    }
 
-/*# sourceMappingURL=style.b4c5b1a79db0b29337b0.css.map*/
+    .container {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100svh;
+        flex-direction: column;
+        gap: 12px;
+        padding: 56px 12px 16px;
+        overflow: visible;
+    }
+
+    #toggle-sidebar {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        min-width: 40px;
+        min-height: 40px;
+        padding: 8px;
+        background: #222;
+        border: 1px solid #444;
+    }
+
+    .left-container,
+    .right-container {
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: 0;
+        padding: 12px;
+        overflow: visible;
+    }
+
+    .left-container {
+        order: 2;
+        gap: 12px;
+    }
+
+    .right-container {
+        order: 1;
+    }
+
+    .container.left-hidden .right-container {
+        flex: 0 0 auto;
+    }
+
+    .video-video-controls {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 8px;
+    }
+
+    .video-layer {
+        flex: 0 0 auto;
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+
+    .control-buttons {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .control-buttons button,
+    .control-buttons select,
+    .control-buttons span {
+        min-width: 40px;
+        min-height: 40px;
+        box-sizing: border-box;
+    }
+
+    .control-buttons input[type="range"] {
+        width: min(28vw, 120px);
+        margin: 0 4px;
+    }
+
+    .seekbar,
+    .seekbar-container {
+        gap: 4px;
+    }
+
+    .seekbar .time-display {
+        flex: 0 0 48px;
+        width: 48px;
+        font-size: 0.75rem;
+    }
+
+    .settings-row {
+        grid-template-columns: minmax(88px, 0.8fr) minmax(0, 1.2fr);
+    }
+
+    .container-first,
+    .container-second,
+    .container-third {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        gap: 8px;
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .left-container,
+    .right-container {
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .control-buttons {
+        gap: 6px;
+    }
+
+    .control-buttons button,
+    .control-buttons select,
+    .control-buttons span {
+        padding: 6px 8px;
+    }
+
+    .settings-row {
+        grid-template-columns: minmax(78px, 0.75fr) minmax(0, 1.25fr);
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+
+    .custom-manifest-form {
+        padding: 10px;
+    }
+}
+
+@media (orientation: portrait) and (max-width: 480px) {
+    .control-buttons input[type="range"] {
+        width: clamp(64px, 18vw, 82px);
+        min-width: 64px;
+        padding: 0;
+        margin: 0 4px;
+        flex: 0 0 auto;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 1024px) {
+    body {
+        display: block;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .container {
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        flex-direction: row;
+        gap: 10px;
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .left-container {
+        order: 1;
+        flex: 0 0 clamp(190px, 30vw, 260px);
+        width: auto;
+        min-height: 0;
+        max-height: calc(100vh - 20px);
+        max-height: calc(100dvh - 20px);
+        padding: 48px 10px 10px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .right-container {
+        order: 2;
+        flex: 1 1 0;
+        width: auto;
+        height: 100%;
+        min-height: 0;
+        padding: 8px;
+        overflow: hidden;
+    }
+
+    .container.left-hidden .right-container {
+        flex: 1 1 0;
+    }
+
+    .video-video-controls {
+        height: 100%;
+        min-height: 0;
+        padding: 6px;
+    }
+
+    .video-layer {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 0;
+        aspect-ratio: auto;
+    }
+
+    .control-buttons {
+        flex: 0 0 auto;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .control-buttons button,
+    .control-buttons select,
+    .control-buttons span {
+        min-height: 40px;
+    }
+
+    .control-buttons input[type="range"] {
+        width: clamp(56px, 9vw, 76px);
+        min-width: 56px;
+        padding: 0;
+        margin: 0 3px;
+    }
+}
+
+
+/*# sourceMappingURL=style.282c9526f5b924267f0b.css.map*/
