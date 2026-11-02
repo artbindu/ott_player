@@ -33,6 +33,21 @@
       padding: 48px 0 32px;
     }
 
+    .header-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 4px;
+      object-fit: cover;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
     .eyebrow {
       margin: 0 0 14px;
       color: var(--accent);
@@ -134,6 +149,7 @@
       margin: 24px 0 0;
       color: var(--muted);
       font-size: 0.75rem;
+      overflow-wrap: anywhere;
     }
 
     .docs-link { white-space: nowrap; font-size: 0.85rem; }
@@ -151,7 +167,12 @@
 <body>
   <main>
     <p class="eyebrow">🌸 OTT Player Integration Lab 🌸</p>
-    <h1>Explore OTT player integrations</h1>
+    <div class="page-heading">
+      <a href="https://github.com/artbindu">
+        <img src="https://artbindu.github.io/ott_player/favicon.ico" alt="Logo" class="header-logo">
+      </a>
+      <h1>Explore OTT player integrations</h1>
+    </div>
     <p class="intro">Four independently built adapters, one shared playback interface. Choose a player to open its live demo.</p>
     <nav class="player-grid" aria-label="Deployed player implementations">
       <article class="player-card">
@@ -179,7 +200,7 @@
         <a class="launch-link" href="./hls/">Open Native HLS demo <span aria-hidden="true">&rarr;</span></a>
       </article>
     </nav>
-    <p class="build-info">Deployed from <a href="https://github.com/artbindu/OTT-Player-Integration/commit/9f0c8abb1f35f37a778c554ca369e8a5b023edd2" title="9f0c8abb1f35f37a778c554ca369e8a5b023edd2">9f0c8ab</a></p>
+    <p class="build-info">Deployed from <a href="https://github.com/artbindu/OTT-Player-Integration/commit/104d79121cebda8b31af753983abff7460e467e1" title="104d79121cebda8b31af753983abff7460e467e1">@rtB!ndu🍁104d791</a></p>
   </main>
 </body>
 </html>
