@@ -18,7 +18,3 @@ Telegram Desktop
 Movie
 Movie List
 *.zip
-
-# OTT Player Lab - Player Integration
-ott-player-lab/*
-!ott-player-lab/index.html
