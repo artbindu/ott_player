@@ -18,3 +18,9 @@ Telegram Desktop
 Movie
 Movie List
 *.zip
+
+# OTT Player Lab - Player Integration
+ott-player-lab/bitmovin/
+ott-player-lab/dashjs/
+ott-player-lab/hls/
+ott-player-lab/rxplayer/
